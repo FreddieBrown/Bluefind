@@ -1,2 +1,10 @@
 papers/
 forms/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.ilg
+*.synctex.gz
+*.toc
