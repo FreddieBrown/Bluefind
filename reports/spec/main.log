@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.10.27)  2 OCT 2019 18:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.10.27)  3 OCT 2019 14:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -122,11 +122,21 @@ Package pdftex.def Info: Warwick.png used on input line 8.
 (pdftex.def)             Requested size: 150.56212pt x 214.80197pt.
  [1
 
-{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map} </Users/freddiebrown/University/3rdYear/proj/reports/spec/Warwick.png>] [1
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map} </Users/freddiebrown/University/3rdYear/proj/reports/spec/Warwick.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 46--55
+
+ []
+
+[1
 
 ] [2
 
-] (/Users/freddiebrown/University/3rdYear/proj/reports/spec/main.toc)
+] (/Users/freddiebrown/University/3rdYear/proj/reports/spec/main.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 4.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 4.
+)
 \tf@toc=\write3
 \openout3 = `main.toc'.
 
@@ -168,18 +178,18 @@ LaTeX Warning: Empty `thebibliography' environment on input line 3.
 
 ] (/Users/freddiebrown/University/3rdYear/proj/reports/spec/main.aux) ) 
 Here is how much of TeX's memory you used:
- 1592 strings out of 492995
- 23509 string characters out of 6132703
- 80338 words of memory out of 5000000
- 5151 multiletter control sequences out of 15000+600000
- 5160 words of font info for 19 fonts, out of 8000000 for 9000
+ 1599 strings out of 492995
+ 23596 string characters out of 6132703
+ 81338 words of memory out of 5000000
+ 5156 multiletter control sequences out of 15000+600000
+ 6111 words of font info for 22 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  39i,5n,25p,290b,181s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on /Users/freddiebrown/University/3rdYear/proj/reports/spec/main.pdf (12 pages, 153234 bytes).
+</usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on /Users/freddiebrown/University/3rdYear/proj/reports/spec/main.pdf (12 pages, 172603 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 38 compressed objects within 1 object stream
+ 62 PDF objects out of 1000 (max. 8388607)
+ 41 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
