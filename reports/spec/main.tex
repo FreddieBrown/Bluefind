@@ -41,7 +41,7 @@
 
 
 \chapter*{Abstract}
-\pagenumbering{roman}
+% \pagenumbering{roman}
 \addcontentsline{toc}{chapter}{Abstract}
 
 When an emergency situation occurs, people want to tell others where they are and get help. 
@@ -62,54 +62,62 @@ Moving information in emergency situations could get alert those who save lives 
 \chapter*{Abbreviations}
 \addcontentsline{toc}{chapter}{Abbreviations}
 
-\textbf{MANET} - Mobile Ad Hoc Network
+\textbf{MANET} - Mobile Ad Hoc Network\\
+\textbf{VM} - Virtual Machine\\
+\textbf{BCS} - British Computing Society\\
 
 
-\tableofcontents{}
 
-\chapter{Introduction}
-\pagenumbering{arabic}
+% \tableofcontents{}
 
-Discuss some general background about MANETs and how they are currently used and what form
+\chapter*{Introduction}
+% \pagenumbering{arabic}
 
-\section{Motivations}
+The main part of this project is investigating an application of MANETs, an interesting technology which fits the 
+emergency use case well. They are low infrastructure networks which use homogenous and heterogenous devices to form a 
+network dynamically. This is good for situations which may be quite fluid, with nodes coming in and out of the network\cite{sun2001mobile}. 
+There are some other areas which this project will also explore, such as keeping devices alive for a long time, biological 
+inspired routing and security issues related to passing packets of potentially sensitive data to unverified devices to distribute.
+
+
+\section*{Motivations}
 In todays world, most people in the world rely on telecommunications to connect with family members, friends, 
 work collegues and, very importantly, the emergency services. When we get a disaster, or group of them, as was 
 seen in Puerto Rico in 2017, it can impact lives and even end them prematurely. A study estimates the increase in 
 mortality at 62\%\cite{kishore2018mortality}, and this is thought to be an underestimate. Remote areas were hit hardest and were without services 
 such as cellular data access for up to 41 days. This can make it very difficult for rescuers to know the situation in 
 these places and creates a mismatch in information.
-\\
+\bigskip\\
 Incidents such as these illustrate the tragic consequences that can happen without vital services which are required in the 
 world today. In 2016, the United Nations voted that access to the internet is a human right that should be protected\cite{UNResolutionJune2016}. 
 This type of action brings into focus the need to have systems in place to help people maintain connectivity, even when traditional infrastructure 
 fails. 
 
-\section{Project Aims}
+\section*{Project Aims}
 
-The aim of the projec is to produce a prototype of a system which could be implemented by governments and technology 
+The aim of the project is to produce a prototype of a system which could be implemented by governments and technology 
 companies which could help people. Companies like Google and Apple produce the Operating Systems for most phones but 
 they don't have any sort of inbuilt emergency system like the one I hope to accomplish. 
-
+\bigskip\\
 I want to explore the different ways this could be implemented, what holds them back and how well they actually perform 
 in action. Also, I want looking at why there is no widely implemented system such as this in consumer phones already. 
 
-\section{Stakeholders}
+\section*{Stakeholders}
 
 The stakeholders for this project would be those who can benefit from it. Those people are those who live in areas 
 which are frequently affected by natural disaster and have weak infrastructure. These are the people that would benefit 
 most from having a system which could help them maintain contact with the world if they couldn't through traditional 
 methods.
 
-\chapter{Research}
+\chapter*{Research}
 
 Discuss the research that I've done so far. Talk about different approaches to the 
 problem which have been implemented already. Discuss what they have done well and what 
 could be improved. Also discuss other aspects such as routing.
 
-\chapter{Ethical, Social, Legal and Professional Issues}
+\chapter*{Ethical, Social, Legal and Professional Issues}
 
-\section{Ethical Issues}
+\section*{Ethical Issues}
 
 Ethical issues arise when there are competing goods and competing evils. An example of this 
 is using data collected through using a product to target certain groups without their consent. 
@@ -118,64 +126,105 @@ should be considered. Fundamentally, stakeholders in the project should be prote
 data shouldn't be used against them. Data should be kept anonymous and protected somehow, through 
 traditional encryption or other means. 
 
-\section{Social Issues}
+\section*{Social Issues}
 
 Social issues are those that may have an affect on the lives of many people. It could be problems which 
 affect how they interact with other people or those relating to access to goods and services that others can 
-but they can't. 
+but they can't. Currently, it is hard to see any issues of this nature relating to the project but this should 
+be continually considered as the project moves forward.
 
-\section{Legal Issues}
+\section*{Legal Issues}
 
 This project will deal with sending data about an individual to others and allowing them to hold and send this 
 data to whomever they wish to send it to. There are legal issues as, without proper protections, this kind of 
 data could be used against individuals that are in trouble, such as in a terror incident. 
-
+\bigskip
+\\
 In this project, I will strive to protect sensitive data, such as location data, so that no one is privy to this 
 information at any time if they shouldn't have access to it. As discussed above in Ethical Issues, this should be 
 done by maintaining data privacy through encryption or other means.
-
+\bigskip
+\\
 Also, in any testing or data collection, a persons personal data should be kept private so that it can't be shared 
 and used by people who shouldn't have access to it.  
 
-\section{Professional Issues}
+\section*{Professional Issues}
 
 Throughout this project, I will adhere to the BCS Code of Conduct\cite{BCSCoP}. I want to produce a 
 research project which can be trusted and respected and so I will adhere to all rules that I am required 
 to follow. This means I will also follow the Research Code of Practice at the University of Warwick\cite{UniWarwickCOP}. 
 This means all work I use to support my research will be referenced. 
 
-\chapter{Project Requirements}
+\chapter*{Project Requirements}
 
 Come up with some basic functional and non-functional requirements
 
-\section{Functional}
+\section*{Functional}
 
-\section{Non-Functional}
+\section*{Non-Functional}
 
-\section{Constraints}
+\section*{Constraints}
 
-\chapter{Project Management}
+\chapter*{Project Management}
 
 Do a gantt chart to go here and what tools I am going to use, e.g Git and Trello
-\section{Project Timeline}
+\section*{Project Timeline}
 
-\section{Project Tools}
+\section*{Project Tools}
 
-\section{Risk Management}
+This project will use C++ for programming. This has been chosen because it is a low level programming language 
+so the code will be easier to optimise for increased performance. Furthermore, there are some good libraries 
+for dealing with technologies like Bluetooth which are needed. One such library is BlueZ\cite{bluez}. This will 
+provide a good api to interface with Bluetooth with on Linux machines.
+\bigskip\\
+In terms of hardware, the project is going to be written for Linux-based devices such as the Raspberry Pi which have 
+Bluetooth. This is a pretty basic requirement for the hardware as Bluetooth standard for a lot of devices. Having 
+very few requirements greatly decreases barrier to entry to use the project and makes it easier to see how it could 
+be used on a variety of devices. 
+\bigskip\\
+A variety of other tools will be used for other aspects of the project. Trello will be used to keep track of tasks that 
+need to be done. This is a simple and clear way to see what it left to do and allows deadlines to be built into tasks. It 
+also fits in with an Agile development methodology, which is preferable. On top of this, Github will be used as the version 
+control system to store code. It makes it easier to access project resources from multiple locations and provides a good back 
+up if something went wrong and all physical devices which hold the project, were to break for some unforseen reason. 
 
-\chapter{Testing}
 
-Discuss the different approaches to testing that could be taken, Unit testing, integration testing etc
+\section*{Risk Management}
 
-\section{Unit Testing}
+\chapter*{Testing}
 
-\section{Integration Testing}
+Testing in this project will be used to verify the functionality of the project while changes are made as 
+well as being able to verify that requirements have been fulfilled. The project will use a couple of different 
+technologies to accomplish this. For unit testing an established C++-specific framework will be used, such 
+as CppUnit.
+For integration testing, TravisCI will be used. Once more, its a robust service and it has very good integration with Github and 
+is very customisable. 
 
-\section{Success Management}
+\section*{Unit Testing}
 
-\chapter{Conclusion}
+With unit testing, tests will be written for each feature that is created. These will be lined up with the requirements so that 
+it is easy to see that they are being fulfilled. For writing unit tests, Agile development methodologies will be adhered to by 
+writing the tests before writing the feature. 
 
-Short part with some final thoughts
+\section*{Integration Testing}
+
+By using TravisCI, larger tests can be written which incorporated more of the project. This can be run on a clean VM which 
+means there is nothing external to the project which could influence its testing. This enables more rigourous testing. 
+
+\section*{Success Management}
+
+The way success of the project can be measured is if the project can transmit packets across a group of devices with to a 
+target device. This would simulate a device in a disaster scenario which is either the emergency services or an internet 
+connected device. This will be tested on a number of topologies and in different environments to test performance when taking 
+in lots of different physical and real world factors.
+
+
+\chapter*{Conclusion}
+
+Overall the project has begun well. The tools which are going to be used as coming into shape and there is a greater 
+understanding about what needs to be done in terms of further research and future implementation. Over the next few 
+weeks a greater plan of what needs to be done will be created and more cards for Trello will be made so that the 
+project stays on track.
 
 
 \bibliography{ref}{}
