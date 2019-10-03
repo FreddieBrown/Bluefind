@@ -1,5 +1,6 @@
 \documentclass{report}
 \usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
 \usepackage{cite}
 \begin{document}
 \begin{titlepage}
@@ -72,15 +73,33 @@ Moving information in emergency situations could get alert those who save lives 
 Discuss some general background about MANETs and how they are currently used and what form
 
 \section{Motivations}
-Write something here about how natural disasters are happening more frequently
+In todays world, most people in the world rely on telecommunications to connect with family members, friends, 
+work collegues and, very importantly, the emergency services. When we get a disaster, or group of them, as was 
+seen in Puerto Rico in 2017, it can impact lives and even end them prematurely. A study estimates the increase in 
+mortality at 62\%\cite{kishore2018mortality}, and this is thought to be an underestimate. Remote areas were hit hardest and were without services 
+such as cellular data access for up to 41 days. This can make it very difficult for rescuers to know the situation in 
+these places and creates a mismatch in information.
+\\
+Incidents such as these illustrate the tragic consequences that can happen without vital services which are required in the 
+world today. In 2016, the United Nations voted that access to the internet is a human right that should be protected\cite{UNResolutionJune2016}. 
+This type of action brings into focus the need to have systems in place to help people maintain connectivity, even when traditional infrastructure 
+fails. 
 
 \section{Project Aims}
 
-Discuss what the project will aim to accomplish, such as producing a system which could acutally help people
+The aim of the projec is to produce a prototype of a system which could be implemented by governments and technology 
+companies which could help people. Companies like Google and Apple produce the Operating Systems for most phones but 
+they don't have any sort of inbuilt emergency system like the one I hope to accomplish. 
+
+I want to explore the different ways this could be implemented, what holds them back and how well they actually perform 
+in action. Also, I want looking at why there is no widely implemented system such as this in consumer phones already. 
 
 \section{Stakeholders}
 
-Who is involved in the project and who could benefit from it
+The stakeholders for this project would be those who can benefit from it. Those people are those who live in areas 
+which are frequently affected by natural disaster and have weak infrastructure. These are the people that would benefit 
+most from having a system which could help them maintain contact with the world if they couldn't through traditional 
+methods.
 
 \chapter{Research}
 
@@ -90,20 +109,69 @@ could be improved. Also discuss other aspects such as routing.
 
 \chapter{Ethical, Social, Legal and Professional Issues}
 
-Talk about issues around data privacy issues relating to holding other peoples data. 
-Also talk about other issues that I could consider
+\section{Ethical Issues}
+
+Ethical issues arise when there are competing goods and competing evils. An example of this 
+is using data collected through using a product to target certain groups without their consent. 
+A firm may make more money by doing this, but whether it is right to do so is something that 
+should be considered. Fundamentally, stakeholders in the project should be protected and their 
+data shouldn't be used against them. Data should be kept anonymous and protected somehow, through 
+traditional encryption or other means. 
+
+\section{Social Issues}
+
+Social issues are those that may have an affect on the lives of many people. It could be problems which 
+affect how they interact with other people or those relating to access to goods and services that others can 
+but they can't. 
+
+\section{Legal Issues}
+
+This project will deal with sending data about an individual to others and allowing them to hold and send this 
+data to whomever they wish to send it to. There are legal issues as, without proper protections, this kind of 
+data could be used against individuals that are in trouble, such as in a terror incident. 
+
+In this project, I will strive to protect sensitive data, such as location data, so that no one is privy to this 
+information at any time if they shouldn't have access to it. As discussed above in Ethical Issues, this should be 
+done by maintaining data privacy through encryption or other means.
+
+Also, in any testing or data collection, a persons personal data should be kept private so that it can't be shared 
+and used by people who shouldn't have access to it.  
+
+\section{Professional Issues}
+
+Throughout this project, I will adhere to the BCS Code of Conduct\cite{BCSCoP}. I want to produce a 
+research project which can be trusted and respected and so I will adhere to all rules that I am required 
+to follow. This means I will also follow the Research Code of Practice at the University of Warwick\cite{UniWarwickCOP}. 
+This means all work I use to support my research will be referenced. 
 
 \chapter{Project Requirements}
 
 Come up with some basic functional and non-functional requirements
 
+\section{Functional}
+
+\section{Non-Functional}
+
+\section{Constraints}
+
 \chapter{Project Management}
 
 Do a gantt chart to go here and what tools I am going to use, e.g Git and Trello
+\section{Project Timeline}
+
+\section{Project Tools}
+
+\section{Risk Management}
 
 \chapter{Testing}
 
 Discuss the different approaches to testing that could be taken, Unit testing, integration testing etc
+
+\section{Unit Testing}
+
+\section{Integration Testing}
+
+\section{Success Management}
 
 \chapter{Conclusion}
 
@@ -111,6 +179,6 @@ Short part with some final thoughts
 
 
 \bibliography{ref}{}
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 
 \end{document}
