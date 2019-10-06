@@ -66,6 +66,9 @@ Moving information in emergency situations could get alert those who save lives 
 \textbf{VM} - Virtual Machine\\
 \textbf{BCS} - British Computing Society\\
 \textbf{WSN} - Wireless Sensor Network\\
+\textbf{AODV} - Ad-Hoc On-Demand Distance Vector\\
+\textbf{DTN} - Delay Tolerant Network\\
+\textbf{LSR} - Link-State Routing\\
 
 
 
@@ -145,7 +148,7 @@ route to send outgoing traffic. It also presents how the WSN is formed and the r
 Data privacy is a necessary, important, and highly sensitive topic which has legal ramifications if ignored. It is especially important in this project because it will 
 deal with information which, if in the wrong hands, could harm someones wellbeing. For this to be effective, any solution needs to ensure confidentiality and integrity of the data.
 \bigskip\\
-One way to do this might be to use Diffie–Hellman key exchange\cite{li2010research} \cite{diffie1976new} alongisde another symmetric key algorithm, which provides confidentiality. This DH is a well known way to do public key exchange over 
+One way to do this might be to use Diffie--Hellman key exchange\cite{li2010research} \cite{diffie1976new} alongisde another symmetric key algorithm, which provides confidentiality. This DH is a well known way to do public key exchange over 
 a public, interceptable channel like bluetooth. There are some drawbacks to this, such as user authentication, as presented by Li. This could be solved by using a digital 
 certificate. This is prested by Diffie and Hellman in \cite{diffie1976new}. This provides integrity to the transmission. Another positive to this is that there doesn't need to be any keys stored over a long period of time. This reduces vulnerability to attack and makes solving 
 each key by brute force a less attractive prospect. On the other hand, calculating it each time can be a computationally intensive process. This could waste valuable 
@@ -160,7 +163,35 @@ used.
 
 Due to the Client-Server model employed by Bluetooth systems, routing tends to be device to device. For this project, it will investigate connecting multiple piconets together 
 and routing packets between devices wihtin the wider scatternet effectively. A good way to do this could be by using one of the many routing algorithms out there. Each one deals 
-with different challenges and is applicable to different scenarios. 
+with different challenges and is applicable to different scenarios. An interesting area in routing is biological-inspired routing which is based on the actions of, usually 
+swam based, creatures in the wild.
+\bigskip\\
+One particular area of routing is swarm based packet routing. This has been explored and is shown to perform better than a number of other routing algorithms \cite{lin2014performance}. 
+A number of the algorithms such as AODV routing are very popular in MANETs similar to the one proposed in this project. Part of the reason why this is a good solution for MANETs is 
+because the path which will be chosen is the one which has been proven to have been the quickest. This leads to the shortest path being chosen. There is a time parameter to 
+this algorithm meaning that if a path isn't taken for a while, the influence of that path wanes. This means that new, faster routes have a good chance at being discovered quickly.
+As can be seen from the data presented by Lin et al, it shows that this algorithm performs better than a number of established algorithms.
+\bigskip\\
+As well as considering ant colony routing, there are other types of swarm based routing based on different principles in Biology \cite{sharvani2009different}. Another version is based on Bees \cite{leonov2016modeling}. 
+In this algorithm, bees do scouting of other nodes. Scouts will be sent out to each neighbour node. They travel through the network and are passed on each time until they reach a sink node. 
+From this node, a back bee packet is sent back to the source. This is done to make an evaluation on the efficency of the route between nodes. This is also a promising algorithm but 
+could be troublesome considering there is a scouting stage. In the application of this project, this could take up time and power needed to send out packets to other nodes as 
+this is a time sensitive use case. 
+\bigskip\\
+An alternative avenue for routing in the network is based on the spread of disease. This form of routing is used in a number of DTN projects as it is good for optimistically 
+spreading information quickly \cite{choksatid2016efficient}. When a node realises it has neighbours, it sends all stored packets to them, as well as any packets it wants to 
+send. This is done to increase the number of nodes which have been given all of the information it has. This is a simialar way to how a disease spreads, it can only spread 
+by coming into contact with another living being and is passed by some sort of transport vector. In this case, that vector is a packet. This is a very quick way of spreading 
+information but the criticism of this is the number of different packet exchanges which need to occur to spread the same packet. This makes the network quite computationally 
+inefficent as the same computation has to be repeated over and over again in multiple nodes. But, it is good for networks which are temporary. This means it could work well 
+in an emergency MANET similar to the one this project is proposing.  
+\bigskip\\
+Aside from the different biological algorithms proposed above, there are a number of other different types of routing. One which has already been mentioned is AODV \cite{phong2010enhancing}.
+In this algorithm, routes in the network are built by a node flooding a network with request messages then using the route suggested by the quickest route reply message. Another 
+class of routing algorithms that could also be used is LSR. This is what is used by the TCP/IP. There have been other optimised versions of this since, such as 
+optimised LSR protocol \cite{OLSRP}. This aims to improve on the performance of the established LSR protocol by reducing the number of nodes which control information is sent to 
+by choosing which nodes to re-send control traffic to more selectively. Also, a node doesn't need to know as much of the topology than it does for LSR, only that of nodes that 
+it will use to re-send control traffic and what links they have.
 
 \chapter*{Ethical, Social, Legal and Professional Issues}
 
