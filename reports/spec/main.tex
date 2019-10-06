@@ -65,6 +65,7 @@ Moving information in emergency situations could get alert those who save lives 
 \textbf{MANET} - Mobile Ad Hoc Network\\
 \textbf{VM} - Virtual Machine\\
 \textbf{BCS} - British Computing Society\\
+\textbf{WSN} - Wireless Sensor Network\\
 
 
 
@@ -73,20 +74,23 @@ Moving information in emergency situations could get alert those who save lives 
 \chapter*{Introduction}
 % \pagenumbering{arabic}
 
-The main part of this project is investigating an application of MANETs, an interesting technology which fits the 
-emergency use case well. They are low infrastructure networks which use homogenous and heterogenous devices to form a 
-network dynamically. This is good for situations which may be quite fluid, with nodes coming in and out of the network\cite{sun2001mobile}. 
+The main part of this project is investigating the application of MANETs for emergency situations, an interesting technology which could be used
+effectively for emergency situations. They are low infrastructure networks which use homogenous and heterogenous devices to form a 
+network dynamically. This is incredibly interesting in situations which are quite fluid, with nodes coming in and out of a network\cite{sun2001mobile}. 
 There are some other areas which this project will also explore, such as keeping devices alive for a long time, biological 
-inspired routing and security issues related to passing packets of potentially sensitive data to unverified devices to distribute.
+inspired routing and security issues related to passing packets of potentially sensitive data to unverified devices to distribute. These areas complement 
+the main project problem as they help to solve some questions associated with MANETs in this context.
 
 
 \section*{Motivations}
 In todays world, most people in the world rely on telecommunications to connect with family members, friends, 
 work collegues and, very importantly, the emergency services. When we get a disaster, or group of them, as was 
 seen in Puerto Rico in 2017, it can impact lives and even end them prematurely. A study estimates the increase in 
-mortality at 62\%\cite{kishore2018mortality}, and this is thought to be an underestimate. Remote areas were hit hardest and were without services 
+mortality of 62\%\cite{kishore2018mortality}, and this is thought to be an underestimate. Remote areas were hit hardest and were without services 
 such as cellular data access for up to 41 days. This can make it very difficult for rescuers to know the situation in 
-these places and creates a mismatch in information.
+these places and creates a mismatch in information. This is a common cause of high cost and disrupsion in many different disasters. 
+Another example of this was in Hurricane Katrina\cite{banipal2006strategic} where high winds saw antennas, belonging to celluar 
+providers, highly damaged or destroyed. 
 \bigskip\\
 Incidents such as these illustrate the tragic consequences that can happen without vital services which are required in the 
 world today. In 2016, the United Nations voted that access to the internet is a human right that should be protected\cite{UNResolutionJune2016}. 
@@ -111,9 +115,52 @@ methods.
 
 \chapter*{Research}
 
-Discuss the research that I've done so far. Talk about different approaches to the 
-problem which have been implemented already. Discuss what they have done well and what 
-could be improved. Also discuss other aspects such as routing.
+\section*{Different Implementations}
+
+Although this is still an open problem, there have been a few different implementations and ideas about similar systems. One such example is 
+HIRO-NET\cite{ferranti2019hiro}. In this example, the approach looks at 2 tiers. One tier is looking at local meshing, similar to this project, 
+and the other tier is looking at connecting these mesh networks over a larger area. The local meshing uses Bluetooth Low Energy to connect 
+devices together and sticks to a Client-Server model. Each server will start off as a client. If it cannot find any nearby server, it will then 
+become a server and start advertising as such. If another server then appears, they will join together their piconets to form a scatternet 
+to increase the number of connected devices. Also, server declare if their piconet is connected to the internet so that other servers can route 
+pakcets to it to send out beyond the local mesh. The main aim of this is to allow devices to maintain a regular internet connection to allow them 
+access to normal internet services such as social media. 
+\bigskip\\
+Another approach focuses on getting emergency information out to the emergency services\cite{wu2011emergency}. This approach is a lot more simple than 
+HIRO-NET as its sole focus is taking an emergency message, such as geographical information, and transporting it to an operational base to allow rescuers 
+to find people who are in trouble. This proposed system investigates the use of both WiFi and Bluetooth in an emergency communications system and how they 
+can both play an important role together. The conclusion in this research is that, because WiFi has a longer range and is a more widely available technology, 
+it plays a more important role than Bluetooth is spreading emergency information. 
+\bigskip\\
+WiFi is a very important and very useful technology becuase of its long-range, for example, 802.11p can reach up to 1,000m \cite{abdelgader2014physical} whereas Bluetooth
+is typically used for shorter ranges. This is discussed in \cite{bhagwat2001bluetooth}. Despite this, when there is a scenario 
+where devices are going to be without a large power source for a long time, it could be more power efficient to use Bluetooth\cite{putra2017comparison}, although some 
+dispute this \cite{friedman2012power} so it is good to consider both technologies. For this reason, looking at Bluetooth WSN systems could provide good inspiration for 
+how to build the system. A system presented by Chu et al \cite{chu2010design} shows a high performance sensor network system. Although it uses highly optimised hardware 
+to accomplish the task (which is different to the system this project is investigating), it presents ways for nodes to work more efficiently, such as only having 1 
+route to send outgoing traffic. It also presents how the WSN is formed and the role of each node. 
+
+\section*{Data Privacy}
+
+Data privacy is a necessary, important, and highly sensitive topic which has legal ramifications if ignored. It is especially important in this project because it will 
+deal with information which, if in the wrong hands, could harm someones wellbeing. For this to be effective, any solution needs to ensure confidentiality and integrity of the data.
+\bigskip\\
+One way to do this might be to use Diffie–Hellman key exchange\cite{li2010research} \cite{diffie1976new} alongisde another symmetric key algorithm, which provides confidentiality. This DH is a well known way to do public key exchange over 
+a public, interceptable channel like bluetooth. There are some drawbacks to this, such as user authentication, as presented by Li. This could be solved by using a digital 
+certificate. This is prested by Diffie and Hellman in \cite{diffie1976new}. This provides integrity to the transmission. Another positive to this is that there doesn't need to be any keys stored over a long period of time. This reduces vulnerability to attack and makes solving 
+each key by brute force a less attractive prospect. On the other hand, calculating it each time can be a computationally intensive process. This could waste valuable 
+computational power, especially when there is a definite need to conserve power and use resources as effectively as possible. 
+\bigskip\\
+Another option could be to use public key encryption, such as RSA \cite{aufa2018security}. This is a highly secure method and is widely used. In a MANET, each node could 
+broadcast its public key when it connects to the network, as an update. Each node could store this public key. Everytime a node wants to communicate with another node, it can 
+encrypt the message with the receiving nodes key. This way the privacy of the message is maintained. To maintain integrity of the message, a digital signature could be 
+used. 
+
+\section*{Routing}
+
+Due to the Client-Server model employed by Bluetooth systems, routing tends to be device to device. For this project, it will investigate connecting multiple piconets together 
+and routing packets between devices wihtin the wider scatternet effectively. A good way to do this could be by using one of the many routing algorithms out there. Each one deals 
+with different challenges and is applicable to different scenarios. 
 
 \chapter*{Ethical, Social, Legal and Professional Issues}
 
@@ -140,34 +187,51 @@ data to whomever they wish to send it to. There are legal issues as, without pro
 data could be used against individuals that are in trouble, such as in a terror incident. 
 \bigskip
 \\
-In this project, I will strive to protect sensitive data, such as location data, so that no one is privy to this 
+In this project, sensitive data will be dealt with appropriately, such as location data, so no one is privy to this 
 information at any time if they shouldn't have access to it. As discussed above in Ethical Issues, this should be 
 done by maintaining data privacy through encryption or other means.
-\bigskip
-\\
-Also, in any testing or data collection, a persons personal data should be kept private so that it can't be shared 
-and used by people who shouldn't have access to it.  
 
 \section*{Professional Issues}
 
-Throughout this project, I will adhere to the BCS Code of Conduct\cite{BCSCoP}. I want to produce a 
-research project which can be trusted and respected and so I will adhere to all rules that I am required 
-to follow. This means I will also follow the Research Code of Practice at the University of Warwick\cite{UniWarwickCOP}. 
+This project will adhere to the BCS Code of Conduct\cite{BCSCoP}. The aim is to produce a 
+research project which can be trusted and respected and so adherence to all rules that are required 
+is important. This means I will also follow the Research Code of Practice at the University of Warwick\cite{UniWarwickCOP}. 
 This means all work I use to support my research will be referenced. 
 
 \chapter*{Project Requirements}
 
-Come up with some basic functional and non-functional requirements like in SE
-
 \section*{Functional}
+
+\textbf{FR1} - The system must use a widely used MAC layer protocol such as Bluetooth or WiFi.\\
+\textbf{FR2} - The system must have the capability to have nodes connected to the internet (sinks) as well as those which aren't (sources/routers).\\
+\textbf{FR2.1} - Within the nodes not connected to the internet, there should be 2 types of node: Nodes of regular citizens(sources) and those belonging to the emergency services 
+which can accept and deal with data like internet nodes (sinks).\\
+\textbf{FR3} - The system must use a mechanism to enable data privacy within packets, such as encryption.\\
+\textbf{FR4} - The system should consider the battery life and make choices to extend this as much as possible\\
+\textbf{FR5} - The system must provide an API which can be implemented by other services.\\
+\textbf{FR5.1} - This API must be simple to use so services can route traffic in disaster scenarios.\\
 
 \section*{Non-Functional}
 
+\textbf{NFR1} - The system must be fully documented and maintainable.\\
+\textbf{NFR2} - The system must be easy for a user to connect to and use.\\
+\textbf{NFR3} - The system must be created so it can be applied to a large population of devices.\\
+\textbf{NFR4} - The system must be able to be used by different types of devices such as IoT as well as Phones, Tablets and PCs\\
+\textbf{NFR5} - The system could provide a way for other services to use the network to send out internet traffic.\\
+
 \section*{Constraints}
+
+This project will be constrained by the number of devices which it can be tested on and the type of devices which can be used. Having access 
+to lots of devices can be very expensive. This project will use Raspberry Pi's to demonstrate the application of the research but these cost 
+money and it won't be able to replicate the scale at which an emergency situation may be.
+\bigskip\\
+A further constraint will be the types of devices. The research will focus on applications in a heterogenous network of devices but it is 
+likely this will only be demonstrated on a homogenous network as more popular devices (e.g iOS and Android\cite{mobileOS}), which this type of system would be employed on in the 
+real world, don't allow root access and are restrictive about what can be run on devices. This makes them difficult to develop for on this project, but are platforms which 
+this would need be implemented on in the real world.
 
 \chapter*{Project Management}
 
-Do a gantt chart to go here and what tools I am going to use, e.g Git and Trello
 \section*{Project Timeline}
 
 \includegraphics[scale=0.35]{ProjectTimeline}
