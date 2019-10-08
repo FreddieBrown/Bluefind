@@ -88,12 +88,12 @@ the main project problem as they help to solve some questions associated with MA
 
 \section*{Motivations}
 Today, most people in the world rely on telecommunications to connect with family members, friends, 
-work collegues and, very importantly, the emergency services. When we get a disaster, or group of them, as was 
+work colleagues and, very importantly, the emergency services. When we get a disaster, or group of them, as was 
 seen in Puerto Rico in 2017, it can impact lives and even end them prematurely. A study estimates the increase in 
 mortality of 62\%\cite{kishore2018mortality}, and this is thought to be an underestimate. Remote areas were hit hardest and were without services 
 such as cellular data access for up to 41 days. This can make it very difficult for rescuers to know what's going on and how to intervene 
-effectively. This is a common cause of high cost and disrupsion in many different disasters. 
-Another example of this was after Hurricane Katrina\cite{banipal2006strategic} where high winds saw antennas, belonging to celluar 
+effectively. This is a common cause of high cost and disruption in many different disasters. 
+Another example of this was after Hurricane Katrina\cite{banipal2006strategic} where high winds saw antennas, belonging to cellular 
 providers, highly damaged or destroyed. 
 \bigskip\\
 Incidents such as these illustrate the tragic consequences these events cause without vital services which are required nowadays. 
@@ -156,9 +156,9 @@ deal with information which, if in the wrong hands, could harm someones wellbein
 Furthermore, during the emergency situations which this project is investigating, there are many nefarious actors which may want to harm people. If this was used during a terrorist 
 attack, for example, data would need to be protected as it could alert bad actors to the locations of survivors and, as a result, could endanger their wellbeing. Furthermore, someone 
 could collect location data being broadcast by devices and could use it to see where the lowest density of people is so that they can loot abandoned houses. Looting was a big problem 
-in the aftermath of Hurrican Katrina in 2005\cite{nbcKatrina}.
+in the aftermath of Hurricane Katrina in 2005\cite{nbcKatrina}.
 \bigskip\\
-One way to do this might be to use Diffie--Hellman key exchange\cite{li2010research, diffie1976new} alongisde another symmetric key algorithm, which provides confidentiality. DH is a well known way to do public key exchange over 
+One way to do this might be to use Diffie--Hellman key exchange\cite{li2010research, diffie1976new} alongside another symmetric key algorithm, which provides confidentiality. DH is a well known way to do public key exchange over 
 a public, interceptable channel like bluetooth. There are some drawbacks to this, such as user authentication, as presented in \cite{li2010research}. This could be solved by using a digital 
 certificate. This is discussed in \cite{diffie1976new}. It proves the integrity of a message which is sent as it can't be replicated by a 3rd party. 
 Another positive to this is that there doesn't need to be any keys stored over a long period of time. This reduces vulnerability to attack and makes solving 
@@ -166,7 +166,7 @@ each key by brute force a less attractive prospect. On the other hand, calculati
 computational power, especially when there is a serious motivation to conserve power and use resources as effectively as possible. 
 \bigskip\\
 Further options could include using public key encryption, such as RSA \cite{aufa2018security}. This is a highly secure method and is widely used in industry. In a MANET, each node could 
-broadcast its public key when it connects to the network as an update. Each node could store this public key. Everytime a node wants to communicate with another node, it can 
+broadcast its public key when it connects to the network as an update. Each node could store this public key. Every time a node wants to communicate with another node, it can 
 encrypt the message with the receiving nodes public key. This way the privacy of the message is maintained. To maintain integrity of the message, a digital signature could be 
 used. The issue here is that there is a worry that unsolicited messages could be sent from nefarious parties with valid digital certificates to nodes. This could trick them 
 into accepting the message and performing actions which work against other users in the network. This is a very pressing issue as users of the network are facing life or 
@@ -191,20 +191,20 @@ topology will change quickly. This could, overall, make the routing of packets m
 \bigskip\\
 As well as considering ant colony routing, there are other types of swarm based routing based on different principles in Biology \cite{sharvani2009different}. Another version is based on Bees \cite{leonov2016modeling}. 
 In this algorithm, bees do scouting of other nodes. Scouts will be sent out to each neighbour node. They travel through the network and are passed on each time until they reach a sink node. 
-From this node, a back bee packet is sent back to the source. This is done to make an evaluation on the efficency of the route between nodes. This is also a promising algorithm but 
+From this node, a back bee packet is sent back to the source. This is done to make an evaluation on the efficiency of the route between nodes. This is also a promising algorithm but 
 could be troublesome considering there is a scouting stage. In the application of this project, this could take up time and power needed to send out packets to other nodes as 
 this is a time sensitive use case.
 \bigskip\\
 An alternative avenue for routing in the network is based on the spread of disease. This form of routing is used in a number of DTN projects as it is good for optimistically 
 spreading information quickly \cite{choksatid2016efficient}. When a node realises it has neighbours, it sends all stored packets to them, as well as any packets it wants to 
-send. This is done to increase the number of nodes which have been given all of the information it has. This is a simialar way to how a disease spreads, it can only spread 
+send. This is done to increase the number of nodes which have been given all of the information it has. This is a similar way to how a disease spreads, it can only spread 
 by coming into contact with another living being and is passed on by some sort of transport vector. In this case, that vector is a packet. This is a very quick way of spreading 
 information but the criticism of this is the number of different packet exchanges which need to occur to spread the same packet. This makes the network quite computationally 
-inefficent as the same computation has to be repeated over and over again in multiple nodes. But, it is good for networks which are temporary. This means it could work well 
+inefficient as the same computation has to be repeated over and over again in multiple nodes. But, it is good for networks which are temporary. This means it could work well 
 in an emergency MANET similar to the one this project is proposing.  
 \bigskip\\
 Aside from the different biological algorithms proposed above, there are a number of other different types of routing. One which has already been mentioned is AODV \cite{phong2010enhancing}.
-In this algorithm, routes in the network are built by a node flooding a network with request messages then using the route suggested by the quickest route reply message. Another 
+In this algorithm, routes in the network are built by a node flooding a network with request messages than using the route suggested by the quickest route reply message. Another 
 class of routing algorithms that could also be used is LSR. This is used by the TCP/IP. There have been other optimised versions of this since, such as 
 optimised LSR protocol \cite{OLSRP}. This aims to improve on the performance of the established LSR protocol by reducing the number of nodes which control information is sent to 
 by choosing which nodes to re-send control traffic to more selectively. Also, a node doesn't need to know as much of the topology than it does for LSR, only that of nodes  
@@ -330,21 +330,21 @@ A variety of other tools will be used for other aspects of the project. Trello w
 need to be done. This is a simple and clear way to see what it left to do and allows deadlines to be built into tasks. It 
 also fits in with an Agile development methodology, which is preferable. On top of this, Git and Github will be used as the version 
 control system to store code. It makes it easier to access project resources from multiple locations and provides a good back 
-up if something went wrong and all physical devices which hold the project, were to break for some unforseen reason. 
+up if something went wrong and all physical devices which hold the project, were to break for some unforeseen reason. 
 
 \section*{Risk Management}
 
 In this project, there aren't too many major risks that could have an effect on its performance. One risk, which was discussed 
 above, is losing all physical machines which hold the project. This can be mitigated by storing any code and reports on Github, 
-as well as maintaining a local copy on a hard drive. Thish provides extra layers of assurance that the project won't be lost. 
+as well as maintaining a local copy on a hard drive. This provides extra layers of assurance that the project won't be lost. 
 \bigskip\\
 Another risk is that persons who work on the project fall ill or are unable to do work. This can be mitigated by keeping in 
 contact with DCS and discussing any factors that could lead to a delay in the projects completion because of this reason.
 \bigskip\\
 Furthermore, there is always a risk that something might take longer than it is planned for to complete. This could be because hardware 
-access has been delayed or there are extra technical difficulties that weren't forseen during the planning of the project. Because of this, 
+access has been delayed or there are extra technical difficulties that weren't foreseen during the planning of the project. Because of this, 
 generous allowances have been made for each task in the project. If something finishes earlier than planned, other tasks can use this time. 
-Also, if a task is running late, subsequent tasks have extra time built in to accomodate for any delays.
+Also, if a task is running late, subsequent tasks have extra time built in to accommodate for any delays.
 
 \chapter*{Testing}
 
@@ -360,12 +360,12 @@ is very customisable.
 With unit testing, tests will be written for each feature that is created. These will be lined up with the requirements so that 
 it is easy to see that they are being fulfilled. For writing unit tests, Agile development methodologies will be adhered to by 
 writing the tests before writing the feature. Unit testing and its benefits are further discussed in \cite{PressmanUnitIntegration, SommervilleTDD}. 
-In these, they discuss the benefits of Test Driven Development and how unit testing works and is beenficial to a project. 
+In these, they discuss the benefits of Test Driven Development and how unit testing works and is beneficial to a project. 
 
 \section*{Integration Testing}
 
 By using TravisCI, larger tests can be written which incorporated more of the project. This can be run on a clean VM which 
-means there is nothing external to the project which could influence its testing. This enables more rigourous testing. This 
+means there is nothing external to the project which could influence its testing. This enables more rigorous testing. This 
 approach to testing the system is discussed in \cite{PressmanUnitIntegration}.
 
 \section*{Success Management}
@@ -381,7 +381,7 @@ in lots of different physical and real world factors.
 Overall the project has begun well. The tools which are going to be used are coming into shape and there is a greater 
 understanding about what needs to be done in terms of further research and future implementation. Over the next few 
 weeks, a greater plan of what needs to be done will be created and more cards for Trello will be made so that the 
-project stays on track. Proper research will begin and a more rigourous plan will be devised 
+project stays on track. Proper research will begin and a more rigorous plan will be devised 
 so that it can be presented during the progress report. Throughout this specification, there have been a couple of areas 
 in which there are multiple avenues that the project could take, such as in routing. Over the next few weeks of 
 research, this will be cleared up so that this can be incorporated into the plan. The project will then be in 
