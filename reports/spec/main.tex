@@ -104,7 +104,7 @@ fails.
 \section*{Project Aims}
 
 The aim of the project is to produce a prototype of a system which could be implemented by governments and technology 
-companies which could help people. Companies like Google and Apple produce the Operating Systems for most phones but 
+companies which could help people. Companies like Google and Apple produce the Operating Systems for most phones\cite{mobileOS} but 
 they don't have any sort of inbuilt emergency system like the one I hope to accomplish. 
 \bigskip\\
 I want to explore the different ways this could be implemented, what holds them back and how well they actually perform 
@@ -120,6 +120,10 @@ with the world if they can't through traditional methods.
 \chapter*{Research}
 
 \section*{Different Implementations}
+A system such as this is difficult to implement, but could be of huge value. The aftermath of a disaster can be 
+painful because of the lack of communications infrastructure \cite{nprDorian}. This makes rescue efforts tough and 
+makes people anxious whether their loved ones are alive. Having a way for devices to work together during this time 
+could really enhance the lives of the people affected by disaster\cite{sciAmHurr}.
 
 Although this is still an open problem, there have been a few different implementations and ideas about similar systems. One such example is 
 HIRO-NET\cite{ferranti2019hiro}. In this example, the approach looks at 2 tiers. One tier uses local meshing, similar to this project, 
@@ -151,11 +155,9 @@ so have to be careful about using too much power.
 
 \section*{Data Privacy}
 
-Data privacy is a necessary, important, and highly sensitive topic which has legal ramifications if ignored. It is especially important in this project because it will 
+Data privacy is a necessary, important, and highly sensitive topic which has legal ramifications if ignored\cite{bbcData}. It is especially important in this project because it will 
 deal with information which, if in the wrong hands, could harm someones wellbeing. For this to be effective, any solution needs to ensure confidentiality and integrity of the data.
-Furthermore, during the emergency situations which this project is investigating, there are many nefarious actors which may want to harm people. If this was used during a terrorist 
-attack, for example, data would need to be protected as it could alert bad actors to the locations of survivors and, as a result, could endanger their wellbeing. Furthermore, someone 
-could collect location data being broadcast by devices and could use it to see where the lowest density of people is so that they can loot abandoned houses. Looting was a big problem 
+Someone could collect location data being broadcast by devices and could use it to see where the lowest density of people is so that they can loot abandoned houses. Looting was a big problem 
 in the aftermath of Hurricane Katrina in 2005\cite{nbcKatrina}.
 \bigskip\\
 One way to do this might be to use Diffie--Hellman key exchange\cite{li2010research, diffie1976new} alongside another symmetric key algorithm, which provides confidentiality. DH is a well known way to do public key exchange over 
@@ -308,7 +310,7 @@ this would need be implemented on in the real world.
 \end{figure}
 \bigskip
 
-The above figure shows the predicted project timeline in a Gantt chart as well as displaying the dates between 
+As can be seen in fig.\ref{fig:project-timeline}, it shows the predicted project timeline in a Gantt chart as well as displaying the dates between 
 which each task will take place. Looking at the timeline, ample time has been left for research for the different aspects of the 
 project (about a month). During this time, the second project deliverable can also be written. After this, a large block of time 
 has been left for the implementation of the project, about 2 months. After this, a period of product testing and iteration has been 
