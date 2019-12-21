@@ -10,3 +10,4 @@ forms/
 *.toc
 *.out
 *.log
+*/obj/
