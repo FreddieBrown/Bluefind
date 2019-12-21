@@ -11,3 +11,4 @@ forms/
 *.out
 *.log
 */obj/
+code/main*
