@@ -7,12 +7,21 @@ int discover(){
     int i;
     char addr[19] = {0};
     char name[248] = {0};
+    struct hci_dev_info di;
     adapter_id = hci_get_route(NULL);
+
+    if (hci_devinfo(adapter_id, &di) < 0) {
+		perror("Can't get device info");
+		exit(1);
+	}
+
     sock = hci_open_dev(adapter_id);
     if(adapter_id < 0 || sock < 0) {
         perrror("opening socket");
         exit(1);
     }
+
+    
 
     len = 8;
     max_rsp = 255;
