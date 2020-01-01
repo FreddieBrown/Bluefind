@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-
+#include "general.h"
+#include "discover.h"
 int main(void){
 
-    printf("This is the project!\n");    
+    printf("This is the project!\n"); 
+    discover();   
     return 1;
 }
