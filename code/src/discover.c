@@ -18,7 +18,7 @@ int discover(){
 
     
     if(adapter_id < 0 || sock < 0) {
-        perrror("opening socket");
+        perror("opening socket");
         exit(1);
     }
     
@@ -29,9 +29,6 @@ int discover(){
     num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
     if(num_rsp < 0){
         perror("hci_inquiry");
-    }
-    else if(num_rsp == 0){
-        perror("No available devies\n");
     }
 
     sock = hci_open_dev(adapter_id);
