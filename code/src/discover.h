@@ -10,5 +10,6 @@
 #include <bluetooth/hci_lib.h>
 
 int discover();
+int discover_le();
 
 #endif

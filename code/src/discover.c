@@ -1,5 +1,11 @@
 #include "discover.h"
 
+/**
+ * @brief Inspects Bluetooth devices which are open for connection 
+ * and gets their information and prints it. 
+ * 
+ * @return int 
+ */
 int discover(){
     inquiry_info* devices = NULL;
     int adapter_id, sock, num_rsp, i;
@@ -25,8 +31,9 @@ int discover(){
     devices = (inquiry_info*) malloc(max_rsp * sizeof(inquiry_info));
 
     printf("Scanning ...\n");
-
-    num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
+    while(num_rsp <= 0){
+        num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
+    }
     if(num_rsp < 0){
         perror("hci_inquiry");
     }
@@ -50,4 +57,13 @@ int discover(){
     free(devices);
     close(sock);
     return 0;
+}
+
+/**
+ * @brief Does very similar things as @see discover , except for it works for LE devices.
+ * 
+ * @return int 
+ */
+int discover_le(){
+
 }
