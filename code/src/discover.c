@@ -17,7 +17,7 @@ int discover(){
 	}
 
     
-    if(adapter_id < 0 || sock < 0) {
+    if(adapter_id < 0) {
         perror("opening socket");
         exit(1);
     }
