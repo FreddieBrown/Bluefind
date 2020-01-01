@@ -31,6 +31,7 @@ int discover(){
     devices = (inquiry_info*) malloc(max_rsp * sizeof(inquiry_info));
 
     printf("Scanning ...\n");
+    num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
     while(num_rsp <= 0){
         num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
     }
@@ -65,5 +66,5 @@ int discover(){
  * @return int 
  */
 int discover_le(){
-
+    return 0;
 }
