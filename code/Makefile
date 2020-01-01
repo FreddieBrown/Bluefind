@@ -1,9 +1,25 @@
-CC=gcc
-CFLAGS=-g -O3 
+CC := gcc
+CFLAGS := -Wall -Wextra -Werror -std=c99 -lbluetooth
+TARGET := main
 
-main:	src/*.c
-	$(CC) -o main $(CFLAGS) src/*.c 
+SRCDIR := src
+OBJDIR := obj
 
-clean: 
-	rm -rf main
+SRC := ${wildcard ${SRCDIR}/*.c}
+OBJ := ${SRC:${SRCDIR}/%.c=${OBJDIR}/%.o}
 
+default: build
+
+debug: CFLAGS += -g
+debug: build
+
+build: ${OBJ}
+	${CC} ${CFLAGS} ${OBJ} -o ${TARGET}
+
+${OBJDIR}/%.o: ${SRCDIR}/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PHONY: clean
+
+clean:
+	rm -f ${OBJDIR}/*.o ${TARGET}
