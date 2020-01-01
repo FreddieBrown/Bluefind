@@ -39,6 +39,7 @@ int discover(){
 	}
 
     for(i=0; i < num_rsp; i++) {
+        printf("Looking at device\n");
         ba2str(&(devices+i)->bdaddr, addr);
         memset(name, 0, sizeof(name));
         if(0 != hci_read_remote_name(sock, &(devices+i)->bdaddr, sizeof(name), name, 0)){
