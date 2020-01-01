@@ -2,9 +2,10 @@
 
 int discover(){
     inquiry_info* devices = NULL;
-    int max_rsp, num_rsp;
-    int adapter_id, sock, len, flags;
-    int i;
+    int adapter_id, sock, num_rsp, i;
+    int len = 8;
+    int max_rsp = 255;
+    int flags = IREQ_CACHE_FLUSH;
     char addr[19] = {0};
     char name[248] = {0};
     struct hci_dev_info di;
@@ -15,22 +16,31 @@ int discover(){
 		exit(1);
 	}
 
-    sock = hci_open_dev(adapter_id);
+    
     if(adapter_id < 0 || sock < 0) {
         perrror("opening socket");
         exit(1);
     }
-
     
-
-    len = 8;
-    max_rsp = 255;
-    flags = IREQ_CACHE_FLUSH;
     devices = (inquiry_info*) malloc(max_rsp * sizeof(inquiry_info));
+
+    printf("Scanning ...\n");
+
     num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
     if(num_rsp < 0){
         perror("hci_inquiry");
     }
+    else if(num_rsp == 0){
+        perror("No available devies\n");
+    }
+
+    sock = hci_open_dev(adapter_id);
+    if (sock < 0) {
+		perror("HCI device open failed");
+		free(devices);
+		exit(1);
+	}
+
     for(i=0; i < num_rsp; i++) {
         ba2str(&(devices+i)->bdaddr, addr);
         memset(name, 0, sizeof(name));
