@@ -1,0 +1,12 @@
+language: c
+os: 
+  - linux
+compiler: gcc
+sudo: yes
+before_script:
+  - sudo apt-get -y update
+  - sudo apt install -y libpthread-stubs0-dev
+  - sudo apt install -y bluez libbluetooth-dev
+  - mkdir obj
+script:
+  - make
