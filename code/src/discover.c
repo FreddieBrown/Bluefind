@@ -148,9 +148,8 @@ int discover_le(){
 			memset(name, 0, sizeof(name));
 
 			ba2str(&info->bdaddr, addr);
-			eir_parse_name(info->data, info->length,
+            eir_parse_name(info->data, info->length,
 							name, sizeof(name) - 1);
-
 			printf("%s %s\n", addr, name);
 		}
 	}
@@ -193,4 +192,73 @@ int check_report_filter(uint8_t procedure, le_advertising_info *info)
 	}
 
 	return 0;
+}
+
+void eir_parse_name(uint8_t *eir, size_t eir_len,
+						char *buf, size_t buf_len)
+{
+	size_t offset;
+
+	offset = 0;
+	while (offset < eir_len) {
+		uint8_t field_len = eir[0];
+		size_t name_len;
+
+		/* Check for the end of EIR */
+		if (field_len == 0)
+			break;
+
+		if (offset + field_len > eir_len)
+			goto failed;
+
+		switch (eir[1]) {
+		case EIR_NAME_SHORT:
+		case EIR_NAME_COMPLETE:
+			name_len = field_len - 1;
+			if (name_len > buf_len)
+				goto failed;
+
+			memcpy(buf, &eir[2], name_len);
+			return;
+		}
+
+		offset += field_len + 1;
+		eir += field_len + 1;
+	}
+
+failed:
+	snprintf(buf, buf_len, "(unknown)");
+}
+
+
+int read_flags(uint8_t *flags, const uint8_t *data, size_t size)
+{
+	size_t offset;
+
+	if (!flags || !data)
+		return -EINVAL;
+
+	offset = 0;
+	while (offset < size) {
+		uint8_t len = data[offset];
+		uint8_t type;
+
+		/* Check if it is the end of the significant part */
+		if (len == 0)
+			break;
+
+		if (len + offset > size)
+			break;
+
+		type = data[offset + 1];
+
+		if (type == FLAGS_AD_TYPE) {
+			*flags = data[offset + 2];
+			return 0;
+		}
+
+		offset += 1 + len;
+	}
+
+	return -ENOENT;
 }
