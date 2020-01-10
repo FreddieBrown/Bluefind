@@ -14,7 +14,7 @@ debug: CFLAGS += -g
 debug: build
 
 build: ${OBJ}
-	${CC} -o ${OBJ} ${TARGET} ${CFLAGS}
+	${CC} -o ${TARGET} ${OBJ} ${CFLAGS}
 
 ${OBJDIR}/%.o: ${SRCDIR}/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
