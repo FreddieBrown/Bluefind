@@ -66,7 +66,7 @@ int discover(){
  * @return int 
  */
 int discover_le(){
-    int err, opt, dd, dev_id;
+    int err, dd, dev_id;
 	uint8_t own_type = LE_PUBLIC_ADDRESS;
 	uint8_t scan_type = 0x01;
 	uint8_t filter_type = 0;
@@ -76,7 +76,6 @@ int discover_le(){
 	uint8_t filter_dup = 0x01;
     unsigned char buf[HCI_MAX_EVENT_SIZE], *ptr;
 	struct hci_filter nf, of;
-	struct sigaction sa;
 	socklen_t olen;
 	int len;
 
@@ -117,19 +116,13 @@ int discover_le(){
 		printf("Could not set socket options\n");
 		return -1;
 	}
-
-    memset(&sa, 0, sizeof(sa));
-	sa.sa_flags = SA_NOCLDSTOP;
-	sa.sa_handler = sigint_handler;
-	sigaction(SIGINT, &sa, NULL);
-
     while (1) {
 		evt_le_meta_event *meta;
 		le_advertising_info *info;
 		char addr[18];
 
 		while ((len = read(dd, buf, sizeof(buf))) < 0) {
-			if (errno == EINTR && signal_received == SIGINT) {
+			if (errno == EINTR) {
 				len = 0;
 				goto done;
 			}
@@ -171,5 +164,33 @@ done:
 		exit(1);
 	}
     hci_close_dev(dd);
+	return 0;
+}
+
+int check_report_filter(uint8_t procedure, le_advertising_info *info)
+{
+	uint8_t flags;
+
+	/* If no discovery procedure is set, all reports are treat as valid */
+	if (procedure == 0)
+		return 1;
+
+	/* Read flags AD type value from the advertising report if it exists */
+	if (read_flags(&flags, info->data, info->length))
+		return 0;
+
+	switch (procedure) {
+	case 'l': /* Limited Discovery Procedure */
+		if (flags & FLAGS_LIMITED_MODE_BIT)
+			return 1;
+		break;
+	case 'g': /* General Discovery Procedure */
+		if (flags & (FLAGS_LIMITED_MODE_BIT | FLAGS_GENERAL_MODE_BIT))
+			return 1;
+		break;
+	default:
+		fprintf(stderr, "Unknown discovery procedure\n");
+	}
+
 	return 0;
 }

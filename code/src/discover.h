@@ -20,5 +20,6 @@
 
 int discover();
 int discover_le();
+int check_report_filter(uint8_t procedure, le_advertising_info *info);
 
 #endif
