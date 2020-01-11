@@ -4,9 +4,9 @@ sdp_session_t *register_service()
 {
     uint32_t service_uuid_int[] = { 0, 0, 0, 0xABCD };
     uint8_t rfcomm_channel = 11;
-    const char *service_name = "Roto-Rooter Data Router";
-    const char *service_dsc = "An experimental plumbing router";
-    const char *service_prov = "Roto-Rooter";
+    const char *service_name = "BlueFind";
+    const char *service_dsc = "Service to locate people in bad situations";
+    const char *service_prov = "Noser Inc.";
 
     uuid_t root_uuid, l2cap_uuid, rfcomm_uuid, svc_uuid;
     sdp_list_t *l2cap_list = 0, 
@@ -66,6 +66,9 @@ sdp_session_t *register_service()
     // connect to the local SDP server, register the service record, and 
     // disconnect
     session = sdp_connect( BDADDR_ANY, BDADDR_LOCAL, SDP_RETRY_IF_BUSY );
+
+    printf("Connecting to local SDP server!\n");
+
     sdp_record_register(session, record, 0);
 
     printf("Registering service!\n");
