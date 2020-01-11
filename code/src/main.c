@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include "discover.h"
+#include "sdp.h"
 int main(int argc, char* argv[]){
 
     printf("This is the project!\n"); 
