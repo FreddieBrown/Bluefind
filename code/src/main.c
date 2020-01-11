@@ -11,6 +11,9 @@ int main(int argc, char* argv[]){
         discover_le();
     }
     else{
+        sdp_session_t *session = register_service();
+        sleep(5);
+        sdp_close(session);
         discover();
     }   
     return 1;
