@@ -13,6 +13,7 @@ int main(int argc, char* argv[]){
     }
     else{
         sdp_session_t *session = register_service();
+        printf("Service has been registered!\n");
         sleep(5);
         sdp_close(session);
         discover();
