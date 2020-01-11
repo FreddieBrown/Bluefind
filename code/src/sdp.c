@@ -4,6 +4,7 @@ sdp_session_t *register_service()
 {
     uint32_t service_uuid_int[] = { 0, 0, 0, 0xABCD };
     uint8_t rfcomm_channel = 11;
+    bdaddr_t interface;
     const char *service_name = "BlueFind";
     const char *service_dsc = "Service to locate people in bad situations";
     const char *service_prov = "Noser Inc.";
@@ -15,6 +16,8 @@ sdp_session_t *register_service()
                *proto_list = 0, 
                *access_proto_list = 0;
     sdp_data_t *channel = 0;
+
+    bacpy(&interface, BDADDR_ANY);
 
     printf("Declared variables!\n");
 
@@ -69,7 +72,7 @@ sdp_session_t *register_service()
 
     printf("Connecting to local SDP server!\n");
 
-    sdp_record_register(session, record, 0);
+    sdp_device_record_register(session, &interface, &record, SDP_RECORD_PERSIST);
 
     printf("Registering service!\n");
 
