@@ -14,7 +14,7 @@ sdp_session_t *register_service()
                *root_list = 0,
                *proto_list = 0, 
                *access_proto_list = 0;
-    sdp_data_t *channel = 0, *psm = 0;
+    sdp_data_t *channel = 0;
 
     sdp_record_t *record = sdp_record_alloc();
 
@@ -45,13 +45,12 @@ sdp_session_t *register_service()
 
     // set the name, provider, and description
     sdp_set_info_attr(record, service_name, service_prov, service_dsc);
-    int err = 0;
     sdp_session_t *session = 0;
 
     // connect to the local SDP server, register the service record, and 
     // disconnect
     session = sdp_connect( BDADDR_ANY, BDADDR_LOCAL, SDP_RETRY_IF_BUSY );
-    err = sdp_record_register(session, record, 0);
+    sdp_record_register(session, record, 0);
 
     // cleanup
     sdp_data_free( channel );
