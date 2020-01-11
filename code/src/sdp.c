@@ -60,11 +60,11 @@ sdp_session_t* register_service() {
     sdp_set_info_attr(&record, service_name, service_prov, svc_dsc);
 
     // connect to the local SDP server, register the service record and disconnect
-    session = sdp_connect(BADDR_ANY, BADDR_LOCAL, SDP_RETRY_IF_BUSY);
+    session = sdp_connect(BDADDR_ANY, BDADDR_LOCAL, SDP_RETRY_IF_BUSY);
     sdp_record_register(session, &record, 0);
 
     //cleanup
-    sdp_list_free(channel);
+    sdp_data_free(channel);
     sdp_list_free(l2cap_list, 0);
     sdp_list_free(rfcomm_list, 0);
     sdp_list_free(root_list, 0);
