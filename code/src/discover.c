@@ -1,6 +1,6 @@
 #include "bluefind.h"
 
-void scan(unsigned timeout){
+void scan(int timeout){
     int devId = hci_get_route(nullptr);
     int dd = hci_open_dev(devId);
     if (devId < 0 || dd < 0) {
@@ -39,7 +39,7 @@ void scan(unsigned timeout){
     return;
 }
 
-void receiveAdv(int dd, unsigned timeout)
+void receiveAdv(int dd, int timeout)
 {
     u_char buff[HCI_MAX_EVENT_SIZE];
     u_char *ptr;

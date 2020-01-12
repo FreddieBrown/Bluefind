@@ -7,16 +7,23 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <ctype.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <wordexp.h>
-#include <time.h>
+#include <string.h>
+#include <getopt.h>
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <signal.h>
+
+
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 #include <bluetooth/bluetooth.h>
 #include <glib.h>
-#include <gio.h>
+#include <gio/gio.h>
 
 #include <dbus/dbus.h>
 
@@ -26,9 +33,9 @@
 
 const u_char LE_ADV_REPORT = 0x02;
 
-void scan(unsigned timeout);
+void scan(int timeout);
 
-void receiveAdv(int dd, unsigned timeout);
+void receiveAdv(int dd, int timeout);
 
 
 #endif
