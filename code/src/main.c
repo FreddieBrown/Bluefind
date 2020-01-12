@@ -8,6 +8,7 @@
 int main(){
 
     printf("This is the project!\n"); 
-    discover();   
+    discover(); 
+    GDBusClient gdbc;  
     return 1;
 }
