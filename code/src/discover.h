@@ -25,6 +25,6 @@
 #define COLORED_CHG	COLOR_YELLOW "CHG" COLOR_OFF
 #define COLORED_DEL	COLOR_RED "DEL" COLOR_OFF
 
-GDBusClient discover();
+int discover();
 
 #endif

@@ -6,7 +6,7 @@
  * 
  * @return int 
  */
-GDBusClient discover(){
+int discover(){
     // inquiry_info* devices = NULL;
     // int adapter_id, sock, num_rsp, i;
     // int len = 8;
@@ -57,5 +57,6 @@ GDBusClient discover(){
     // }
     // free(devices);
     // close(sock);
-    return NULL;
+    gboolean opt_system_bus = FALSE;
+    return 0;
 }
