@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -std=c99 `pkg-config --cflags gio-2.0` -lbluetooth
+CFLAGS := -std=c99 `pkg-config --cflags --libs gio-2.0` -lbluetooth
 TARGET := main
 
 SRCDIR := src
