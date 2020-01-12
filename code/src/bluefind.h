@@ -13,6 +13,7 @@
 #include <wordexp.h>
 
 #include <glib.h>
+#include "gdbus.h"
 
 // #include <gio/gio.h>
 #include <dbus/dbus.h>
