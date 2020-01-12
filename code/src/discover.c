@@ -1,4 +1,4 @@
-#include "discover.h"
+#include "bluefind.h"
 
 
 void name_appeared(GDBusConnection *connection,

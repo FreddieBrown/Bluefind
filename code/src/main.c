@@ -1,4 +1,4 @@
-#include "discover.h"
+#include "bluefind.h"
 #include <gio/gio.h>
 #include <stdio.h>
 
