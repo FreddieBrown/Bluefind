@@ -19,7 +19,7 @@ extra: CFLAGS +=  -Wall -Wextra -Werror
 extra: build
 
 build: ${OBJ}
-	${CC} -o ${TARGET} ${OBJ} ${CFLAGS}
+	${CC} ${OBJ} ${CFLAGS} -o ${TARGET}  
 
 ${OBJDIR}/%.o: ${SRCDIR}/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
