@@ -1,4 +1,6 @@
 #include "discover.h"
+#include <gio/gio.h>
+#include <stdio.h>
 int main(void)
 {
     GMainLoop *loop;
