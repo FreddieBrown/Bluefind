@@ -8,11 +8,6 @@
 int main(int argc, char* argv[]){
 
     printf("This is the project!\n"); 
-    if(argc > 1 && strcmp(argv[1],"--le")  == 0){
-        discover_le();
-    }
-    else{
-        discover();
-    }   
+    discover();   
     return 1;
 }

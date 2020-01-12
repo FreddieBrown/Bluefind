@@ -6,7 +6,7 @@
  * 
  * @return int 
  */
-int discover(){
+GDBusClient discover(){
     // inquiry_info* devices = NULL;
     // int adapter_id, sock, num_rsp, i;
     // int len = 8;
@@ -57,5 +57,5 @@ int discover(){
     // }
     // free(devices);
     // close(sock);
-    return 0;
+    return NULL;
 }
