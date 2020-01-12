@@ -31,9 +31,8 @@
 #define COLORED_CHG	COLOR_YELLOW "CHG" COLOR_OFF
 #define COLORED_DEL	COLOR_RED "DEL" COLOR_OFF
 
-const u_char LE_ADV_REPORT = 0x02;
 
-void scan();
+int scan();
 
 // void receiveAdv(int dd, int timeout);
 
