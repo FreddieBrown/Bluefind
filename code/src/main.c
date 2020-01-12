@@ -46,12 +46,6 @@ int main(void)
 							property_changed, NULL);
 
 	g_dbus_client_set_ready_watch(client, client_ready, NULL);
-	
-	while(1){}
-
-    g_dbus_client_unref(client);
-
-	dbus_connection_unref(dbus_conn);
 
 
     
