@@ -14,7 +14,8 @@
 
 #include <glib.h>
 
-#include <gdbus/gdbus.h>
+// #include <gdbus/gdbus.h>
+#include <gio/gio.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
