@@ -6,10 +6,10 @@ LDFLAGS=`pkg-config --libs $(LIBS)`
 .PHONY: clean
 default: gdbus-example
 gdbus-example: gdbus-example.o
-    $(CC) $^ $(LDFLAGS) -o $@
+	$(CC) $^ $(LDFLAGS) -o $@
 
 %.o: %.c
-    $(CC) $(INCLUDE) $(CFLAGS) -o $@ -c $^
+	$(CC) $(INCLUDE) $(CFLAGS) -o $@ -c $^
 
 clean:
-    rm -f *.o gdbus-example
+	rm -f *.o gdbus-example
