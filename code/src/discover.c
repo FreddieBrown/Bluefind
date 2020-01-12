@@ -58,5 +58,6 @@ int discover(){
     // free(devices);
     // close(sock);
     gboolean opt_system_bus = FALSE;
+    printf("%s", opt_system_bus);
     return 0;
 }
