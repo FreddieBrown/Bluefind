@@ -1,5 +1,21 @@
 #include "bluefind.h"
 
+struct set_discovery_filter_args {
+	char *transport;
+	dbus_uint16_t rssi;
+	dbus_int16_t pathloss;
+	char **uuids;
+	size_t uuids_len;
+	dbus_bool_t duplicate;
+	dbus_bool_t discoverable;
+	bool set;
+	bool active;
+} filter = {
+	.rssi = DISTANCE_VAL_INVALID,
+	.pathloss = DISTANCE_VAL_INVALID,
+	.set = true,
+};
+
 void set_discovery_filter_reply(DBusMessage *message, void *user_data)
 {
 	DBusError error;

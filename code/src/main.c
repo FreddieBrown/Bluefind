@@ -1,5 +1,4 @@
 #include "bluefind.h"
-// #include <gio/gio.h>
 #include <stdio.h>
 #include "gdbus.h"
 
