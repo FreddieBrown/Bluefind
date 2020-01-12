@@ -1,7 +1,5 @@
 CC := gcc
-LIBS=gio-2.0
-CFLAGS := -O0 -ggdb3 `pkg-config --cflags $(LIBS)`
-LDFLAGS := `pkg-config --libs $(LIBS)`
+CFLAGS := -Wall -Wextra -Werror -std=c99 `pkg-config --cflags gio-2.0` -lbluetooth
 TARGET := main
 
 SRCDIR := src
@@ -15,11 +13,8 @@ default: build
 debug: CFLAGS += -g
 debug: build
 
-extra: CFLAGS +=  -Wall -Wextra -Werror
-extra: build
-
 build: ${OBJ}
-	${CC} ${OBJ} ${CFLAGS} -o ${TARGET}  
+	${CC} -o ${TARGET} ${OBJ} ${CFLAGS}
 
 ${OBJDIR}/%.o: ${SRCDIR}/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
