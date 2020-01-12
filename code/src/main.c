@@ -5,7 +5,7 @@
 #include<glib.h>
 #include <bluetooth/bluetooth.h>
 #include "discover.h"
-int main(int argc, char* argv[]){
+int main(){
 
     printf("This is the project!\n"); 
     discover();   
