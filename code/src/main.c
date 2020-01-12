@@ -9,8 +9,6 @@ int main(){
 
     printf("This is the project!\n"); 
     discover(); 
-    GDBusClient *gdbc = malloc(sizeof(GDBusClient));
-
-    free(gdbc);  
+    DBusMessageIter value; 
     return 1;
 }
