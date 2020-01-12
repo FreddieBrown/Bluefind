@@ -33,9 +33,9 @@
 
 const u_char LE_ADV_REPORT = 0x02;
 
-void scan(int timeout);
+void scan();
 
-void receiveAdv(int dd, int timeout);
+// void receiveAdv(int dd, int timeout);
 
 
 #endif

@@ -8,6 +8,6 @@ int main(void)
 
 printf("Hi!\n");
 
-    scan(10);
+    scan();
 
 }
