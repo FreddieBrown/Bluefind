@@ -1,5 +1,6 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -std=c99 `pkg-config --cflags --libs glib-2.0 dbus-1.0` -lbluetooth
+CFLAGS := -Wall -Wextra -Werror -std=c99 `pkg-config --cflags --libs glib-2.0` -lbluetooth
+CFLAGS+=-I/usr/include/dbus-1.0/
 TARGET := main
 
 SRCDIR := src
