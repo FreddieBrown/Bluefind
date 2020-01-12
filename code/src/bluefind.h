@@ -21,15 +21,15 @@
 #define COLORED_CHG	COLOR_YELLOW "CHG" COLOR_OFF
 #define COLORED_DEL	COLOR_RED "DEL" COLOR_OFF
 
-// GMainLoop *loop;
+struct adapter {
+	GDBusProxy *proxy;
+	GDBusProxy *ad_proxy;
+	GList *devices;
+};
 
-// void name_appeared(GDBusConnection *connection,
-//                    const gchar *name,
-//                    const gchar *name_owner,
-//                    gpointer user_data);
-// void name_vanished(GDBusConnection *connection,
-//                    const gchar *name,
-//                    gpointer user_data);
+struct adapter *default_ctrl;
+
+void scan(int argc, char *argv[]);
 
 
 #endif
