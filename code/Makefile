@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -std=c99 -lbluetooth
+CFLAGS := -Wall -Wextra -Werror -std=c99 `pkg-config --cflags --libs glib-2.0` -lbluetooth
 TARGET := main
 
 SRCDIR := src
