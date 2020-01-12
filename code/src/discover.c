@@ -1,133 +1,85 @@
 #include "bluefind.h"
 
-struct set_discovery_filter_args {
-	char *transport;
-	dbus_uint16_t rssi;
-	dbus_int16_t pathloss;
-	char **uuids;
-	size_t uuids_len;
-	dbus_bool_t duplicate;
-	dbus_bool_t discoverable;
-	bool set;
-	bool active;
-} filter = {
-	.rssi = DISTANCE_VAL_INVALID,
-	.pathloss = DISTANCE_VAL_INVALID,
-	.set = true,
-};
+void scan(unsigned timeout){
+    int devId = hci_get_route(nullptr);
+    int dd = hci_open_dev(devId);
+    if (devId < 0 || dd < 0) {
+        printf("Couldn't open device\n");
+        return;
+    }
 
-void set_discovery_filter_reply(DBusMessage *message, void *user_data)
-{
-	DBusError error;
+    uint8_t localAddr = LE_PUBLIC_ADDRESS; //LE_PUBLIC_ADDRESS to use public on local device, LE_RANDOM_ADDRESS to use random
+    uint8_t scanType = 0x01; //0x01 = active, 0x00 = passive
+    uint8_t filterPolicy = 0x00; //0x00 = don't use whitelist, 0x01 = use whitelist
+    uint16_t interval = htobs(0x0010); //no idea, default for all except 'g' or 'l' filters that use htobs(0x0012)
+    uint16_t window = htobs(0x0010); //no idea, default for all except 'g' or 'l' filters that use htobs(0x0012)
+    uint8_t filterDup = 0x00; // 0x01 = filter duplicates, 0x00 = receive duplicates
+    int hciTimeout = 10000; // this is timeout for communication with the local adapter, not scanning
 
-	dbus_error_init(&error);
-	if (dbus_set_error_from_message(&error, message) == TRUE) {
-		printf("SetDiscovery filter failed\n");
-	}
+    if (hci_le_set_scan_parameters(dd, scanType, interval, window, localAddr, filterPolicy, hciTimeout) < 0) {
+        printf("Set scan parameters failed\n");
+        hci_close_dev(dd);
+        return;
+    }
 
-	filter.set = true;
+    uint8_t scanEnable = 0x01;
+    if (hci_le_set_scan_enable(dd, scanEnable, filterDup, hciTimeout) < 0) {
+        printf("Enable scan failed\n");
+        hci_close_dev(dd);
+        return;
+    }
 
-    printf("SetDiscovery filer success");
+    if (receiveAdv(dd, timeout) < 0) {
+        printf("Could not receive advertising events\n");
+        hci_close_dev(dd);
+        return;
+    }
+
+    hci_close_dev(dd);
+    return;
 }
 
-void clear_discovery_filter(DBusMessageIter *iter, void *user_data)
+void receiveAdv(int dd, unsigned timeout)
 {
-	DBusMessageIter dict;
+    u_char buff[HCI_MAX_EVENT_SIZE];
+    u_char *ptr;
+    hci_filter filter;
+ 
+    hci_filter_clear(&filter);
+    hci_filter_set_ptype(HCI_EVENT_PKT, &filter);
+    hci_filter_set_event(EVT_LE_META_EVENT, &filter);
+ 
+    if (setsockopt(dd, SOL_HCI, HCI_FILTER, &filter, sizeof(filter)) < 0) {
+        printf("Could not set socket options\n");
+        return false;
+    }
 
-	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
-				DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING
-				DBUS_TYPE_STRING_AS_STRING
-				DBUS_TYPE_VARIANT_AS_STRING
-				DBUS_DICT_ENTRY_END_CHAR_AS_STRING, &dict);
+    time_t endwait;
+    time_t start = time(NULL);
+    time_t seconds = timeout;
 
-	dbus_message_iter_close_container(iter, &dict);
-}
+    endwait = start + seconds;
 
-void set_discovery_filter_setup(DBusMessageIter *iter, void *user_data)
-{
-	struct set_discovery_filter_args *args = user_data;
-	DBusMessageIter dict;
+    while (start < endwait) {
+        if (read(dd, buff, sizeof(buff)) < 0) {
+            sleep(0.2);
+            continue;
+        }
+ 
+        ptr = buff + (1 + HCI_EVENT_HDR_SIZE);
+        evt_le_meta_event *meta = reinterpret_cast<evt_le_meta_event *>(ptr);
+ 
+        if (meta->subevent != LE_ADV_REPORT)
+            continue;
+ 
+        le_advertising_info *info = reinterpret_cast<le_advertising_info *>(meta->data + 1);
+        char addr[18];
+        ba2str(&info->bdaddr, addr);
+        int rssi = info->data[info->length]; //intentional, isn't out of bounds
+        printf("Detected device: %s, %i\n"addr,rssi);
 
-	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
-				DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING
-				DBUS_TYPE_STRING_AS_STRING
-				DBUS_TYPE_VARIANT_AS_STRING
-				DBUS_DICT_ENTRY_END_CHAR_AS_STRING, &dict);
-
-	g_dbus_dict_append_array(&dict, "UUIDs", DBUS_TYPE_STRING,
-							&args->uuids,
-							args->uuids_len);
-
-	if (args->pathloss != DISTANCE_VAL_INVALID)
-		g_dbus_dict_append_entry(&dict, "Pathloss", DBUS_TYPE_UINT16,
-						&args->pathloss);
-
-	if (args->rssi != DISTANCE_VAL_INVALID)
-		g_dbus_dict_append_entry(&dict, "RSSI", DBUS_TYPE_INT16,
-						&args->rssi);
-
-	if (args->transport != NULL)
-		g_dbus_dict_append_entry(&dict, "Transport", DBUS_TYPE_STRING,
-						&args->transport);
-
-	if (args->duplicate)
-		g_dbus_dict_append_entry(&dict, "DuplicateData",
-						DBUS_TYPE_BOOLEAN,
-						&args->duplicate);
-
-	if (args->discoverable)
-		g_dbus_dict_append_entry(&dict, "Discoverable",
-						DBUS_TYPE_BOOLEAN,
-						&args->discoverable);
-
-	dbus_message_iter_close_container(iter, &dict);
-}
-
-void start_discovery_reply(DBusMessage *message, void *user_data)
-{
-	dbus_bool_t enable = GPOINTER_TO_UINT(user_data);
-	DBusError error;
-
-	dbus_error_init(&error);
-
-	if (dbus_set_error_from_message(&error, message) == TRUE) {
-		printf("Failed to start discovery\n");
-
-	}
-
-	printf("Discovery Enabled\n");
-
-	filter.active = enable;
-	/* Leave the discovery running even on noninteractive mode */
-}
-
-void set_discovery_filter(bool cleared)
-{
-	GDBusSetupFunction func;
-
-	func = cleared ? clear_discovery_filter : set_discovery_filter_setup;
-
-	if (g_dbus_proxy_method_call(default_ctrl->proxy, "SetDiscoveryFilter",
-					func, set_discovery_filter_reply,
-					&filter, NULL) == FALSE) {
-        printf("Setting Discover filer\n");
-	}
-
-	filter.set = true;
-}
-
-
-void scan(int argc, char *argv[]){
-    dbus_bool_t enable = TRUE;
-	const char *method;
-
-    set_discovery_filter(false);
-	method = "StartDiscovery";
-
-    if (g_dbus_proxy_method_call(default_ctrl->proxy, method,
-				NULL, start_discovery_reply,
-				GUINT_TO_POINTER(enable), NULL) == FALSE) {
-		printf("Failed to start discovery\n");
-	}
-
+        start = time(NULL);
+    }
+ 
+    return true;
 }
