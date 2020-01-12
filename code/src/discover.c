@@ -57,6 +57,6 @@ int discover(){
     // }
     // free(devices);
     // close(sock);
-    g_print("Library Works!");
+    g_print("Library Works!\n");
     return 0;
 }

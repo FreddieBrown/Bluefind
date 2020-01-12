@@ -16,6 +16,7 @@
 
 // #include <gdbus/gdbus.h>
 #include <gio/gio.h>
+#include <dbus/dbus.h>
 
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
