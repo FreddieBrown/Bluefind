@@ -21,6 +21,8 @@
 #define COLORED_CHG	COLOR_YELLOW "CHG" COLOR_OFF
 #define COLORED_DEL	COLOR_RED "DEL" COLOR_OFF
 
+GMainLoop *loop;
+
 void name_appeared(GDBusConnection *connection,
                    const gchar *name,
                    const gchar *name_owner,

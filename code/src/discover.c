@@ -8,6 +8,7 @@ void name_appeared(GDBusConnection *connection,
 {
     printf("Name appeared: %s\n", name);
     printf("Owned by: %s\n", name_owner);
+    g_main_loop_quit(loop);
 }
 
 void name_vanished(GDBusConnection *connection,
