@@ -27,6 +27,22 @@ struct adapter {
 	GList *devices;
 };
 
+struct set_discovery_filter_args {
+	char *transport;
+	dbus_uint16_t rssi;
+	dbus_int16_t pathloss;
+	char **uuids;
+	size_t uuids_len;
+	dbus_bool_t duplicate;
+	dbus_bool_t discoverable;
+	bool set;
+	bool active;
+} filter = {
+	.rssi = DISTANCE_VAL_INVALID,
+	.pathloss = DISTANCE_VAL_INVALID,
+	.set = true,
+};
+
 struct adapter *default_ctrl;
 
 void scan(int argc, char *argv[]);

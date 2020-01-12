@@ -11,7 +11,7 @@ void set_discovery_filter_reply(DBusMessage *message, void *user_data)
 
 	filter.set = true;
 
-    printf("SetDiscovery filer success")
+    printf("SetDiscovery filer success");
 }
 
 void clear_discovery_filter(DBusMessageIter *iter, void *user_data)
@@ -94,7 +94,7 @@ void set_discovery_filter(bool cleared)
 	if (g_dbus_proxy_method_call(default_ctrl->proxy, "SetDiscoveryFilter",
 					func, set_discovery_filter_reply,
 					&filter, NULL) == FALSE) {
-		return bt_shell_noninteractive_quit(EXIT_FAILURE);
+        printf("Setting Discover filer\n");
 	}
 
 	filter.set = true;
