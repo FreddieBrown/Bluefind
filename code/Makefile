@@ -1,6 +1,5 @@
 CC := gcc
-CFLAGS := -std=c99 `pkg-config --cflags --libs gio-2.0` -lbluetooth
-CFLAGS += -I/usr/include/dbus-1.0
+CFLAGS := -std=c99 `pkg-config --cflags --libs gio-2.0 dbus-1.0` -lbluetooth
 TARGET := main
 
 SRCDIR := src
