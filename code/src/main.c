@@ -21,7 +21,9 @@
 // }
 
 void connect_handler(DBusConnection *connection, void *user_data)
-{}
+{
+	printf("Connected\n");
+}
 
 void disconnect_handler(DBusConnection *connection, void *user_data)
 {}
@@ -63,6 +65,8 @@ int main(void)
 							property_changed, NULL);
 
 	g_dbus_client_set_ready_watch(client, client_ready, NULL);
+	
+	while(1){}
 
     g_dbus_client_unref(client);
 
