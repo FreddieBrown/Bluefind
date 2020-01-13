@@ -42,7 +42,7 @@ extern Discover dis;
 struct dev_info{
     const gchar* address;
     const gchar* alias;
-    const gchar* class;
+    const gchar* devclass;
 }dev_info;
 
 static void new_device(GDBusConnection *sig,

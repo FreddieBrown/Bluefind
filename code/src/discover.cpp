@@ -7,7 +7,7 @@
  * @param key 
  * @param value 
  */
-void Discover::property_value(const gchar *key, GVariant *value)
+gchar* Discover::property_value(const gchar *key, GVariant *value)
 {
 	const gchar *type = g_variant_get_type_string(value);
     const gchar *val_string; 
