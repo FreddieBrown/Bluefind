@@ -1,6 +1,6 @@
 #include "bluefind.h"
 #include <stdio.h>
-#include <gio.h>
+#include <gio/gio.h>
 
 
 int main(int argc, char **argv)
