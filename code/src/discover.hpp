@@ -1,22 +1,4 @@
-#include <stdio.h>
-#include <errno.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <getopt.h>
-#include <sys/param.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <signal.h>
-
-
-#include <glib.h>
-#include <gio/gio.h>
-
-#include <dbus/dbus.h>
+#include "bluefind.hpp"
 
 typedef void (*method_cb_t)(GObject *, GAsyncResult *, gpointer);
 
@@ -51,4 +33,4 @@ class Discover{
         int adapter_set_property(const char *prop, GVariant *value);
         GVariant* adapter_get_property(const char *prop);
         int set_discovery_filter(char **argv);
-}
+};

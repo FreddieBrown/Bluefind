@@ -20,7 +20,11 @@
 
 #include "discover.hpp"
 
-void new_device(GDBusConnection *sig,
+#define BT_ADDRESS_STRING_SIZE 18
+
+extern GDBusConnection *con;
+
+static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
@@ -28,7 +32,7 @@ void new_device(GDBusConnection *sig,
 				GVariant *parameters,
 				gpointer user_data);
 
-void device_disappeared(GDBusConnection *sig,
+static void device_disappeared(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
@@ -36,7 +40,7 @@ void device_disappeared(GDBusConnection *sig,
 				GVariant *parameters,
 				gpointer user_data);
 
-void signal_adapter_changed(GDBusConnection *conn,
+static void signal_adapter_changed(GDBusConnection *conn,
 					const gchar *sender,
 					const gchar *path,
 					const gchar *interface,
@@ -44,5 +48,5 @@ void signal_adapter_changed(GDBusConnection *conn,
 					GVariant *params,
 					void *userdata);
 
-void sigHandler(int sig);
+static void sigHandler(int sig);
 

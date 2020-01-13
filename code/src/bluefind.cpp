@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <gio/gio.h>
 
+GDBusConnection *con;
 
 int main(int argc, char **argv)
 {
@@ -96,7 +97,7 @@ fail:
 }
 
 
-void new_device(GDBusConnection *sig,
+static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
@@ -133,7 +134,7 @@ void new_device(GDBusConnection *sig,
 	return;
 }
 
-void device_disappeared(GDBusConnection *sig,
+static void device_disappeared(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
@@ -166,7 +167,7 @@ void device_disappeared(GDBusConnection *sig,
 	return;
 }
 
-void signal_adapter_changed(GDBusConnection *conn,
+static void signal_adapter_changed(GDBusConnection *conn,
 					const gchar *sender,
 					const gchar *path,
 					const gchar *interface,
@@ -216,7 +217,7 @@ done:
 		g_variant_unref(value);
 }
 
-void sigHandler(int sig){
+static void sigHandler(int sig){
     g_print(" SIGINT\n");
 	g_object_unref(con);
     exit(EXIT_SUCCESS);
