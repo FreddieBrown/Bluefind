@@ -57,7 +57,7 @@ int hci0_call_method(const char* api, const char *method, GVariant *param, metho
 	g_dbus_connection_call(con,
 			     "org.bluez",
 			     "/org/bluez/hci0",
-			     adapter,
+			     api,
 			     method,
 			     param,
 			     NULL,
