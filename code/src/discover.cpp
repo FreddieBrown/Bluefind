@@ -71,33 +71,6 @@ int Discover::hci0_call_method(const char* api, const char *method, GVariant *pa
 	return 0;
 }
 
-/**
- * This method is a callback which is used when finding the discovery filter 
- * which are being used by Adapter1. This function will be used to finish the 
- * call to Adapter1, take the filters that have been returned, and print out
- * the first value in the returned data. 
- * 
- * @param con 
- * @param res 
- * @param data 
- */
-void Discover::get_discovery_filter_cb(GObject *con,
-					  GAsyncResult *res,
-					  gpointer data)
-{
-	(void)data;
-	GVariant *result = NULL;
-	result = g_dbus_connection_call_finish((GDBusConnection *)con, res, NULL);
-	if(result == NULL)
-		g_print("Unable to get result for GetDiscoveryFilter\n");
-
-	if(result) {
-		result = g_variant_get_child_value(result, 0);
-		property_value("GetDiscoveryFilter", result);
-	}
-	g_variant_unref(result);
-}
-
 int Discover::adapter_set_property(const char *prop, GVariant *value)
 {
 	GVariant *result;
@@ -168,7 +141,7 @@ int Discover::set_discovery_filter(char **argv)
 
 	rc = hci0_call_method("org.bluez.Adapter1", "GetDiscoveryFilters",
 			NULL,
-			dis.get_discovery_filter_cb);
+			get_discovery_filter_cb);
 	if(rc) {
 		g_print("Not able to get discovery filter\n");
 		return 1;

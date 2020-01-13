@@ -51,6 +51,10 @@ static void signal_adapter_changed(GDBusConnection *conn,
 					GVariant *params,
 					void *userdata);
 
+static void get_discovery_filter_cb(GObject *con,
+                            GAsyncResult *res,
+                            gpointer data);
+
 static void sigHandler(int sig);
 
 #endif
