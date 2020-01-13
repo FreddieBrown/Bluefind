@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 	guint prop_changed;
 	guint iface_added;
 	guint iface_removed;
-
+    signal(SIGINT, sigHandler);
 	con = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);
 	if(con == NULL) {
 		g_print("Not able to get connection to system bus\n");
@@ -95,6 +95,13 @@ fail:
 	return 0;
 }
 
+void sigHandler(int sig){
+    g_print("SIGINT\n");
+    g_main_loop_quit((GMainLoop *)user_data);
+	g_object_unref(con);
+}
+
+
 void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
@@ -160,7 +167,6 @@ void device_disappeared(GDBusConnection *sig,
 				address[i] = *tmp;
 			}
 			g_print("\nDevice %s removed\n", address);
-            // g_main_loop_quit((GMainLoop *)user_data);
 		}
 	}
 	return;
