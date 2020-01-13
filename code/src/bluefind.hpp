@@ -39,11 +39,11 @@
 extern GDBusConnection *con;
 extern Discover dis;
 
-struct device_info{
+struct bth_device_info{
     const gchar* address;
     const gchar* alias;
     const gchar* devclass;
-}device_info;
+};
 
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
