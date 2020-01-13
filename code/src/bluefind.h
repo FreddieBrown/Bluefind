@@ -19,9 +19,6 @@
 #include <signal.h>
 
 
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_lib.h>
-#include <bluetooth/bluetooth.h>
 #include <glib.h>
 #include <gio/gio.h>
 
