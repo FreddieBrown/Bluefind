@@ -25,6 +25,7 @@
 #define BT_ADDRESS_STRING_SIZE 18
 
 extern GDBusConnection *con;
+extern Discover dis;
 
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
