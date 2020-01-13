@@ -129,16 +129,16 @@ static void new_device(GDBusConnection *sig,
                 // Here is where the adapter information can be seen
                 // Need to write more code to extract the address and alias 
                 // for each device that is seen by the program.
+                const gchar* val_string = dis.property_value(property_name, prop_val);
                 if(strcasecmp(property_name, "address") == 0){
                     g_print("ADDRESS\n");
                     // This should extract the address from the adapter information
-                    device.address = 
+                    device.address = val_string;
                 }
                 else if(strcasecmp(property_name, "alias") == 0){
                     g_print("ALIAS\n");
                     // This should extract the alias from the adapter information
                 }
-				dis.property_value(property_name, prop_val);
             }
 			g_variant_unref(prop_val);
 		}
