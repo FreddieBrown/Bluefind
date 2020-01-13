@@ -138,10 +138,12 @@ static void new_device(GDBusConnection *sig,
                 else if(strcasecmp(property_name, "alias") == 0){
                     g_print("ALIAS\n");
                     // This should extract the alias from the adapter information
+                    device.alias = val_string;
                 }
             }
 			g_variant_unref(prop_val);
 		}
+        devices.push_back(device);
 		g_variant_unref(properties);
 	}
 	return;
@@ -233,5 +235,10 @@ done:
 static void sigHandler(int sig){
     g_print(" SIGINT\n");
 	g_object_unref(con);
+    while(!devices.empty()){
+        struct bth_device_info device = devices.back();
+        devices.pop_back();
+        g_print("%s, %s\n", device.address, device.alias); 
+    }
     exit(EXIT_SUCCESS);
 }
