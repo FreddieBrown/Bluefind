@@ -235,10 +235,12 @@ done:
 static void sigHandler(int sig){
     g_print(" SIGINT\n");
 	g_object_unref(con);
+    std::cout<<"Size of Vector: "<<devices.size()<<std::endl;
     while(!devices.empty()){
         struct bth_device_info device = devices.back();
         devices.pop_back();
-        g_print("%s, %s\n", device.address, device.alias); 
+        g_print("%s, %s\n", device.address, device.alias);
+        std::cout<<"Size of Vector: "<<devices.size()<<std::endl;
     }
     exit(EXIT_SUCCESS);
 }
