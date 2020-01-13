@@ -142,8 +142,8 @@ static void new_device(GDBusConnection *sig,
                 }
             }
 			g_variant_unref(prop_val);
+            devices.push_back(device);
 		}
-        devices.push_back(device);
 		g_variant_unref(properties);
 	}
 	return;
