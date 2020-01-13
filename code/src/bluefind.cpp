@@ -7,6 +7,13 @@ GDBusConnection *con;
 Discover dis;
 std::vector<struct bth_device_info> devices;
 
+/**
+ * Main function of the project. This is where everything starts and is run from.
+ * 
+ * @param argc 
+ * @param argv 
+ * @return int 
+ */
 int main(int argc, char **argv)
 {
 	GMainLoop *loop;
@@ -100,7 +107,20 @@ fail:
 	return 0;
 }
 
-
+/**
+ * This is a function which is used to track new devices which are found by 
+ * adapter1. This is the main tennant of the searching framework. It gets called 
+ * when there is a new adapter and will sort through the signal that it gets and 
+ * extracts the critical information. 
+ * 
+ * @param sig 
+ * @param sender_name 
+ * @param object_path 
+ * @param interface 
+ * @param signal_name 
+ * @param parameters 
+ * @param user_data 
+ */
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
@@ -131,13 +151,9 @@ static void new_device(GDBusConnection *sig,
                 // for each device that is seen by the program.
                 const gchar* val_string = dis.property_value(property_name, prop_val);
                 if(strcasecmp(property_name, "address") == 0){
-                    g_print("ADDRESS\n");
-                    // This should extract the address from the adapter information
                     device.address = val_string;
                 }
                 else if(strcasecmp(property_name, "alias") == 0){
-                    g_print("ALIAS\n");
-                    // This should extract the alias from the adapter information
                     device.alias = val_string;
                 }
             }
@@ -149,6 +165,19 @@ static void new_device(GDBusConnection *sig,
 	return;
 }
 
+/**
+ * This function deals with when devices leave the range of the 
+ * device and disappear. It will register this and print the 
+ * MAC address of the device which has disappeared.
+ * 
+ * @param sig 
+ * @param sender_name 
+ * @param object_path 
+ * @param interface 
+ * @param signal_name 
+ * @param parameters 
+ * @param user_data 
+ */
 static void device_disappeared(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
@@ -182,6 +211,20 @@ static void device_disappeared(GDBusConnection *sig,
 	return;
 }
 
+/**
+ * This function will register when an adapter has changed its information. 
+ * It will take the signal and split off its parameters to look through. This 
+ * function mainly looks for  whether the adapter is powered and is discovering 
+ * devices.
+ * 
+ * @param conn 
+ * @param sender 
+ * @param path 
+ * @param interface 
+ * @param signal 
+ * @param params 
+ * @param userdata 
+ */
 static void signal_adapter_changed(GDBusConnection *conn,
 					const gchar *sender,
 					const gchar *path,
@@ -232,6 +275,13 @@ done:
 		g_variant_unref(value);
 }
 
+/**
+ * Signal Handler. This is what happens when CRTL^C is used. 
+ * It will print information about all devices that it has seen and 
+ * will quit the program.
+ * 
+ * @param sig 
+ */
 static void sigHandler(int sig){
     g_print(" SIGINT\n");
 	g_object_unref(con);

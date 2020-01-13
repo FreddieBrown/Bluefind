@@ -78,6 +78,13 @@ int Discover::hci0_call_method(const char* api, const char *method, GVariant *pa
 	return 0;
 }
 
+/**
+ * This is a helper method to set information about Adapter1.
+ * 
+ * @param prop 
+ * @param value 
+ * @return int 
+ */
 int Discover::adapter_set_property(const char *prop, GVariant *value)
 {
 	GVariant *result;
@@ -101,6 +108,13 @@ int Discover::adapter_set_property(const char *prop, GVariant *value)
 	return 0;
 }
 
+/**
+ * This function is a helper function to get information about 
+ * Adapter1.
+ * 
+ * @param prop 
+ * @return GVariant* 
+ */
 GVariant* Discover::adapter_get_property(const char *prop)
 {
 	GVariant *result;
@@ -124,6 +138,14 @@ GVariant* Discover::adapter_get_property(const char *prop)
 
 }
 
+/**
+ * Function will set the discovery filter of the adapter. It takes a number 
+ * of arguments. These are all used to specify different parts of the filter 
+ * which is then sent to the adapter for scanning of devices.
+ * 
+ * @param argv 
+ * @return int 
+ */
 int Discover::set_discovery_filter(char **argv)
 {
 	int rc;
