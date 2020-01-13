@@ -28,7 +28,6 @@
 #define BT_ADDRESS_STRING_SIZE 18
 
 GDBusConnection *con;
-GMainLoop *loop;
 
 void property_value(const gchar *key, GVariant *value);
 typedef void (*method_cb_t)(GObject *, GAsyncResult *, gpointer);
