@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 							NULL,
 							NULL,
 							G_DBUS_SIGNAL_FLAGS_NONE,
-							bluez_device_appeared,
+							new_device,
 							loop,
 							NULL);
 

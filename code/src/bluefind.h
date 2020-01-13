@@ -36,7 +36,7 @@ int hci0_call_method(const char* api, const char *method, GVariant *param, metho
 void bluez_get_discovery_filter_cb(GObject *con,
 					  GAsyncResult *res,
 					  gpointer data);
-void bluez_device_appeared(GDBusConnection *sig,
+void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,

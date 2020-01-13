@@ -98,7 +98,7 @@ void bluez_get_discovery_filter_cb(GObject *con,
 	g_variant_unref(result);
 }
 
-void bluez_device_appeared(GDBusConnection *sig,
+void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
@@ -121,7 +121,6 @@ void bluez_device_appeared(GDBusConnection *sig,
 
 	g_variant_get(parameters, "(&oa{sa{sv}})", &object, &interfaces);
 	while(g_variant_iter_next(interfaces, "{&s@a{sv}}", &interface_name, &properties)) {
-        g_print("New Property: \n");
 		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
 			g_print("[ %s ]\n", object);
 			const gchar *property_name;
@@ -129,6 +128,8 @@ void bluez_device_appeared(GDBusConnection *sig,
 			GVariant *prop_val;
 			g_variant_iter_init(&i, properties);
 			while(g_variant_iter_next(&i, "{&sv}", &property_name, &prop_val))
+                // Here is where the adapter information can be seen
+                g_print("New Property: \n");
 				bluez_property_value(property_name, prop_val);
 			g_variant_unref(prop_val);
 		}
@@ -171,7 +172,6 @@ void bluez_device_disappeared(GDBusConnection *sig,
 				address[i] = *tmp;
 			}
 			g_print("\nDevice %s removed\n", address);
-			g_main_loop_quit((GMainLoop *)user_data);
 		}
 	}
 	return;
@@ -259,6 +259,7 @@ int bluez_set_discovery_filter(char **argv)
 	g_variant_builder_add(b, "{sv}", "Transport", g_variant_new_string(argv[1]));
 	g_variant_builder_add(b, "{sv}", "RSSI", g_variant_new_int16(-g_ascii_strtod(argv[2], NULL)));
 	g_variant_builder_add(b, "{sv}", "DuplicateData", g_variant_new_boolean(FALSE));
+    g_variant_builder_add(b, "{sv}", "Discoverable", g_variant_new_boolean(TRUE));
 
 	GVariantBuilder *u = g_variant_builder_new(G_VARIANT_TYPE_STRING_ARRAY);
 	g_variant_builder_add(u, "s", argv[3]);
