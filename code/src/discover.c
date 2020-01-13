@@ -270,9 +270,8 @@ int bluez_adapter_get_property(const char *prop)
 					     &error);
 	if(error != NULL)
 		return 1;
-    gchar* value;
-    value = g_variant_get_string(result, NULL)
-    g_print("Prop: %s\n",value);
+    
+    g_print("Prop: %s\n",g_variant_get_string(result, NULL));
 
 	g_variant_unref(result);
 	return 0;
