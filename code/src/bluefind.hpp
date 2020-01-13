@@ -43,7 +43,7 @@ struct dev_info{
     const gchar* address;
     const gchar* alias;
     const gchar* devclass;
-}dev_info;
+}device_info;
 
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,

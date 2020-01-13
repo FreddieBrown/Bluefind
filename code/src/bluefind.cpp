@@ -5,7 +5,7 @@
 
 GDBusConnection *con;
 Discover dis;
-std::vector<struct dev_info> devices;
+std::vector<struct device_info> devices;
 
 int main(int argc, char **argv)
 {
@@ -117,7 +117,7 @@ static void new_device(GDBusConnection *sig,
 
 	g_variant_get(parameters, "(&oa{sa{sv}})", &object, &interfaces);
 	while(g_variant_iter_next(interfaces, "{&s@a{sv}}", &interface_name, &properties)) {
-        struct dev_info device;
+        struct device_info device;
 		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
 			g_print("[ %s ]\n", object);
 			const gchar *property_name;
