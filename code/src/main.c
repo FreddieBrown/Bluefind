@@ -97,7 +97,7 @@ fail:
 
 void sigHandler(int sig){
     g_print("SIGINT\n");
-    g_main_loop_quit((GMainLoop *)user_data);
+    g_main_loop_quit(loop);
 	g_object_unref(con);
 }
 
