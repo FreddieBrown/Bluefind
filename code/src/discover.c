@@ -269,7 +269,7 @@ GVariant* bluez_adapter_get_property(const char *prop)
 					     NULL,
 					     &error);
 	if(error != NULL)
-		return 1;
+		return NULL;
 
     return result;
 
