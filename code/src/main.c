@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 						bluez_signal_adapter_changed,
 						NULL,
 						NULL);
+    g_print("Added changed signal\n");
 
 	iface_added = g_dbus_connection_signal_subscribe(con,
 							"org.bluez",
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
 							new_device,
 							loop,
 							NULL);
-
+    g_print("Added new signal\n");
 	iface_removed = g_dbus_connection_signal_subscribe(con,
 							"org.bluez",
 							"org.freedesktop.DBus.ObjectManager",
@@ -51,12 +52,14 @@ int main(int argc, char **argv)
 							bluez_device_disappeared,
 							loop,
 							NULL);
-
+    g_print("Added leaving signal\n");
 	rc = bluez_adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
 		goto fail;
 	}
+
+    g_print("turning adapter on\n");
 
 	if(argc > 3) {
 		rc = bluez_set_discovery_filter(argv);
