@@ -1,3 +1,5 @@
+#ifndef BLUEFIND
+#define BLUEFIND
 #include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
@@ -50,3 +52,4 @@ static void signal_adapter_changed(GDBusConnection *conn,
 
 static void sigHandler(int sig);
 
+#endif

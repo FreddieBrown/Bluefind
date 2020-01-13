@@ -3,6 +3,7 @@
 #include <gio/gio.h>
 
 GDBusConnection *con;
+Discover dis;
 
 int main(int argc, char **argv)
 {
@@ -51,23 +52,23 @@ int main(int argc, char **argv)
 							device_disappeared,
 							loop,
 							NULL);
-	rc = adapter_set_property("Powered", g_variant_new("b", TRUE));
+	rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
 		goto fail;
 	}
 
-    GVariant* power = adapter_get_property("Powered");
+    GVariant* power = dis.adapter_get_property("Powered");
     g_print("Adapter1 Powered: %d\n",  g_variant_get_boolean(g_variant_get_child_value(g_variant_get_child_value(power,0),0)));
     g_variant_unref(power);
 
 	if(argc > 3) {
-		rc = set_discovery_filter(argv);
+		rc = dis.set_discovery_filter(argv);
 		if(rc)
 			goto fail;
 	}
 
-	rc =hci0_call_method("org.bluez.Adapter1", "StartDiscovery", NULL, NULL);
+	rc =dis.hci0_call_method("org.bluez.Adapter1", "StartDiscovery", NULL, NULL);
 	if(rc) {
 		g_print("Not able to scan for new devices\n");
 		goto fail;
@@ -75,17 +76,17 @@ int main(int argc, char **argv)
 
 	g_main_loop_run(loop);
 	if(argc > 3) {
-		rc = hci0_call_method("org.bluez.Adapter1", "SetDiscoveryFilter", NULL, NULL);
+		rc = dis.hci0_call_method("org.bluez.Adapter1", "SetDiscoveryFilter", NULL, NULL);
 		if(rc)
 			g_print("Not able to remove discovery filter\n");
 	}
 
-	rc = hci0_call_method("org.bluez.Adapter1", "StopDiscovery", NULL, NULL);
+	rc = dis.hci0_call_method("org.bluez.Adapter1", "StopDiscovery", NULL, NULL);
 	if(rc)
 		g_print("Not able to stop scanning\n");
 	g_usleep(100);
 
-	rc = adapter_set_property("Powered", g_variant_new("b", FALSE));
+	rc = dis.adapter_set_property("Powered", g_variant_new("b", FALSE));
 	if(rc)
 		g_print("Not able to disable the adapter\n");
 fail:
@@ -125,7 +126,7 @@ static void new_device(GDBusConnection *sig,
                 if(strcasecmp(property_name, "address") == 0){
                     g_print("ADDRESS\n");
                 }
-				property_value(property_name, prop_val);
+				dis.property_value(property_name, prop_val);
             }
 			g_variant_unref(prop_val);
 		}
@@ -207,7 +208,7 @@ static void signal_adapter_changed(GDBusConnection *conn,
 			g_print("Adapter scan \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
 		}
         else{
-            property_value(key, value);
+            dis.property_value(key, value);
         }
 	}
 done:

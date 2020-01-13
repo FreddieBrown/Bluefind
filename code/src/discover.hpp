@@ -1,5 +1,7 @@
 #include "bluefind.hpp"
 
+#ifndef DISCOVER
+#define DISCOVER
 typedef void (*method_cb_t)(GObject *, GAsyncResult *, gpointer);
 
 class Discover{
@@ -9,28 +11,9 @@ class Discover{
         void get_discovery_filter_cb(GObject *con,
                             GAsyncResult *res,
                             gpointer data);
-        void new_device(GDBusConnection *sig,
-                        const gchar *sender_name,
-                        const gchar *object_path,
-                        const gchar *interface,
-                        const gchar *signal_name,
-                        GVariant *parameters,
-                        gpointer user_data);
-        void device_disappeared(GDBusConnection *sig,
-                        const gchar *sender_name,
-                        const gchar *object_path,
-                        const gchar *interface,
-                        const gchar *signal_name,
-                        GVariant *parameters,
-                        gpointer user_data);
-        void signal_adapter_changed(GDBusConnection *conn,
-                            const gchar *sender,
-                            const gchar *path,
-                            const gchar *interface,
-                            const gchar *signal,
-                            GVariant *params,
-                            void *userdata);
         int adapter_set_property(const char *prop, GVariant *value);
         GVariant* adapter_get_property(const char *prop);
         int set_discovery_filter(char **argv);
 };
+
+#endif

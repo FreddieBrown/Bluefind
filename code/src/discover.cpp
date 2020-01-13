@@ -168,7 +168,7 @@ int Discover::set_discovery_filter(char **argv)
 
 	rc = hci0_call_method("org.bluez.Adapter1", "GetDiscoveryFilters",
 			NULL,
-			get_discovery_filter_cb);
+			Discover::get_discovery_filter_cb);
 	if(rc) {
 		g_print("Not able to get discovery filter\n");
 		return 1;
