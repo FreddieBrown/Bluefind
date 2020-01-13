@@ -39,7 +39,7 @@
 extern GDBusConnection *con;
 extern Discover dis;
 
-struct dev_info{
+struct device_info{
     const gchar* address;
     const gchar* alias;
     const gchar* devclass;
