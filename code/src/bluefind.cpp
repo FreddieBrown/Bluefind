@@ -1,4 +1,4 @@
-#include "bluefind.h"
+#include "bluefind.hpp"
 #include <stdio.h>
 #include <gio/gio.h>
 
@@ -93,12 +93,6 @@ fail:
 	g_dbus_connection_signal_unsubscribe(con, iface_removed);
 	g_object_unref(con);
 	return 0;
-}
-
-void sigHandler(int sig){
-    g_print(" SIGINT\n");
-	g_object_unref(con);
-    exit(EXIT_SUCCESS);
 }
 
 
@@ -220,4 +214,10 @@ done:
 		g_variant_iter_free(properties);
 	if(value != NULL)
 		g_variant_unref(value);
+}
+
+void sigHandler(int sig){
+    g_print(" SIGINT\n");
+	g_object_unref(con);
+    exit(EXIT_SUCCESS);
 }
