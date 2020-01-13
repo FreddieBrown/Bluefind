@@ -12,6 +12,7 @@ int main(int argc, char **argv)
 	guint prop_changed;
 	guint iface_added;
 	guint iface_removed;
+    GVariant* power;
     signal(SIGINT, sigHandler);
 	con = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);
 	if(con == NULL) {
@@ -58,7 +59,7 @@ int main(int argc, char **argv)
 		goto fail;
 	}
 
-    GVariant* power = dis.adapter_get_property("Powered");
+    power = dis.adapter_get_property("Powered");
     g_print("Adapter1 Powered: %d\n",  g_variant_get_boolean(g_variant_get_child_value(g_variant_get_child_value(power,0),0)));
     g_variant_unref(power);
 
