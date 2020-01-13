@@ -252,6 +252,32 @@ int bluez_adapter_set_property(const char *prop, GVariant *value)
 	return 0;
 }
 
+int bluez_adapter_get_property(const char *prop)
+{
+	GVariant *result;
+	GError *error = NULL;
+
+	result = g_dbus_connection_call_sync(con,
+					     "org.bluez",
+					     "/org/bluez/hci0",
+					     "org.freedesktop.DBus.Properties",
+					     "Get",
+					     g_variant_new("(ss)", "org.bluez.Adapter1", prop),
+					     NULL,
+					     G_DBUS_CALL_FLAGS_NONE,
+					     -1,
+					     NULL,
+					     &error);
+	if(error != NULL)
+		return 1;
+    gchar* value;
+    g_variant_get_string(value, NULL)
+    g_print("Prop: %s\n",value);
+
+	g_variant_unref(result);
+	return 0;
+}
+
 int bluez_set_discovery_filter(char **argv)
 {
 	int rc;
