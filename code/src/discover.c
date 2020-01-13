@@ -127,9 +127,13 @@ void new_device(GDBusConnection *sig,
 			GVariantIter i;
 			GVariant *prop_val;
 			g_variant_iter_init(&i, properties);
-			while(g_variant_iter_next(&i, "{&sv}", &property_name, &prop_val))
+			while(g_variant_iter_next(&i, "{&sv}", &property_name, &prop_val)){
                 // Here is where the adapter information can be seen
+                if(strcasecmp(property_name, "address")){
+                    g_print("ADDRESS\n");
+                }
 				bluez_property_value(property_name, prop_val);
+            }
 			g_variant_unref(prop_val);
 		}
 		g_variant_unref(properties);
