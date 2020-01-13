@@ -94,3 +94,124 @@ fail:
 	g_object_unref(con);
 	return 0;
 }
+
+void new_device(GDBusConnection *sig,
+				const gchar *sender_name,
+				const gchar *object_path,
+				const gchar *interface,
+				const gchar *signal_name,
+				GVariant *parameters,
+				gpointer user_data)
+{
+
+	GVariantIter *interfaces;
+	const char *object;
+	const gchar *interface_name;
+	GVariant *properties;
+
+	g_variant_get(parameters, "(&oa{sa{sv}})", &object, &interfaces);
+	while(g_variant_iter_next(interfaces, "{&s@a{sv}}", &interface_name, &properties)) {
+		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
+			g_print("[ %s ]\n", object);
+			const gchar *property_name;
+			GVariantIter i;
+			GVariant *prop_val;
+			g_variant_iter_init(&i, properties);
+            // Create Data structure here
+			while(g_variant_iter_next(&i, "{&sv}", &property_name, &prop_val)){
+                // Here is where the adapter information can be seen
+                if(strcasecmp(property_name, "address") == 0){
+                    g_print("ADDRESS\n");
+                }
+				property_value(property_name, prop_val);
+            }
+			g_variant_unref(prop_val);
+		}
+		g_variant_unref(properties);
+	}
+	return;
+}
+
+void device_disappeared(GDBusConnection *sig,
+				const gchar *sender_name,
+				const gchar *object_path,
+				const gchar *interface,
+				const gchar *signal_name,
+				GVariant *parameters,
+				gpointer user_data)
+{
+
+	GVariantIter *interfaces;
+	const char *object;
+	const gchar *interface_name;
+	char address[BT_ADDRESS_STRING_SIZE] = {'\0'};
+
+	g_variant_get(parameters, "(&oas)", &object, &interfaces);
+	while(g_variant_iter_next(interfaces, "s", &interface_name)) {
+		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
+			int i;
+			char *tmp = g_strstr_len(object, -1, "dev_") + 4;
+
+			for(i = 0; *tmp != '\0'; i++, tmp++) {
+				if(*tmp == '_') {
+					address[i] = ':';
+					continue;
+				}
+				address[i] = *tmp;
+			}
+			g_print("\nDevice %s removed\n", address);
+            // g_main_loop_quit((GMainLoop *)user_data);
+		}
+	}
+	return;
+}
+
+void signal_adapter_changed(GDBusConnection *conn,
+					const gchar *sender,
+					const gchar *path,
+					const gchar *interface,
+					const gchar *signal,
+					GVariant *params,
+					void *userdata)
+{
+
+	GVariantIter *properties = NULL;
+	GVariantIter *unknown = NULL;
+	const char *iface;
+	const char *key;
+	GVariant *value = NULL;
+	const gchar *signature = g_variant_get_type_string(params);
+
+	if(strcmp(signature, "(sa{sv}as)") != 0) {
+		g_print("Invalid signature for %s: %s != %s", signal, signature, "(sa{sv}as)");
+		goto done;
+	}
+
+	g_variant_get(params, "(&sa{sv}as)", &iface, &properties, &unknown);
+	while(g_variant_iter_next(properties, "{&sv}", &key, &value)) {
+		if(!g_strcmp0(key, "Powered")) {
+			if(!g_variant_is_of_type(value, G_VARIANT_TYPE_BOOLEAN)) {
+				g_print("Invalid argument type for %s: %s != %s", key,
+						g_variant_get_type_string(value), "b");
+				goto done;
+			}
+			g_print("Adapter is Powered \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
+		}
+		if(!g_strcmp0(key, "Discovering")) {
+			if(!g_variant_is_of_type(value, G_VARIANT_TYPE_BOOLEAN)) {
+				g_print("Invalid argument type for %s: %s != %s", key,
+						g_variant_get_type_string(value), "b");
+				goto done;
+			}
+			g_print("Adapter scan \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
+		}
+        else{
+            property_value(key, value);
+        }
+	}
+done:
+	if(properties != NULL)
+		g_variant_iter_free(properties);
+	if(value != NULL)
+		g_variant_unref(value);
+}
