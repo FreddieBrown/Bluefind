@@ -25,16 +25,14 @@
 
 #include <dbus/dbus.h>
 
-#define COLORED_NEW	COLOR_GREEN "NEW" COLOR_OFF
-#define COLORED_CHG	COLOR_YELLOW "CHG" COLOR_OFF
-#define COLORED_DEL	COLOR_RED "DEL" COLOR_OFF
+#define BT_ADDRESS_STRING_SIZE 18
 
 GDBusConnection *con;
 
-void bluez_property_value(const gchar *key, GVariant *value);
+void property_value(const gchar *key, GVariant *value);
 typedef void (*method_cb_t)(GObject *, GAsyncResult *, gpointer);
 int hci0_call_method(const char* api, const char *method, GVariant *param, method_cb_t method_cb);
-void bluez_get_discovery_filter_cb(GObject *con,
+void get_discovery_filter_cb(GObject *con,
 					  GAsyncResult *res,
 					  gpointer data);
 void new_device(GDBusConnection *sig,
@@ -44,23 +42,23 @@ void new_device(GDBusConnection *sig,
 				const gchar *signal_name,
 				GVariant *parameters,
 				gpointer user_data);
-void bluez_device_disappeared(GDBusConnection *sig,
+void device_disappeared(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
 				const gchar *signal_name,
 				GVariant *parameters,
 				gpointer user_data);
-void bluez_signal_adapter_changed(GDBusConnection *conn,
+void signal_adapter_changed(GDBusConnection *conn,
 					const gchar *sender,
 					const gchar *path,
 					const gchar *interface,
 					const gchar *signal,
 					GVariant *params,
 					void *userdata);
-int bluez_adapter_set_property(const char *prop, GVariant *value);
-GVariant* bluez_adapter_get_property(const char *prop);
-int bluez_set_discovery_filter(char **argv);
+int adapter_set_property(const char *prop, GVariant *value);
+GVariant* adapter_get_property(const char *prop);
+int set_discovery_filter(char **argv);
 
 
 

@@ -7,7 +7,7 @@
  * @param key 
  * @param value 
  */
-void bluez_property_value(const gchar *key, GVariant *value)
+void property_value(const gchar *key, GVariant *value)
 {
 	const gchar *type = g_variant_get_type_string(value);
 
@@ -81,7 +81,7 @@ int hci0_call_method(const char* api, const char *method, GVariant *param, metho
  * @param res 
  * @param data 
  */
-void bluez_get_discovery_filter_cb(GObject *con,
+void get_discovery_filter_cb(GObject *con,
 					  GAsyncResult *res,
 					  gpointer data)
 {
@@ -93,7 +93,7 @@ void bluez_get_discovery_filter_cb(GObject *con,
 
 	if(result) {
 		result = g_variant_get_child_value(result, 0);
-		bluez_property_value("GetDiscoveryFilter", result);
+		property_value("GetDiscoveryFilter", result);
 	}
 	g_variant_unref(result);
 }
@@ -106,18 +106,11 @@ void new_device(GDBusConnection *sig,
 				GVariant *parameters,
 				gpointer user_data)
 {
-	(void)sig;
-	(void)sender_name;
-	(void)object_path;
-	(void)interface;
-	(void)signal_name;
-	(void)user_data;
 
 	GVariantIter *interfaces;
 	const char *object;
 	const gchar *interface_name;
 	GVariant *properties;
-	//int rc;
 
 	g_variant_get(parameters, "(&oa{sa{sv}})", &object, &interfaces);
 	while(g_variant_iter_next(interfaces, "{&s@a{sv}}", &interface_name, &properties)) {
@@ -127,12 +120,13 @@ void new_device(GDBusConnection *sig,
 			GVariantIter i;
 			GVariant *prop_val;
 			g_variant_iter_init(&i, properties);
+            // Create Data structure here
 			while(g_variant_iter_next(&i, "{&sv}", &property_name, &prop_val)){
                 // Here is where the adapter information can be seen
-                if(strcasecmp(property_name, "address")){
+                if(strcasecmp(property_name, "address") == 0){
                     g_print("ADDRESS\n");
                 }
-				bluez_property_value(property_name, prop_val);
+				property_value(property_name, prop_val);
             }
 			g_variant_unref(prop_val);
 		}
@@ -141,8 +135,7 @@ void new_device(GDBusConnection *sig,
 	return;
 }
 
-#define BT_ADDRESS_STRING_SIZE 18
-void bluez_device_disappeared(GDBusConnection *sig,
+void device_disappeared(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,
 				const gchar *interface,
@@ -150,11 +143,6 @@ void bluez_device_disappeared(GDBusConnection *sig,
 				GVariant *parameters,
 				gpointer user_data)
 {
-	(void)sig;
-	(void)sender_name;
-	(void)object_path;
-	(void)interface;
-	(void)signal_name;
 
 	GVariantIter *interfaces;
 	const char *object;
@@ -181,7 +169,7 @@ void bluez_device_disappeared(GDBusConnection *sig,
 	return;
 }
 
-void bluez_signal_adapter_changed(GDBusConnection *conn,
+void signal_adapter_changed(GDBusConnection *conn,
 					const gchar *sender,
 					const gchar *path,
 					const gchar *interface,
@@ -189,11 +177,6 @@ void bluez_signal_adapter_changed(GDBusConnection *conn,
 					GVariant *params,
 					void *userdata)
 {
-	(void)conn;
-	(void)sender;
-	(void)path;
-	(void)interface;
-	(void)userdata;
 
 	GVariantIter *properties = NULL;
 	GVariantIter *unknown = NULL;
@@ -225,6 +208,9 @@ void bluez_signal_adapter_changed(GDBusConnection *conn,
 			}
 			g_print("Adapter scan \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
 		}
+        else{
+            property_value(key, value);
+        }
 	}
 done:
 	if(properties != NULL)
@@ -233,7 +219,7 @@ done:
 		g_variant_unref(value);
 }
 
-int bluez_adapter_set_property(const char *prop, GVariant *value)
+int adapter_set_property(const char *prop, GVariant *value)
 {
 	GVariant *result;
 	GError *error = NULL;
@@ -256,7 +242,7 @@ int bluez_adapter_set_property(const char *prop, GVariant *value)
 	return 0;
 }
 
-GVariant* bluez_adapter_get_property(const char *prop)
+GVariant* adapter_get_property(const char *prop)
 {
 	GVariant *result;
 	GError *error = NULL;
@@ -279,7 +265,7 @@ GVariant* bluez_adapter_get_property(const char *prop)
 
 }
 
-int bluez_set_discovery_filter(char **argv)
+int set_discovery_filter(char **argv)
 {
 	int rc;
 	GVariantBuilder *b = g_variant_builder_new(G_VARIANT_TYPE_VARDICT);
@@ -303,7 +289,7 @@ int bluez_set_discovery_filter(char **argv)
 
 	rc = hci0_call_method("org.bluez.Adapter1", "GetDiscoveryFilters",
 			NULL,
-			bluez_get_discovery_filter_cb);
+			get_discovery_filter_cb);
 	if(rc) {
 		g_print("Not able to get discovery filter\n");
 		return 1;

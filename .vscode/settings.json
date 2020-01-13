@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "__locale": "c",
-        "gdbus.h": "c",
-        "stdio.h": "c",
-        "functional": "c"
-    }
-}

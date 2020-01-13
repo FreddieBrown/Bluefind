@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 						NULL,
 						"org.bluez.Adapter1",
 						G_DBUS_SIGNAL_FLAGS_NONE,
-						bluez_signal_adapter_changed,
+						signal_adapter_changed,
 						NULL,
 						NULL);
 
@@ -47,21 +47,21 @@ int main(int argc, char **argv)
 							NULL,
 							NULL,
 							G_DBUS_SIGNAL_FLAGS_NONE,
-							bluez_device_disappeared,
+							device_disappeared,
 							loop,
 							NULL);
-	rc = bluez_adapter_set_property("Powered", g_variant_new("b", TRUE));
+	rc = adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
 		goto fail;
 	}
 
-    GVariant* power = bluez_adapter_get_property("Powered");
+    GVariant* power = adapter_get_property("Powered");
     g_print("Adapter1 Powered: %d\n",  g_variant_get_boolean(g_variant_get_child_value(g_variant_get_child_value(power,0),0)));
     g_variant_unref(power);
 
 	if(argc > 3) {
-		rc = bluez_set_discovery_filter(argv);
+		rc = set_discovery_filter(argv);
 		if(rc)
 			goto fail;
 	}
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 		g_print("Not able to stop scanning\n");
 	g_usleep(100);
 
-	rc = bluez_adapter_set_property("Powered", g_variant_new("b", FALSE));
+	rc = adapter_set_property("Powered", g_variant_new("b", FALSE));
 	if(rc)
 		g_print("Not able to disable the adapter\n");
 fail:

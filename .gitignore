@@ -12,3 +12,4 @@ forms/
 *.log
 */obj/
 code/main*
+.vscode
