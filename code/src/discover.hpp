@@ -4,6 +4,10 @@
 #define DISCOVER
 typedef void (*method_cb_t)(GObject *, GAsyncResult *, gpointer);
 
+static void get_discovery_filter_cb(GObject *con,
+                            GAsyncResult *res,
+                            gpointer data);
+
 class Discover{
     public:
         void property_value(const gchar *key, GVariant *value);
