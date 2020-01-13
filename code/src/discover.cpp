@@ -1,33 +1,6 @@
 #include "discover.hpp"
 
 /**
- * This method is a callback which is used when finding the discovery filter 
- * which are being used by Adapter1. This function will be used to finish the 
- * call to Adapter1, take the filters that have been returned, and print out
- * the first value in the returned data. 
- * 
- * @param con 
- * @param res 
- * @param data 
- */
-static void get_discovery_filter_cb(GObject *con,
-					  GAsyncResult *res,
-					  gpointer data)
-{
-	(void)data;
-	GVariant *result = NULL;
-	result = g_dbus_connection_call_finish((GDBusConnection *)con, res, NULL);
-	if(result == NULL)
-		g_print("Unable to get result for GetDiscoveryFilter\n");
-
-	if(result) {
-		result = g_variant_get_child_value(result, 0);
-		dis.property_value("GetDiscoveryFilter", result);
-	}
-	g_variant_unref(result);
-}
-
-/**
  * Method to take a key and a GVariant and print out the 
  * value of the GVariant if it is a single value.
  * 
@@ -174,4 +147,31 @@ int Discover::set_discovery_filter(char **argv)
 		return 1;
 	}
 	return 0;
+}
+
+/**
+ * This method is a callback which is used when finding the discovery filter 
+ * which are being used by Adapter1. This function will be used to finish the 
+ * call to Adapter1, take the filters that have been returned, and print out
+ * the first value in the returned data. 
+ * 
+ * @param con 
+ * @param res 
+ * @param data 
+ */
+static void get_discovery_filter_cb(GObject *con,
+					  GAsyncResult *res,
+					  gpointer data)
+{
+	(void)data;
+	GVariant *result = NULL;
+	result = g_dbus_connection_call_finish((GDBusConnection *)con, res, NULL);
+	if(result == NULL)
+		g_print("Unable to get result for GetDiscoveryFilter\n");
+
+	if(result) {
+		result = g_variant_get_child_value(result, 0);
+		dis.property_value("GetDiscoveryFilter", result);
+	}
+	g_variant_unref(result);
 }
