@@ -271,7 +271,7 @@ int bluez_adapter_get_property(const char *prop)
 	if(error != NULL)
 		return 1;
 
-    g_print("Type String: %s\n", g_variant_get_child_value(g_variant_get_type_string(result),0));
+    g_print("Type String: %s\n", g_variant_get_child_value(result,0));
     // g_print("%s: %s\n",prop,g_variant_get_string(result, NULL));
 
 	g_variant_unref(result);
