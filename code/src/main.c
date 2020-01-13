@@ -56,11 +56,9 @@ int main(int argc, char **argv)
 		goto fail;
 	}
 
-    rc = bluez_adapter_get_property("Powered");
-    if(rc) {
-        g_print("Not able to check the power of the adapter\n");
-        goto fail;
-    }
+    GVariant* power = bluez_adapter_get_property("Powered");
+    g_print("Adapter1 Powered: %d\n",  g_variant_get_boolean(g_variant_get_child_value(g_variant_get_child_value(power,0),0)));
+    
 
 	if(argc > 3) {
 		rc = bluez_set_discovery_filter(argv);

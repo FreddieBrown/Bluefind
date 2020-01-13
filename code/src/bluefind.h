@@ -58,7 +58,7 @@ void bluez_signal_adapter_changed(GDBusConnection *conn,
 					GVariant *params,
 					void *userdata);
 int bluez_adapter_set_property(const char *prop, GVariant *value);
-int bluez_adapter_get_property(const char *prop);
+GVariant* bluez_adapter_get_property(const char *prop);
 int bluez_set_discovery_filter(char **argv);
 
 
