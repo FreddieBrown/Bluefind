@@ -1,145 +1,262 @@
 #include "bluefind.h"
 
-// void scan(int timeout){
-//     int devId = hci_get_route(nullptr);
-//     int dd = hci_open_dev(devId);
-//     if (devId < 0 || dd < 0) {
-//         printf("Couldn't open device\n");
-//         return;
-//     }
+void bluez_property_value(const gchar *key, GVariant *value)
+{
+	const gchar *type = g_variant_get_type_string(value);
 
-//     uint8_t localAddr = LE_PUBLIC_ADDRESS; //LE_PUBLIC_ADDRESS to use public on local device, LE_RANDOM_ADDRESS to use random
-//     uint8_t scanType = 0x01; //0x01 = active, 0x00 = passive
-//     uint8_t filterPolicy = 0x00; //0x00 = don't use whitelist, 0x01 = use whitelist
-//     uint16_t interval = htobs(0x0010); //no idea, default for all except 'g' or 'l' filters that use htobs(0x0012)
-//     uint16_t window = htobs(0x0010); //no idea, default for all except 'g' or 'l' filters that use htobs(0x0012)
-//     uint8_t filterDup = 0x00; // 0x01 = filter duplicates, 0x00 = receive duplicates
-//     int hciTimeout = 10000; // this is timeout for communication with the local adapter, not scanning
+	g_print("\t%s : ", key);
+	switch(*type) {
+		case 'o':
+		case 's':
+			g_print("%s\n", g_variant_get_string(value, NULL));
+			break;
+		case 'b':
+			g_print("%d\n", g_variant_get_boolean(value));
+			break;
+		case 'u':
+			g_print("%d\n", g_variant_get_uint32(value));
+			break;
+		case 'a':
+		/* TODO Handling only 'as', but not array of dicts */
+			if(g_strcmp0(type, "as"))
+				break;
+			g_print("\n");
+			const gchar *uuid;
+			GVariantIter i;
+			g_variant_iter_init(&i, value);
+			while(g_variant_iter_next(&i, "s", &uuid))
+				g_print("\t\t%s\n", uuid);
+			break;
+		default:
+			g_print("Other\n");
+			break;
+	}
+}
 
-//     if (hci_le_set_scan_parameters(dd, scanType, interval, window, localAddr, filterPolicy, hciTimeout) < 0) {
-//         printf("Set scan parameters failed\n");
-//         hci_close_dev(dd);
-//         return;
-//     }
+int bluez_adapter_call_method(const char *method, GVariant *param, method_cb_t method_cb)
+{
+	GError *error = NULL;
 
-//     uint8_t scanEnable = 0x01;
-//     if (hci_le_set_scan_enable(dd, scanEnable, filterDup, hciTimeout) < 0) {
-//         printf("Enable scan failed\n");
-//         hci_close_dev(dd);
-//         return;
-//     }
+	g_dbus_connection_call(con,
+			     "org.bluez",
+			/* TODO Find the adapter path runtime */
+			     "/org/bluez/hci0",
+			     "org.bluez.Adapter1",
+			     method,
+			     param,
+			     NULL,
+			     G_DBUS_CALL_FLAGS_NONE,
+			     -1,
+			     NULL,
+			     method_cb,
+			     &error);
+	if(error != NULL)
+		return 1;
+	return 0;
+}
 
-//     if (receiveAdv(dd, timeout) < 0) {
-//         printf("Could not receive advertising events\n");
-//         hci_close_dev(dd);
-//         return;
-//     }
+void bluez_get_discovery_filter_cb(GObject *con,
+					  GAsyncResult *res,
+					  gpointer data)
+{
+	(void)data;
+	GVariant *result = NULL;
+	result = g_dbus_connection_call_finish((GDBusConnection *)con, res, NULL);
+	if(result == NULL)
+		g_print("Unable to get result for GetDiscoveryFilter\n");
 
-//     hci_close_dev(dd);
-//     return;
-// }
+	if(result) {
+		result = g_variant_get_child_value(result, 0);
+		bluez_property_value("GetDiscoveryFilter", result);
+	}
+	g_variant_unref(result);
+}
 
-// void receiveAdv(int dd, int timeout)
-// {
-//     u_char buff[HCI_MAX_EVENT_SIZE];
-//     u_char *ptr;
-//     hci_filter filter;
- 
-//     hci_filter_clear(&filter);
-//     hci_filter_set_ptype(HCI_EVENT_PKT, &filter);
-//     hci_filter_set_event(EVT_LE_META_EVENT, &filter);
- 
-//     if (setsockopt(dd, SOL_HCI, HCI_FILTER, &filter, sizeof(filter)) < 0) {
-//         printf("Could not set socket options\n");
-//         return false;
-//     }
+void bluez_device_appeared(GDBusConnection *sig,
+				const gchar *sender_name,
+				const gchar *object_path,
+				const gchar *interface,
+				const gchar *signal_name,
+				GVariant *parameters,
+				gpointer user_data)
+{
+	(void)sig;
+	(void)sender_name;
+	(void)object_path;
+	(void)interface;
+	(void)signal_name;
+	(void)user_data;
 
-//     time_t endwait;
-//     time_t start = time(NULL);
-//     time_t seconds = timeout;
+	GVariantIter *interfaces;
+	const char *object;
+	const gchar *interface_name;
+	GVariant *properties;
+	//int rc;
 
-//     endwait = start + seconds;
+	g_variant_get(parameters, "(&oa{sa{sv}})", &object, &interfaces);
+	while(g_variant_iter_next(interfaces, "{&s@a{sv}}", &interface_name, &properties)) {
+		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
+			g_print("[ %s ]\n", object);
+			const gchar *property_name;
+			GVariantIter i;
+			GVariant *prop_val;
+			g_variant_iter_init(&i, properties);
+			while(g_variant_iter_next(&i, "{&sv}", &property_name, &prop_val))
+				bluez_property_value(property_name, prop_val);
+			g_variant_unref(prop_val);
+		}
+		g_variant_unref(properties);
+	}
+/*
+	rc = bluez_adapter_call_method("RemoveDevice", g_variant_new("(o)", object));
+	if(rc)
+		g_print("Not able to remove %s\n", object);
+*/
+	return;
+}
 
-//     while (start < endwait) {
-//         if (read(dd, buff, sizeof(buff)) < 0) {
-//             sleep(0.2);
-//             continue;
-//         }
- 
-//         ptr = buff + (1 + HCI_EVENT_HDR_SIZE);
-//         evt_le_meta_event *meta = reinterpret_cast<evt_le_meta_event *>(ptr);
- 
-//         if (meta->subevent != LE_ADV_REPORT)
-//             continue;
- 
-//         le_advertising_info *info = reinterpret_cast<le_advertising_info *>(meta->data + 1);
-//         char addr[18];
-//         ba2str(&info->bdaddr, addr);
-//         int rssi = info->data[info->length]; //intentional, isn't out of bounds
-//         printf("Detected device: %s, %i\n"addr,rssi);
+#define BT_ADDRESS_STRING_SIZE 18
+void bluez_device_disappeared(GDBusConnection *sig,
+				const gchar *sender_name,
+				const gchar *object_path,
+				const gchar *interface,
+				const gchar *signal_name,
+				GVariant *parameters,
+				gpointer user_data)
+{
+	(void)sig;
+	(void)sender_name;
+	(void)object_path;
+	(void)interface;
+	(void)signal_name;
 
-//         start = time(NULL);
-//     }
- 
-//     return true;
-// }
+	GVariantIter *interfaces;
+	const char *object;
+	const gchar *interface_name;
+	char address[BT_ADDRESS_STRING_SIZE] = {'\0'};
 
-/**
- * @brief Inspects Bluetooth devices which are open for connection 
- * and gets their information and prints it. 
- * 
- * @return int 
- */
-int scan(){
-    inquiry_info* devices = NULL;
-    int adapter_id, sock, num_rsp, i;
-    int len = 8;
-    int max_rsp = 255;
-    int flags = IREQ_CACHE_FLUSH;
-    char addr[19] = {0};
-    char name[248] = {0};
-    struct hci_dev_info di;
-    adapter_id = hci_get_route(NULL);
+	g_variant_get(parameters, "(&oas)", &object, &interfaces);
+	while(g_variant_iter_next(interfaces, "s", &interface_name)) {
+		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
+			int i;
+			char *tmp = g_strstr_len(object, -1, "dev_") + 4;
 
-    if (hci_devinfo(adapter_id, &di) < 0) {
-		perror("Can't get device info");
-		exit(1);
+			for(i = 0; *tmp != '\0'; i++, tmp++) {
+				if(*tmp == '_') {
+					address[i] = ':';
+					continue;
+				}
+				address[i] = *tmp;
+			}
+			g_print("\nDevice %s removed\n", address);
+			g_main_loop_quit((GMainLoop *)user_data);
+		}
+	}
+	return;
+}
+
+void bluez_signal_adapter_changed(GDBusConnection *conn,
+					const gchar *sender,
+					const gchar *path,
+					const gchar *interface,
+					const gchar *signal,
+					GVariant *params,
+					void *userdata)
+{
+	(void)conn;
+	(void)sender;
+	(void)path;
+	(void)interface;
+	(void)userdata;
+
+	GVariantIter *properties = NULL;
+	GVariantIter *unknown = NULL;
+	const char *iface;
+	const char *key;
+	GVariant *value = NULL;
+	const gchar *signature = g_variant_get_type_string(params);
+
+	if(strcmp(signature, "(sa{sv}as)") != 0) {
+		g_print("Invalid signature for %s: %s != %s", signal, signature, "(sa{sv}as)");
+		goto done;
 	}
 
-    
-    if(adapter_id < 0) {
-        perror("opening socket");
-        exit(1);
-    }
-    
-    devices = (inquiry_info*) malloc(max_rsp * sizeof(inquiry_info));
+	g_variant_get(params, "(&sa{sv}as)", &iface, &properties, &unknown);
+	while(g_variant_iter_next(properties, "{&sv}", &key, &value)) {
+		if(!g_strcmp0(key, "Powered")) {
+			if(!g_variant_is_of_type(value, G_VARIANT_TYPE_BOOLEAN)) {
+				g_print("Invalid argument type for %s: %s != %s", key,
+						g_variant_get_type_string(value), "b");
+				goto done;
+			}
+			g_print("Adapter is Powered \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
+		}
+		if(!g_strcmp0(key, "Discovering")) {
+			if(!g_variant_is_of_type(value, G_VARIANT_TYPE_BOOLEAN)) {
+				g_print("Invalid argument type for %s: %s != %s", key,
+						g_variant_get_type_string(value), "b");
+				goto done;
+			}
+			g_print("Adapter scan \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
+		}
+	}
+done:
+	if(properties != NULL)
+		g_variant_iter_free(properties);
+	if(value != NULL)
+		g_variant_unref(value);
+}
 
-    printf("Scanning ...\n");
-    num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
-    while(1){
-        num_rsp = hci_inquiry(adapter_id, len, max_rsp, NULL, &devices, flags);
-        if(num_rsp < 0){
-            perror("hci_inquiry");
-        }
+int bluez_adapter_set_property(const char *prop, GVariant *value)
+{
+	GVariant *result;
+	GError *error = NULL;
 
-        sock = hci_open_dev(adapter_id);
-        if (sock < 0) {
-            perror("HCI device open failed");
-            free(devices);
-            exit(1);
-        }
+	result = g_dbus_connection_call_sync(con,
+					     "org.bluez",
+					     "/org/bluez/hci0",
+					     "org.freedesktop.DBus.Properties",
+					     "Set",
+					     g_variant_new("(ssv)", "org.bluez.Adapter1", prop, value),
+					     NULL,
+					     G_DBUS_CALL_FLAGS_NONE,
+					     -1,
+					     NULL,
+					     &error);
+	if(error != NULL)
+		return 1;
 
-        for(i=0; i < num_rsp; i++) {
-            printf("Looking at device\n");
-            ba2str(&(devices+i)->bdaddr, addr);
-            memset(name, 0, sizeof(name));
-            if(0 != hci_read_remote_name(sock, &(devices+i)->bdaddr, sizeof(name), name, 0)){
-                strcpy(name, "[unknown]");            
-            }
-            printf("%s %s\n", addr, name);
-        }
-    }
-    free(devices);
-    close(sock);
-    return 0;
+	g_variant_unref(result);
+	return 0;
+}
+
+int bluez_set_discovery_filter(char **argv)
+{
+	int rc;
+	GVariantBuilder *b = g_variant_builder_new(G_VARIANT_TYPE_VARDICT);
+	g_variant_builder_add(b, "{sv}", "Transport", g_variant_new_string(argv[1]));
+	g_variant_builder_add(b, "{sv}", "RSSI", g_variant_new_int16(-g_ascii_strtod(argv[2], NULL)));
+	g_variant_builder_add(b, "{sv}", "DuplicateData", g_variant_new_boolean(FALSE));
+
+	GVariantBuilder *u = g_variant_builder_new(G_VARIANT_TYPE_STRING_ARRAY);
+	g_variant_builder_add(u, "s", argv[3]);
+	g_variant_builder_add(b, "{sv}", "UUIDs", g_variant_builder_end(u));
+
+	GVariant *device_dict = g_variant_builder_end(b);
+	g_variant_builder_unref(u);
+	g_variant_builder_unref(b);
+	rc = bluez_adapter_call_method("SetDiscoveryFilter", g_variant_new_tuple(&device_dict, 1), NULL);
+	if(rc) {
+		g_print("Not able to set discovery filter\n");
+		return 1;
+	}
+
+	rc = bluez_adapter_call_method("GetDiscoveryFilters",
+			NULL,
+			bluez_get_discovery_filter_cb);
+	if(rc) {
+		g_print("Not able to get discovery filter\n");
+		return 1;
+	}
+	return 0;
 }
