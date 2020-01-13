@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 			goto fail;
 	}
 
-	rc = bluez_adapter_call_method("StartDiscovery", NULL, NULL);
+	rc =hci0_call_method("org.bluez.Adapter1", "StartDiscovery", NULL, NULL);
 	if(rc) {
 		g_print("Not able to scan for new devices\n");
 		goto fail;
@@ -72,12 +72,12 @@ int main(int argc, char **argv)
 
 	g_main_loop_run(loop);
 	if(argc > 3) {
-		rc = bluez_adapter_call_method("SetDiscoveryFilter", NULL, NULL);
+		rc = hci0_call_method("org.bluez.Adapter1", "SetDiscoveryFilter", NULL, NULL);
 		if(rc)
 			g_print("Not able to remove discovery filter\n");
 	}
 
-	rc = bluez_adapter_call_method("StopDiscovery", NULL, NULL);
+	rc = hci0_call_method("org.bluez.Adapter1", "StopDiscovery", NULL, NULL);
 	if(rc)
 		g_print("Not able to stop scanning\n");
 	g_usleep(100);

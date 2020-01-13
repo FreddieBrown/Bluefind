@@ -1,5 +1,12 @@
 #include "bluefind.h"
 
+/**
+ * Method to take a key and a GVariant and print out the 
+ * value of the GVariant if it is a single value.
+ * 
+ * @param key 
+ * @param value 
+ */
 void bluez_property_value(const gchar *key, GVariant *value)
 {
 	const gchar *type = g_variant_get_type_string(value);
@@ -33,15 +40,24 @@ void bluez_property_value(const gchar *key, GVariant *value)
 	}
 }
 
-int bluez_adapter_call_method(const char *method, GVariant *param, method_cb_t method_cb)
+/**
+ * This function is use the object path /org/bluez/hci0. It takes an adapter name, method name, parameters 
+ * and an optional call back method. This is used to 
+ * 
+ * @param adapter
+ * @param method 
+ * @param param 
+ * @param method_cb 
+ * @return int 
+ */
+int hci0_call_method(const char* api, const char *method, GVariant *param, method_cb_t method_cb)
 {
 	GError *error = NULL;
 
 	g_dbus_connection_call(con,
 			     "org.bluez",
-			/* TODO Find the adapter path runtime */
 			     "/org/bluez/hci0",
-			     "org.bluez.Adapter1",
+			     adapter,
 			     method,
 			     param,
 			     NULL,
@@ -55,6 +71,16 @@ int bluez_adapter_call_method(const char *method, GVariant *param, method_cb_t m
 	return 0;
 }
 
+/**
+ * This method is a callback which is used when finding the discovery filter 
+ * which are being used by Adapter1. This function will be used to finish the 
+ * call to Adapter1, take the filters that have been returned, and print out
+ * the first value in the returned data. 
+ * 
+ * @param con 
+ * @param res 
+ * @param data 
+ */
 void bluez_get_discovery_filter_cb(GObject *con,
 					  GAsyncResult *res,
 					  gpointer data)
@@ -95,6 +121,7 @@ void bluez_device_appeared(GDBusConnection *sig,
 
 	g_variant_get(parameters, "(&oa{sa{sv}})", &object, &interfaces);
 	while(g_variant_iter_next(interfaces, "{&s@a{sv}}", &interface_name, &properties)) {
+        g_print("New Property: \n");
 		if(g_strstr_len(g_ascii_strdown(interface_name, -1), -1, "device")) {
 			g_print("[ %s ]\n", object);
 			const gchar *property_name;
@@ -107,11 +134,6 @@ void bluez_device_appeared(GDBusConnection *sig,
 		}
 		g_variant_unref(properties);
 	}
-/*
-	rc = bluez_adapter_call_method("RemoveDevice", g_variant_new("(o)", object));
-	if(rc)
-		g_print("Not able to remove %s\n", object);
-*/
 	return;
 }
 
@@ -245,13 +267,13 @@ int bluez_set_discovery_filter(char **argv)
 	GVariant *device_dict = g_variant_builder_end(b);
 	g_variant_builder_unref(u);
 	g_variant_builder_unref(b);
-	rc = bluez_adapter_call_method("SetDiscoveryFilter", g_variant_new_tuple(&device_dict, 1), NULL);
+	rc = hci0_call_method("org.bluez.Adapter1", "SetDiscoveryFilter", g_variant_new_tuple(&device_dict, 1), NULL);
 	if(rc) {
 		g_print("Not able to set discovery filter\n");
 		return 1;
 	}
 
-	rc = bluez_adapter_call_method("GetDiscoveryFilters",
+	rc = hci0_call_method("org.bluez.Adapter1", "GetDiscoveryFilters",
 			NULL,
 			bluez_get_discovery_filter_cb);
 	if(rc) {

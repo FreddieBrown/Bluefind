@@ -35,7 +35,7 @@ GDBusConnection *con;
 
 void bluez_property_value(const gchar *key, GVariant *value);
 typedef void (*method_cb_t)(GObject *, GAsyncResult *, gpointer);
-int bluez_adapter_call_method(const char *method, GVariant *param, method_cb_t method_cb);
+int hci0_call_method(const char* api, const char *method, GVariant *param, method_cb_t method_cb);
 void bluez_get_discovery_filter_cb(GObject *con,
 					  GAsyncResult *res,
 					  gpointer data);
