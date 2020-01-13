@@ -14,6 +14,18 @@
 #include <sys/socket.h>
 #include <signal.h>
 
+#include <algorithm>
+#include <cassert>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <queue>
+#include <string>
+#include <vector>
+
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -26,6 +38,12 @@
 
 extern GDBusConnection *con;
 extern Discover dis;
+
+struct dev_info{
+    const gchar* address;
+    const gchar* alias;
+    const gchar* class;
+}dev_info;
 
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,

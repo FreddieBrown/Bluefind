@@ -10,17 +10,20 @@
 void Discover::property_value(const gchar *key, GVariant *value)
 {
 	const gchar *type = g_variant_get_type_string(value);
-
+    const gchar *val_string; 
 	g_print("\t%s : ", key);
 	switch(*type) {
 		case 'o':
 		case 's':
-			g_print("%s\n", g_variant_get_string(value, NULL));
+            val_string = g_variant_get_string(value, NULL);
+			g_print("%s\n", val_string);
 			break;
 		case 'b':
+            val_string = g_variant_print(value,FALSE);
 			g_print("%d\n", g_variant_get_boolean(value));
 			break;
 		case 'u':
+            val_string = g_variant_print(value,FALSE);
 			g_print("%d\n", g_variant_get_uint32(value));
 			break;
 		case 'a':
@@ -33,11 +36,15 @@ void Discover::property_value(const gchar *key, GVariant *value)
 			g_variant_iter_init(&i, value);
 			while(g_variant_iter_next(&i, "s", &uuid))
 				g_print("\t\t%s\n", uuid);
+            val_string = "UUID Value";
 			break;
 		default:
 			g_print("Other\n");
+            val_string = "Other";
 			break;
 	}
+
+    return val_string;
 }
 
 /**
