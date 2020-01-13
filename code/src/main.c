@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
     GVariant* power = bluez_adapter_get_property("Powered");
     g_print("Adapter1 Powered: %d\n",  g_variant_get_boolean(g_variant_get_child_value(g_variant_get_child_value(power,0),0)));
-    
+    g_variant_unref(power);
 
 	if(argc > 3) {
 		rc = bluez_set_discovery_filter(argv);

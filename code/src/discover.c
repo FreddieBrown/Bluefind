@@ -271,8 +271,8 @@ GVariant* bluez_adapter_get_property(const char *prop)
 	if(error != NULL)
 		return 1;
 
-	g_variant_unref(result);
-	return 0;
+    return result;
+
 }
 
 int bluez_set_discovery_filter(char **argv)
