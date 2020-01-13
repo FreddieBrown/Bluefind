@@ -98,6 +98,7 @@ fail:
 void sigHandler(int sig){
     g_print("SIGINT\n");
 	g_object_unref(con);
+    exit(EXIT_SUCCESS);
 }
 
 
