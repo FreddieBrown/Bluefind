@@ -108,11 +108,6 @@ int main(int argc, char **argv)
 		if(rc)
 			goto fail;
 	}
-    else if(argc > 2){
-        rc = dis.set_discoverable(argv[1]);
-        if(rc)
-            goto fail;
-    }
 
 
 	rc =dis.hci0_call_method("org.bluez.Adapter1", "StartDiscovery", NULL, NULL);
