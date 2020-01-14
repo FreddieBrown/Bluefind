@@ -86,9 +86,16 @@ int main(int argc, char **argv)
 							device_disappeared,
 							loop,
 							NULL);
+                            
 	rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
+		goto fail;
+	}
+
+    rc = dis.adapter_set_property("Discoverable", g_variant_new("b", TRUE));
+    if(rc) {
+		g_print("Not able to make it visible\n");
 		goto fail;
 	}
 
