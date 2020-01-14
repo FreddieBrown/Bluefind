@@ -159,7 +159,6 @@ static gboolean signalHandler (gpointer data)
     int rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
-		goto fail;
 	}
     g_main_loop_quit((GMainLoop *)data);
     return G_SOURCE_REMOVE;
