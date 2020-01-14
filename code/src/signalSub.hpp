@@ -2,6 +2,8 @@
 #define SIGSUB
 #include "global.hpp"
 
+extern Discover dis;
+
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
 				const gchar *object_path,

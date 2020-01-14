@@ -1,4 +1,5 @@
 #include "bluefind.hpp"
+Discover dis;
 
 /**
  * This is a function which is used to track new devices which are found by 

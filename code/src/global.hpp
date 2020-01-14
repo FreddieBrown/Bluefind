@@ -36,7 +36,6 @@
 #define BT_ADDRESS_STRING_SIZE 18
 
 extern GDBusConnection *con;
-extern Discover dis;
 extern guint bus_name;
 extern guint registration_id;
 extern GDBusNodeInfo *introspection_data;

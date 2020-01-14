@@ -4,7 +4,6 @@
 
 
 GDBusConnection *con;
-Discover dis;
 std::vector<struct bth_device_info> devices;
 guint bus_name;
 GDBusNodeInfo *introspection_data;
