@@ -1,7 +1,9 @@
-#ifndef SIGSUB
-#define SIGSUB
 #include "global.hpp"
 #include "discover.hpp"
+
+#ifndef SIGSUB_HPP
+#define SIGSUB_HPP
+
 
 extern Discover dis;
 

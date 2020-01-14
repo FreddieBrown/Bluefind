@@ -1,9 +1,10 @@
-#ifndef BLUEFIND
-#define BLUEFIND
 #include "global.hpp"
 
 #include "discover.hpp"
 #include "signalSub.hpp"
+
+#ifndef BLUEFIND
+#define BLUEFIND
 
 static const gchar *introspection_xml =
   "<node>"
