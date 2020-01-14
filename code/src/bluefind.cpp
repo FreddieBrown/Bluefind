@@ -154,7 +154,7 @@ static gboolean signalHandler (gpointer data)
         g_print("%s, %s\n", device.address, device.alias);
     }
     g_debug("Got SIGINT");
-    return G_SOURCE_REMOVE;
+    exit(1);
 }
 
 /**
