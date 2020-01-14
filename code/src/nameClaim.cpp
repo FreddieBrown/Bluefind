@@ -1,4 +1,4 @@
-#include "bluefind.hpp"
+#include "nameClaim.hpp"
 guint registration_id;
 /**
  * This functions deals with the consequences of not acquiring the 
