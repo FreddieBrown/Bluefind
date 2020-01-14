@@ -134,7 +134,6 @@ fail:
 	g_bus_unown_name (bus_name);
     g_dbus_node_info_unref (introspection_data);
     g_object_unref(con);
-    g_main_loop_quit((GMainLoop *)loop);
 	return 0;
 }
 /**
@@ -154,7 +153,8 @@ static gboolean signalHandler (gpointer data)
         g_print("%s, %s\n", device.address, device.alias);
     }
     g_debug("Got SIGINT");
-    exit(1);
+    g_main_loop_quit((GMainLoop *)data);
+    return G_SOURCE_REMOVE;
 }
 
 /**
