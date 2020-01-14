@@ -1,48 +1,11 @@
 #ifndef BLUEFIND
 #define BLUEFIND
-#include <stdio.h>
-#include <errno.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <getopt.h>
-#include <sys/param.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <signal.h>
-#include <glib-unix.h>
-
-#include <algorithm>
-#include <cassert>
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <queue>
-#include <string>
-#include <vector>
-
-
-#include <glib.h>
-#include <gio/gio.h>
-
-#include <dbus/dbus.h>
+#include "global.hpp"
 
 #include "discover.hpp"
-
-#define BT_ADDRESS_STRING_SIZE 18
-
-extern GDBusConnection *con;
-extern Discover dis;
-extern guint bus_name;
-extern guint registration_id;
-extern GDBusNodeInfo *introspection_data;
-extern std::vector<struct bth_device_info> devices;
+#include "introspectable.hpp"
+#include "nameClaim.hpp"
+#include "signalSub.hpp"
 
 static const gchar *introspection_xml =
   "<node>"
@@ -87,87 +50,5 @@ struct bth_device_info{
     const gchar* devclass;
 };
 
-//bluefind.cpp
 static gboolean signalHandler (gpointer data);
-
-// signalSub.cpp
-static void new_device(GDBusConnection *sig,
-				const gchar *sender_name,
-				const gchar *object_path,
-				const gchar *interface,
-				const gchar *signal_name,
-				GVariant *parameters,
-				gpointer user_data);
-
-static void device_disappeared(GDBusConnection *sig,
-				const gchar *sender_name,
-				const gchar *object_path,
-				const gchar *interface,
-				const gchar *signal_name,
-				GVariant *parameters,
-				gpointer user_data);
-
-static void signal_adapter_changed(GDBusConnection *conn,
-					const gchar *sender,
-					const gchar *path,
-					const gchar *interface,
-					const gchar *signal,
-					GVariant *params,
-					void *userdata);
-
-
-// Introspectable.cpp
-// Not implemented yet
-static void
-handle_method_call (GDBusConnection       *connection,
-                    const gchar           *sender,
-                    const gchar           *object_path,
-                    const gchar           *interface_name,
-                    const gchar           *method_name,
-                    GVariant              *parameters,
-                    GDBusMethodInvocation *invocation,
-                    gpointer               user_data);
-
-// Not implemented yet
-static GVariant *
-handle_get_property (GDBusConnection  *connection,
-                     const gchar      *sender,
-                     const gchar      *object_path,
-                     const gchar      *interface_name,
-                     const gchar      *property_name,
-                     GError          **error,
-                     gpointer          user_data);
-
-// Not implemented yet
-static gboolean
-handle_set_property (GDBusConnection  *connection,
-                     const gchar      *sender,
-                     const gchar      *object_path,
-                     const gchar      *interface_name,
-                     const gchar      *property_name,
-                     GVariant         *value,
-                     GError          **error,
-                     gpointer          user_data);
-
-
-// nameClaim.cpp
-
-static void
-on_name_lost(GDBusConnection * connection,
-             const gchar * name,
-             gpointer user_data);
-
-static void
-on_name_acquired (GDBusConnection *connection,
-                  const gchar     *name,
-                  gpointer         user_data);
-
-
-static const GDBusInterfaceVTable interface_vtable =
-{
-  handle_method_call,
-  handle_get_property,
-  handle_set_property
-};
-
 #endif
