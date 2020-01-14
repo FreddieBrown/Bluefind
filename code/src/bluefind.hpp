@@ -13,6 +13,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <signal.h>
+#include <glib-unix.h>
 
 #include <algorithm>
 #include <cassert>
@@ -41,6 +42,7 @@ extern Discover dis;
 extern guint bus_name;
 extern guint registration_id;
 extern GDBusNodeInfo *introspection_data;
+extern std::vector<struct bth_device_info> devices;
 
 static const gchar *introspection_xml =
   "<node>"

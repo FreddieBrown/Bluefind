@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     introspection_data = g_dbus_node_info_new_for_xml (introspection_xml, NULL);
 
     // Claim name on BUS
-    bus_name = g_bus_own_name_on_connection (conn,
+    bus_name = g_bus_own_name_on_connection (con,
                               name,
                               G_BUS_NAME_OWNER_FLAGS_NONE,
                               on_name_acquired,
