@@ -15,7 +15,6 @@ class Discover{
         int adapter_set_property(const char *prop, GVariant *value);
         GVariant* adapter_get_property(const char *prop);
         int set_discovery_filter(char **argv);
-        int set_discoverable(const gchar *transport);
 };
 
 #endif

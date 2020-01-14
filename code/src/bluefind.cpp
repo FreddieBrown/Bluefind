@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 							device_disappeared,
 							loop,
 							NULL);
-                            
+
 	rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
@@ -161,7 +161,11 @@ static gboolean signalHandler (gpointer data)
         devices.pop_back();
         g_print("%s, %s\n", device.address, device.alias);
     }
-    g_debug("Got SIGINT");
+    rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
+	if(rc) {
+		g_print("Not able to enable the adapter\n");
+		goto fail;
+	}
     g_main_loop_quit((GMainLoop *)data);
     return G_SOURCE_REMOVE;
 }

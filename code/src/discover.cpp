@@ -178,30 +178,6 @@ int Discover::set_discovery_filter(char **argv)
 	return 0;
 }
 
-int Discover::set_discoverable(const gchar *transport){
-    int rc;
-	GVariantBuilder *b = g_variant_builder_new(G_VARIANT_TYPE_VARDICT);
-	g_variant_builder_add(b, "{sv}", "Transport", g_variant_new_string(transport));
-	g_variant_builder_add(b, "{sv}", "DuplicateData", g_variant_new_boolean(FALSE));
-    g_variant_builder_add(b, "{sv}", "Discoverable", g_variant_new_boolean(TRUE));
-
-	GVariant *device_dict = g_variant_builder_end(b);
-	g_variant_builder_unref(b);
-	rc = hci0_call_method("org.bluez.Adapter1", "SetDiscoveryFilter", g_variant_new_tuple(&device_dict, 1), NULL);
-	if(rc) {
-		g_print("Not able to set discovery filter\n");
-		return 1;
-	}
-
-	rc = hci0_call_method("org.bluez.Adapter1", "GetDiscoveryFilters",
-			NULL,
-			get_discovery_filter_cb);
-	if(rc) {
-		g_print("Not able to get discovery filter\n");
-		return 1;
-	}
-	return 0;
-}
 
 /**
  * This method is a callback which is used when finding the discovery filter 
