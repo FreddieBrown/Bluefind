@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	guint iface_removed;
     GVariant* power;
     GError *error=NULL;
-    const gchar* name = "net.noser.bluefind";
+    const gchar* name = "net.noser";
     
 
 	con = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);

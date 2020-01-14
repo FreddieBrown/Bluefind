@@ -40,8 +40,8 @@
 
 static const gchar *introspection_xml =
   "<node>"
-  "  <interface name='org.bluez.Device1'>"
-  "    <annotation name='org.bluez.Annotation' value='OnInterface'/>"
+  "  <interface name='net.noser.Device1'>"
+  "    <annotation name='net.noser.Annotation' value='OnInterface'/>"
   "    <method name='Pair'/>"
   "    <method name='CancelPairing'/>"
   "    <method name='Connect'/>"
@@ -72,7 +72,7 @@ static const gchar *introspection_xml =
   "    <property type='q' name='Appearance' access='read'/>"
   "    <property type='u' name='Class' access='read'/>"
   "  </interface>"
-  "  <interface name='org.bluez.Input1'>"
+  "  <interface name='net.noser.Input1'>"
   "    <property type='s' name='ReconnectMode' access='read'/>"
   "  </interface>"
   "</node>";
