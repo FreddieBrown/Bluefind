@@ -67,6 +67,8 @@ sdp_session_t *register_service()
     // disconnect
     session = sdp_connect( BDADDR_ANY, BDADDR_LOCAL, SDP_RETRY_IF_BUSY );
 
+    //printf("Session: %d\n", session);
+
     printf("Connecting to local SDP server!\n");
 
     sdp_record_register(session, record, 0);
