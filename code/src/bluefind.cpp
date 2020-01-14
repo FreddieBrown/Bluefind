@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
 	loop = g_main_loop_new(NULL, FALSE);
 
-    g_unix_signal_add(SIGINT, signalHandler, loop);
+    // g_unix_signal_add(SIGINT, signalHandler, loop);
 
 	prop_changed = g_dbus_connection_signal_subscribe(con,
 						"org.bluez",
@@ -147,22 +147,22 @@ fail:
  * 
  * @param sig 
  */
-static gboolean signalHandler (gpointer data)
-{
-    g_print(" SIGINT\n");
-    std::cout<<"Devices found: "<<devices.size()<<std::endl;
-    while(!devices.empty()){
-        struct bth_device_info device = devices.back();
-        devices.pop_back();
-        g_print("%s, %s\n", device.address, device.alias);
-    }
-    int rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
-	if(rc) {
-		g_print("Not able to enable the adapter\n");
-	}
-    g_main_loop_quit((GMainLoop *)data);
-    return G_SOURCE_REMOVE;
-}
+// static gboolean signalHandler (gpointer data)
+// {
+//     g_print(" SIGINT\n");
+//     std::cout<<"Devices found: "<<devices.size()<<std::endl;
+//     while(!devices.empty()){
+//         struct bth_device_info device = devices.back();
+//         devices.pop_back();
+//         g_print("%s, %s\n", device.address, device.alias);
+//     }
+//     int rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
+// 	if(rc) {
+// 		g_print("Not able to enable the adapter\n");
+// 	}
+//     g_main_loop_quit((GMainLoop *)data);
+//     return G_SOURCE_REMOVE;
+// }
 
 /**
  * This functions deals with the consequences of not acquiring the 
