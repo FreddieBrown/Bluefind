@@ -1,4 +1,5 @@
 #include "nameClaim.hpp"
+
 guint registration_id;
 /**
  * This functions deals with the consequences of not acquiring the 
@@ -8,8 +9,7 @@ guint registration_id;
  * @param name 
  * @param user_data 
  */
-static void
-on_name_lost(GDBusConnection * connection,
+static void on_name_lost(GDBusConnection * connection,
              const gchar * name,
              gpointer user_data)
 {
@@ -25,8 +25,7 @@ on_name_lost(GDBusConnection * connection,
  * @param name 
  * @param user_data 
  */
-static void
-on_name_acquired (GDBusConnection *connection,
+static void on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
