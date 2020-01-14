@@ -144,7 +144,6 @@ fail:
 static gboolean signalHandler (gpointer data)
 {
     g_print(" SIGINT\n");
-	g_object_unref(con);
     std::cout<<"Devices found: "<<devices.size()<<std::endl;
     while(!devices.empty()){
         struct bth_device_info device = devices.back();
@@ -154,6 +153,7 @@ static gboolean signalHandler (gpointer data)
     g_debug("Got SIGINT");
     g_bus_unown_name (bus_name);
     g_dbus_node_info_unref (introspection_data);
+    g_object_unref(con);
     g_main_loop_quit((GMainLoop *)data);
     // unref bus name
 
