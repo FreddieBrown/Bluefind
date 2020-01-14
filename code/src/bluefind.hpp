@@ -88,7 +88,7 @@ struct bth_device_info{
 };
 
 //bluefind.cpp
-static void sigHandler(int sig);
+static gboolean signalHandler (gpointer data);
 
 // signalSub.cpp
 static void new_device(GDBusConnection *sig,
