@@ -3,7 +3,6 @@
 #include "global.hpp"
 
 #include "discover.hpp"
-#include "introspectable.hpp"
 #include "signalSub.hpp"
 
 static const gchar *introspection_xml =
