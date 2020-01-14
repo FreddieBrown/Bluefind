@@ -1,7 +1,5 @@
 #ifndef BLUEFIND
 #define BLUEFIND
-
-
 #include "discover.hpp"
 #include <stdio.h>
 #include <errno.h>
@@ -36,6 +34,8 @@
 
 #include <dbus/dbus.h>
 
+#include "discover.hpp"
+
 #define BT_ADDRESS_STRING_SIZE 18
 
 extern GDBusConnection *con;
@@ -43,6 +43,7 @@ extern guint bus_name;
 extern guint registration_id;
 extern GDBusNodeInfo *introspection_data;
 extern std::vector<struct bth_device_info> devices;
+extern Discover dis;
 
 static const gchar *introspection_xml =
   "<node>"
@@ -91,8 +92,7 @@ static gboolean signalHandler (gpointer data);
 
 // // Introspectable
 
-static void
-handle_method_call (GDBusConnection       *connection,
+static void handle_method_call (GDBusConnection       *connection,
                     const gchar           *sender,
                     const gchar           *object_path,
                     const gchar           *interface_name,
@@ -101,8 +101,7 @@ handle_method_call (GDBusConnection       *connection,
                     GDBusMethodInvocation *invocation,
                     gpointer               user_data);
 
-static GVariant *
-handle_get_property (GDBusConnection  *connection,
+static GVariant * handle_get_property (GDBusConnection  *connection,
                      const gchar      *sender,
                      const gchar      *object_path,
                      const gchar      *interface_name,
@@ -111,8 +110,7 @@ handle_get_property (GDBusConnection  *connection,
                      gpointer          user_data);
 
 // Not implemented yet
-static gboolean
-handle_set_property (GDBusConnection  *connection,
+static gboolean handle_set_property (GDBusConnection  *connection,
                      const gchar      *sender,
                      const gchar      *object_path,
                      const gchar      *interface_name,
@@ -138,8 +136,6 @@ static const GDBusInterfaceVTable interface_vtable =
 };
 
 // // signalSub
-
-extern Discover dis;
 
 static void new_device(GDBusConnection *sig,
 				const gchar *sender_name,
