@@ -131,7 +131,10 @@ fail:
 	g_dbus_connection_signal_unsubscribe(con, prop_changed);
 	g_dbus_connection_signal_unsubscribe(con, iface_added);
 	g_dbus_connection_signal_unsubscribe(con, iface_removed);
-	g_object_unref(con);
+	g_bus_unown_name (bus_name);
+    g_dbus_node_info_unref (introspection_data);
+    g_object_unref(con);
+    g_main_loop_quit((GMainLoop *)data);
 	return 0;
 }
 /**
@@ -151,12 +154,6 @@ static gboolean signalHandler (gpointer data)
         g_print("%s, %s\n", device.address, device.alias);
     }
     g_debug("Got SIGINT");
-    g_bus_unown_name (bus_name);
-    g_dbus_node_info_unref (introspection_data);
-    g_object_unref(con);
-    g_main_loop_quit((GMainLoop *)data);
-    // unref bus name
-
     return G_SOURCE_REMOVE;
 }
 
