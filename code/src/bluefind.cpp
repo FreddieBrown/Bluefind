@@ -157,7 +157,7 @@ static void signalHandler (int sig)
         devices.pop_back();
         g_print("%s, %s\n", device.address, device.alias);
     }
-    exit(1)
+    exit(1);
 }
 
 /**
