@@ -433,6 +433,14 @@ static void signal_adapter_changed(GDBusConnection *conn,
 			}
 			g_print("Adapter scan \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
 		}
+        if(!g_strcmp0(key, "Discoverable")) {
+			if(!g_variant_is_of_type(value, G_VARIANT_TYPE_BOOLEAN)) {
+				g_print("Invalid argument type for %s: %s != %s", key,
+						g_variant_get_type_string(value), "b");
+				goto done;
+			}
+			g_print("Discoverable \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
+		}
         else{
             dis.property_value(key, value);
         }
