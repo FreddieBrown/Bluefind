@@ -152,10 +152,11 @@ static gboolean signalHandler (gpointer data)
         g_print("%s, %s\n", device.address, device.alias);
     }
     g_debug("Got SIGINT");
+    g_bus_unown_name (bus_name);
+    g_dbus_node_info_unref (introspection_data);
     g_main_loop_quit((GMainLoop *)data);
     // unref bus name
-    // g_bus_unown_name (bus_name);
-    g_dbus_node_info_unref (introspection_data);
+
     return G_SOURCE_REMOVE;
 }
 
