@@ -1,5 +1,5 @@
-#ifndef BLUEFIND
-#define BLUEFIND
+#ifndef GLOBAL
+#define GLOBAL
 #include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
