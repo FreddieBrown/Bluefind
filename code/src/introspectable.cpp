@@ -1,4 +1,4 @@
-#include "introspectable.hpp"
+#include "bluefind.hpp"
 
 guint registration_id;
 /**
