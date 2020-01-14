@@ -39,13 +39,13 @@ int main(int argc, char **argv)
     introspection_data = g_dbus_node_info_new_for_xml (introspection_xml, NULL);
 
     // Claim name on BUS
-    bus_name = g_bus_own_name_on_connection (con,
-                              name,
-                              G_BUS_NAME_OWNER_FLAGS_NONE,
-                              on_name_acquired,
-                              on_name_lost,
-                              NULL,
-                              NULL);
+    // bus_name = g_bus_own_name_on_connection (con,
+    //                           name,
+    //                           G_BUS_NAME_OWNER_FLAGS_NONE,
+    //                           on_name_acquired,
+    //                           on_name_lost,
+    //                           NULL,
+    //                           NULL);
 
 	loop = g_main_loop_new(NULL, FALSE);
 
@@ -146,7 +146,7 @@ static gboolean signalHandler (gpointer data)
     g_debug("Got SIGINT");
     g_main_loop_quit((GMainLoop *)data);
     // unref bus name
-    g_bus_unown_name (bus_name);
+    // g_bus_unown_name (bus_name);
     g_dbus_node_info_unref (introspection_data);
     return G_SOURCE_REMOVE;
 }
