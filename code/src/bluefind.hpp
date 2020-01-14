@@ -89,7 +89,7 @@ struct bth_device_info{
 
 static gboolean signalHandler (gpointer data);
 
-// Introspectable
+// // Introspectable
 
 static void
 handle_method_call (GDBusConnection       *connection,
@@ -137,7 +137,7 @@ static const GDBusInterfaceVTable interface_vtable =
   handle_set_property
 };
 
-// signalSub
+// // signalSub
 
 extern Discover dis;
 
