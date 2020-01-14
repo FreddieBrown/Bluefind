@@ -53,7 +53,6 @@ int main(int argc, char **argv)
 
 	loop = g_main_loop_new(NULL, FALSE);
 
-    // g_unix_signal_add(SIGINT, signalHandler, loop);
     signal(SIGINT, signalHandler);
 
 	prop_changed = g_dbus_connection_signal_subscribe(con,

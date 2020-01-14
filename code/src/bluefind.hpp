@@ -28,6 +28,10 @@
 #include <string>
 #include <vector>
 
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
+
 
 #include <glib.h>
 #include <gio/gio.h>

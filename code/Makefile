@@ -26,7 +26,7 @@
 
 
 CXX=g++
-CFLAGS= -g -O3 `pkg-config --cflags --libs gio-2.0 dbus-1 glib-2.0` \
+CFLAGS= -g -O3 `pkg-config --cflags --libs gio-2.0 dbus-1 glib-2.0` -lbluetooth\
        -Wno-unused-function
 
 
