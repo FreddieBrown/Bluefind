@@ -13,3 +13,6 @@ forms/
 */obj/
 code/main*
 .vscode
+code/bluefind*
+code/old_code/obj/
+code/old_code/main*
