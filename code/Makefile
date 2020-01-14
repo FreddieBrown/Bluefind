@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -std=c99 `pkg-config --cflags --libs gio-2.0 dbus-1 glib-2.0`
+CFLAGS := `pkg-config --cflags --libs gio-2.0 dbus-1 glib-2.0`
 TARGET := bluefind
 
 SRCDIR := src

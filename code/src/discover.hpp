@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "bluefind.hpp"
 
 #ifndef DISCOVER
 #define DISCOVER
