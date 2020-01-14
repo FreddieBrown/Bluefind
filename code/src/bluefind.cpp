@@ -156,7 +156,7 @@ static gboolean signalHandler (gpointer data)
         devices.pop_back();
         g_print("%s, %s\n", device.address, device.alias);
     }
-    rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
+    int rc = dis.adapter_set_property("Powered", g_variant_new("b", TRUE));
 	if(rc) {
 		g_print("Not able to enable the adapter\n");
 		goto fail;
