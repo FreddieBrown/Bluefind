@@ -4,7 +4,6 @@
 
 #include "discover.hpp"
 #include "introspectable.hpp"
-#include "nameClaim.hpp"
 #include "signalSub.hpp"
 
 static const gchar *introspection_xml =
