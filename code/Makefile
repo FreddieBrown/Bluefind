@@ -27,7 +27,7 @@
 
 CXX=g++
 CFLAGS= -g -O3 `pkg-config --cflags --libs gio-2.0 dbus-1 glib-2.0` \
-       -Wno-unused-function -Wno-unknown-warning-option -o bluefind
+       -Wno-unused-function -o bluefind
 
 
 build: src/*.cpp
