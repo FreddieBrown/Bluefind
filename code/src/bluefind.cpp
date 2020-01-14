@@ -440,9 +440,6 @@ static void signal_adapter_changed(GDBusConnection *conn,
 			}
 			g_print("Discoverable \"%s\"\n", g_variant_get_boolean(value) ? "on" : "off");
 		}
-        else{
-            dis.property_value(key, value);
-        }
 	}
 done:
 	if(properties != NULL)
