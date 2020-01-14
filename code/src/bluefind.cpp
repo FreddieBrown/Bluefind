@@ -134,7 +134,7 @@ fail:
 	g_bus_unown_name (bus_name);
     g_dbus_node_info_unref (introspection_data);
     g_object_unref(con);
-    g_main_loop_quit((GMainLoop *)data);
+    g_main_loop_quit((GMainLoop *)loop);
 	return 0;
 }
 /**
