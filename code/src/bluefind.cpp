@@ -51,10 +51,6 @@ int main(int argc, char **argv)
                               NULL,
                               NULL);
 
-    if(bus_name > 0){
-        g_print("bus name not registered\n");
-    }
-
 	loop = g_main_loop_new(NULL, FALSE);
 
     g_unix_signal_add(SIGINT, signalHandler, loop);
@@ -105,6 +101,12 @@ int main(int argc, char **argv)
 		if(rc)
 			goto fail;
 	}
+    else if(argc > 2){
+        rc = dis.set_discoverable(argv[1]);
+        if(rc)
+            goto fail;
+    }
+
 
 	rc =dis.hci0_call_method("org.bluez.Adapter1", "StartDiscovery", NULL, NULL);
 	if(rc) {
