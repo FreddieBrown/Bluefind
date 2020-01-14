@@ -163,7 +163,7 @@ static void on_name_lost(GDBusConnection * connection,
              const gchar * name,
              gpointer user_data)
 {
-    exit(1);
+    g_print("Name not acquired\n");
 }
 
 /**
