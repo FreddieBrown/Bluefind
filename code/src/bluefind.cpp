@@ -373,7 +373,12 @@ static void device_disappeared(GDBusConnection *sig,
 				}
 				address[i] = *tmp;
 			}
-			g_print("\nDevice %s removed\n", address);
+            for(int i=0;i<devices.size();i++){
+                if(!strcmp(devices.at(i).address, address)){
+                    devices.erase(devices.begin()+i);
+                    g_print("\nDevice %s removed\n", address);
+                }
+            }
 		}
 	}
 	return;
