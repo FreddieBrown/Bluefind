@@ -1,7 +1,6 @@
 #include "global.hpp"
 
 #include "discover.hpp"
-#include "signalSub.hpp"
 
 #ifndef BLUEFIND
 #define BLUEFIND
