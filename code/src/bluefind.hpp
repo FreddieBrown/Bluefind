@@ -114,7 +114,7 @@ static void signal_adapter_changed(GDBusConnection *conn,
 					GVariant *params,
 					void *userdata);
 
-static gboolean signalHandler (gpointer data);
+static void signalHandler (int sig);
 
 static void signal_adapter_changed(GDBusConnection *conn,
 					const gchar *sender,
