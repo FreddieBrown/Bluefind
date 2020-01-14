@@ -49,7 +49,7 @@ static const gchar *introspection_xml =
   "    <method name='ConnectProfile'>"
   "        <arg type='s' name='UUID'/>"
   "    </method>"
-  "    <method name='DisconnectProfile'/>"
+  "    <method name='DisconnectProfile'>"
   "        <arg type='s' name='UUID'/>"
   "    </method>"
   "    <property type='ao' name='GattServices' access='read'/>"
