@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 	guint iface_added;
 	guint iface_removed;
     GVariant* power;
+    GError *error=NULL;
     const gchar* name = "net.noser.bluefind";
     
 
@@ -36,9 +37,9 @@ int main(int argc, char **argv)
 	}
 
     // Introspection data
-    introspection_data = g_dbus_node_info_new_for_xml (introspection_xml, NULL);
+    introspection_data = g_dbus_node_info_new_for_xml (introspection_xml, &error);
     if(introspection_data == NULL){
-        g_print("Introspection data not generated\n");
+        g_warning ("Error %s", error->message);
     }
 
     // Claim name on BUS
