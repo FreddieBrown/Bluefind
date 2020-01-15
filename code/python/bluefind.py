@@ -63,9 +63,6 @@ def properties_changed(interface, changed, invalidated, path):
 
 	if path in devices:
 		dev = devices[path]
-
-		if compact and skip_dev(dev, changed):
-			return
 		devices[path].update(changed.items())
 	else:
 		devices[path] = changed
