@@ -70,10 +70,6 @@ def properties_changed(interface, changed, invalidated, path):
 		address = devices[path]["Address"]
 	else:
 		address = "<unknown>"
-
-	if compact:
-		print_compact(address, devices[path])
-	else:
 		print_info(address, devices[path])
 
 if __name__ == '__main__':
