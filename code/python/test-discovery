@@ -19,8 +19,8 @@ def print_compact(address, properties):
 	address = "<unknown>"
 
 	for key, value in properties.items():
-                if(type(value) == dbus.String):
-                        value = str(value)
+		if(type(value) == dbus.String):
+			value = str(value)
 		if (key == "Name"):
 			name = value
 		elif (key == "Address"):
@@ -40,8 +40,8 @@ def print_normal(address, properties):
 
 	for key in properties.keys():
 		value = properties[key]
-                if(type(value) == dbus.String):
-                        value = str(value)
+		if(type(value) == dbus.String):
+			value = str(value)
 		if (key == "Class"):
 			print("    %s = 0x%06x" % (key, value))
 		else:

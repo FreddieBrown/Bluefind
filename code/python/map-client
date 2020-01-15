@@ -22,23 +22,23 @@ MESSAGE_INTERFACE = 'org.bluez.obex.Message1'
 TRANSFER_INTERFACE = 'org.bluez.obex.Transfer1'
 
 def unwrap(x):
-    """Hack to unwrap D-Bus values, so that they're easier to read when
-    printed. Taken from d-feet """
+	"""Hack to unwrap D-Bus values, so that they're easier to read when
+	printed. Taken from d-feet """
 
-    if isinstance(x, list):
-        return map(unwrap, x)
+	if isinstance(x, list):
+		return map(unwrap, x)
 
-    if isinstance(x, tuple):
-        return tuple(map(unwrap, x))
+	if isinstance(x, tuple):
+		return tuple(map(unwrap, x))
 
-    if isinstance(x, dict):
-        return dict([(unwrap(k), unwrap(v)) for k, v in x.iteritems()])
+	if isinstance(x, dict):
+		return dict([(unwrap(k), unwrap(v)) for k, v in x.items()])
 
-    for t in [unicode, str, long, int, float, bool]:
-        if isinstance(x, t):
-            return t(x)
+	for t in [unicode, str, long, int, float, bool]:
+		if isinstance(x, t):
+			return t(x)
 
-    return x
+	return x
 
 def parse_options():
 	parser.add_option("-d", "--device", dest="device",

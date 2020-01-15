@@ -99,7 +99,7 @@ class InputHandler:
 			print('\t', cmd, self.commands[cmd], sep='')
 
 		print("\nUse python syntax to pass arguments to available methods.\n" \
-                "E.g.: PropertiesChanged({'Metadata' : {'Title': 'My title', \
+				"E.g.: PropertiesChanged({'Metadata' : {'Title': 'My title', \
 		'Album': 'my album' }})")
 		self.prompt()
 

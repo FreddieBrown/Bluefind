@@ -792,7 +792,7 @@ class Menu():
 			return
 		if len(cmds) > 1:
 			for cmd in cmds:
-			     print(set_cyan(cmd + '?'))
+				print(set_cyan(cmd + '?'))
 			return
 
 		self.menu.get(cmds[0]).func()
