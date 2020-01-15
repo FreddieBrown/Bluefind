@@ -14,7 +14,6 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <signal.h>
-#include <glib-unix.h>
 
 #include <algorithm>
 #include <cassert>
