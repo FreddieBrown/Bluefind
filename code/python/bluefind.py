@@ -4,11 +4,8 @@ from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
-import dbus.mainloop.glib
-try:
-  from gi.repository import GObject
-except ImportError:
-  import gobject as GObject
+from dbus.mainloop.glib import DBusGMainLoop
+from gi.repository import GLib
 import bluezutils
 
 compact = False
@@ -178,5 +175,5 @@ if __name__ == '__main__':
 	adapter.SetDiscoveryFilter(scan_filter)
 	adapter.StartDiscovery()
 
-	mainloop = Glib.MainLoop()
+	mainloop = GLib.MainLoop()
 	mainloop.run()
