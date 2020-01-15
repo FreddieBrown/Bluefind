@@ -29,15 +29,6 @@ def print_info(address, properties):
 
 	properties["Logged"] = True
 
-def skip_dev(old_dev, new_dev):
-	if not "Logged" in old_dev:
-		return False
-	if "Name" in old_dev:
-		return True
-	if not "Name" in new_dev:
-		return True
-	return False
-
 def interfaces_added(path, interfaces):
 	properties = interfaces["org.bluez.Device1"]
 	if not properties:

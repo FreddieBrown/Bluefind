@@ -6,6 +6,7 @@ import sys
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
+
 import bluezutils
 import discovery
 
@@ -37,11 +38,11 @@ if __name__ == '__main__':
 	adapter = bluezutils.find_adapter(options.dev_id)
 
 
-	bus.add_signal_receiver(interfaces_added,
+	bus.add_signal_receiver(discovery.interfaces_added,
 			dbus_interface = "org.freedesktop.DBus.ObjectManager",
 			signal_name = "InterfacesAdded")
 
-	bus.add_signal_receiver(properties_changed,
+	bus.add_signal_receiver(discovery.properties_changed,
 			dbus_interface = "org.freedesktop.DBus.Properties",
 			signal_name = "PropertiesChanged",
 			arg0 = "org.bluez.Device1",
