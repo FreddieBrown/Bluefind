@@ -22,7 +22,7 @@ def print_info(address, properties):
 		elif (key == "UUIDs"):
 			# Print the UUIDs, one below the other
 			for uuid_string in value:
-				print("    %s = %s" % ("UUID", value))    
+				print("    %s = %s" % ("UUID", str(uuid_string))    
 		else:
 			print("    %s = %s" % (key, value))
 
