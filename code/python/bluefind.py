@@ -8,31 +8,9 @@ from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 import bluezutils
 
-compact = False
 devices = {}
 
-def print_compact(address, properties):
-	name = ""
-	address = "<unknown>"
-
-	for key, value in properties.items():
-		if(type(value) == dbus.String):
-			value = str(value)
-		if (key == "Name"):
-			name = value
-		elif (key == "Address"):
-			address = value
-
-	if "Logged" in properties:
-		flag = "*"
-	else:
-		flag = " "
-
-	print("%s%s %s" % (flag, address, name))
-
-	properties["Logged"] = True
-
-def print_normal(address, properties):
+def print_info(address, properties):
 	print("[ " + address + " ]")
 
 	for key in properties.keys():
@@ -41,6 +19,10 @@ def print_normal(address, properties):
 			value = str(value)
 		if (key == "Class"):
 			print("    %s = 0x%06x" % (key, value))
+        elif (key == "UUIDs"):
+            # Print the UUIDs, one below the other
+            for uuid_string in value:
+                print("    %s = %s" % ("UUID", value))    
 		else:
 			print("    %s = %s" % (key, value))
 
@@ -64,9 +46,6 @@ def interfaces_added(path, interfaces):
 
 	if path in devices:
 		dev = devices[path]
-
-		if compact and skip_dev(dev, properties):
-			return
 		devices[path].update(properties.items())
 	else:
 		devices[path] = properties
@@ -76,10 +55,7 @@ def interfaces_added(path, interfaces):
 	else:
 		address = "<unknown>"
 
-	if compact:
-		print_compact(address, devices[path])
-	else:
-		print_normal(address, devices[path])
+	print_info(address, devices[path])
 
 def properties_changed(interface, changed, invalidated, path):
 	if interface != "org.bluez.Device1":
@@ -102,7 +78,7 @@ def properties_changed(interface, changed, invalidated, path):
 	if compact:
 		print_compact(address, devices[path])
 	else:
-		print_normal(address, devices[path])
+		print_info(address, devices[path])
 
 if __name__ == '__main__':
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
@@ -124,8 +100,6 @@ if __name__ == '__main__':
 			make_option("-t", "--transport", action="store",
 					type="string", dest="transport",
 					help="Type of scan to run (le/bredr/auto)"),
-			make_option("-c", "--compact",
-					action="store_true", dest="compact"),
 			]
 	parser = OptionParser(option_list=option_list)
 
@@ -133,8 +107,6 @@ if __name__ == '__main__':
 
 	adapter = bluezutils.find_adapter(options.dev_id)
 
-	if options.compact:
-		compact = True;
 
 	bus.add_signal_receiver(interfaces_added,
 			dbus_interface = "org.freedesktop.DBus.ObjectManager",
