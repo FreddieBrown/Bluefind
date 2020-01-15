@@ -22,13 +22,13 @@ def print_info(address, properties):
 		elif key == "UUIDs":
 			for uuid_string in value:
 				print("    %s = %s" % ("UUID", str(uuid_string)))
-        elif key = "ManufacturerData":
-            for key, arr in value.items():
-                print("    %s = %s" % ("ManufacturerData Key", str(key)))
-                ManuData = "    ManufacturerData Value = "
-                for mandata in arr:
-                    ManuData += str(mandata+" ")
-                print(ManuData)
+		elif key = "ManufacturerData":
+			for key, arr in value.items():
+				print("    %s = %s" % ("ManufacturerData Key", str(key)))
+				ManuData = "    ManufacturerData Value = "
+				for mandata in arr:
+					ManuData += str(mandata+" ")
+				print(ManuData)
 
 		else:
 			print("    %s = %s" % (key, value))
