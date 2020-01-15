@@ -53,7 +53,7 @@ if __name__ == '__main__':
 	objects = om.GetManagedObjects()
 	for path, interfaces in objects.items():
 		if "org.bluez.Device1" in interfaces:
-			devices[path] = interfaces["org.bluez.Device1"]
+			discovery.devices[path] = interfaces["org.bluez.Device1"]
 
 	scan_filter = dict()
 
