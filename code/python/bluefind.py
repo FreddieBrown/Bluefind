@@ -18,13 +18,13 @@ def print_info(address, properties):
 		if type(value) == dbus.String:
 			value = str(value)
 		if key == "Class":
-			print("    %s = 0x%06x" % (key, value)) 	   
-		else:
-			if key == "UUIDs":
+			print("    %s = 0x%06x" % (key, value))
+			elif key == "UUIDs":
+				# Print the UUIDs, one below the other
 				for uuid_string in value:
-					print("    %s = %s" % ("UUID", str(uuid_string))
-			else:
-				print("    %s = %s" % (key, value))
+					print("    %s = %s" % ("UUID", str(uuid_string))) 	   
+		else:
+			print("    %s = %s" % (key, value))
 
 	print()
 
