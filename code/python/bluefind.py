@@ -19,10 +19,10 @@ def print_info(address, properties):
 			value = str(value)
 		if (key == "Class"):
 			print("    %s = 0x%06x" % (key, value))
-        elif (key == "UUIDs"):
-            # Print the UUIDs, one below the other
-            for uuid_string in value:
-                print("    %s = %s" % ("UUID", value))    
+		elif (key == "UUIDs"):
+			# Print the UUIDs, one below the other
+			for uuid_string in value:
+				print("    %s = %s" % ("UUID", value))    
 		else:
 			print("    %s = %s" % (key, value))
 
