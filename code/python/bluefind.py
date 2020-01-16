@@ -7,8 +7,7 @@ import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
-import bluezutils
-import discovery
+import bluezutils, discovery, adapter_controls
 
 if __name__ == '__main__':
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
@@ -36,7 +35,8 @@ if __name__ == '__main__':
 	(options, args) = parser.parse_args()
 
 	adapter = bluezutils.find_adapter(options.dev_id)
-
+    adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter_path.object_path),
+					"org.freedesktop.DBus.Properties")
 
 	bus.add_signal_receiver(discovery.interfaces_added,
 			dbus_interface = "org.freedesktop.DBus.ObjectManager",
@@ -47,6 +47,8 @@ if __name__ == '__main__':
 			signal_name = "PropertiesChanged",
 			arg0 = "org.bluez.Device1",
 			path_keyword = "path")
+
+    adapter_controls.properties(adapter_props, "Discoverable", "on")    
 
 	om = dbus.Interface(bus.get_object("org.bluez", "/"),
 				"org.freedesktop.DBus.ObjectManager")
