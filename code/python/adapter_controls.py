@@ -19,4 +19,5 @@ def properties(adapter_p, prop, onoff):
         status = dbus.Boolean(0)
     else: 
         status = onoff
+    print("\t%s = %s", prop, onoff)
     adapter_p.Set("org.bluez.Adapter1", prop, status)
