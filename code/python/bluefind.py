@@ -35,7 +35,7 @@ if __name__ == '__main__':
 	(options, args) = parser.parse_args()
 
 	adapter = bluezutils.find_adapter(options.dev_id)
-    adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter_path.object_path),
+	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter_path.object_path),
 					"org.freedesktop.DBus.Properties")
 
 	bus.add_signal_receiver(discovery.interfaces_added,
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 			arg0 = "org.bluez.Device1",
 			path_keyword = "path")
 
-    adapter_controls.properties(adapter_props, "Discoverable", "on")    
+	adapter_controls.properties(adapter_props, "Discoverable", "on")    
 
 	om = dbus.Interface(bus.get_object("org.bluez", "/"),
 				"org.freedesktop.DBus.ObjectManager")
