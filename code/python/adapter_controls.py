@@ -13,11 +13,11 @@ from gi.repository import GLib
 import bluezutils
 
 def properties(adapter_p, prop, onoff):
-    if onoff == "on":
-        status = dbus.Boolean(1)
-    elif onoff == "off": 
-        status = dbus.Boolean(0)
-    else: 
-        status = onoff
-    print("\t%s = %s", prop, onoff)
-    adapter_p.Set("org.bluez.Adapter1", prop, status)
+	if onoff == "on":
+		status = dbus.Boolean(1)
+	elif onoff == "off": 
+		status = dbus.Boolean(0)
+	else: 
+		status = onoff
+	print("\t%s = %s" % (prop, onoff))
+	adapter_p.Set("org.bluez.Adapter1", prop, status)
