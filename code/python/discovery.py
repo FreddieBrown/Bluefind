@@ -55,11 +55,7 @@ def interfaces_added(path, interfaces):
 	print_info(address, devices[path])
 
 def properties_changed(interface, changed, invalidated, path):
-	print("Interface: "+interface)
-	if interface == "org.bluez.Adapter1":
-		for key, val in changed.items():
-			print("\n\t%s = %s\n", key, val)
-	elif interface != "org.bluez.Device1":
+	if interface != "org.bluez.Device1":
 		return
 
 	if path in devices:
