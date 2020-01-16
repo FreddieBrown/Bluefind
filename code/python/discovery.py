@@ -27,7 +27,7 @@ def print_info(address, properties):
 				print("    %s = %s" % ("ManufacturerData Key", str(key)))
 				ManuData = "    ManufacturerData Value = "
 				for mandata in arr:
-					ManuData += str(mandata, 'utf-8')+" "
+					ManuData += str(int(mandata))+" "
 				print(ManuData)
 		else:
 			print("    %s = %s" % (key, value))
