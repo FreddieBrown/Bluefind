@@ -88,7 +88,7 @@ class Advertisment(dbus.service.Object):
 			self.service_uuids = []
 		self.service_uuids.append(uuid)
 	
-	def.add_solicit_uuid(self, uuid):
+	def add_solicit_uuid(self, uuid):
 		if self.solicit_uuids is None:
 			self.solicit_uuids = []
 		self.solicit_uuids.append(uuid)
@@ -144,7 +144,7 @@ def register_ad_cb():
 
 def register_ad_error_cb(error):
 	print('Failed to register advertisement: ' + str(error))
-	
+
 
 	
 
