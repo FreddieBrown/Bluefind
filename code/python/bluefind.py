@@ -79,5 +79,13 @@ if __name__ == '__main__':
 	adapter.SetDiscoveryFilter(scan_filter)
 	adapter.StartDiscovery()
 
+    ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, adapter), LE_ADVERTISING_MANAGER_IFACE)
+
+	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
+
+    ad_manager.RegisterAdvertisement(em_advertisement.get_path(), {},
+									reply_handler=advertising.register_ad_cb,
+									error_handler=advertising.register_ad_error_cb)
+
 	mainloop = GLib.MainLoop()
 	mainloop.run()
