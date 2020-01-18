@@ -14,6 +14,7 @@ from gi.repository import GLib
 
 import bluezutils
 
+BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 DBUS_OM_IFACE = 'org.freedesktop.DBus.ObjectManager'
