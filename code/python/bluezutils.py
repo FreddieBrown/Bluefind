@@ -45,3 +45,13 @@ def find_device_in_objects(objects, device_address, adapter_pattern=None):
 			return dbus.Interface(obj, DEVICE_INTERFACE)
 
 	raise Exception("Bluetooth device not found")
+
+def properties(adapter_p, prop, onoff):
+	if onoff == "on":
+		status = dbus.Boolean(1)
+	elif onoff == "off": 
+		status = dbus.Boolean(0)
+	else: 
+		status = onoff
+	print("\t%s = %s" % (prop, onoff))
+	adapter_p.Set("org.bluez.Adapter1", prop, status)
