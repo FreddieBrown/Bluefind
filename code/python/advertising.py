@@ -113,7 +113,7 @@ class Advertisement(dbus.service.Object):
 	def add_data(self, adtype, data):
 		if self.data is None:
 			self.data = dbus.Dictionary({}, signature='yv')
-		self.data[ad_type] = dbus.Array(data, signature='y')
+		self.data[adtype] = dbus.Array(data, signature='y')
 	
 	@dbus.service.method(DBUS_PROP_IFACE, in_signature='s', out_signature='a{sv}')
 	def GetAll(self, interface):
