@@ -3,6 +3,9 @@ import dbus
 SERVICE_NAME = "org.bluez"
 ADAPTER_INTERFACE = SERVICE_NAME + ".Adapter1"
 DEVICE_INTERFACE = SERVICE_NAME + ".Device1"
+BLUEZ_SERVICE_NAME = 'org.bluez'
+DBUS_OM_IFACE = 'org.freedesktop.DBus.ObjectManager'
+LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 
 def get_managed_objects():
 	bus = dbus.SystemBus()
