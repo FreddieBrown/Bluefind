@@ -82,6 +82,9 @@ if __name__ == '__main__':
 	adapter.SetDiscoveryFilter(scan_filter)
 	adapter.StartDiscovery()
 
+	print(adapter)
+	print(BLUEZ_SERVICE_NAME)
+
 	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, adapter), LE_ADVERTISING_MANAGER_IFACE)
 
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
