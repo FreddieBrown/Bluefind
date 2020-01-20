@@ -13,6 +13,17 @@ def get_managed_objects():
 def find_adapter(pattern=None):
 	return find_adapter_in_objects(get_managed_objects(), pattern)
 
+def find_adapter_path(bus):
+	remote_om = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, '/'),
+							   DBUS_OM_IFACE)
+	objects = remote_om.GetManagedObjects()
+
+	for o, props in objects.items():
+		if LE_ADVERTISING_MANAGER_IFACE in props:
+			return o
+
+	return None
+
 def find_adapter_in_objects(objects, pattern=None):
 	bus = dbus.SystemBus()
 	for path, ifaces in objects.items():
