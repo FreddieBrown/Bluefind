@@ -9,6 +9,9 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server
 
+BLUEZ_SERVICE_NAME = 'org.bluez'
+LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
+
 if __name__ == '__main__':
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
@@ -79,7 +82,7 @@ if __name__ == '__main__':
 	adapter.SetDiscoveryFilter(scan_filter)
 	adapter.StartDiscovery()
 
-	ad_manager = dbus.Interface(bus.get_object(advertising.BLUEZ_SERVICE_NAME, adapter), advertising.LE_ADVERTISING_MANAGER_IFACE)
+	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, adapter), LE_ADVERTISING_MANAGER_IFACE)
 
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
