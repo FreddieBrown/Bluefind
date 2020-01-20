@@ -39,7 +39,7 @@ class InvalidValueLengthException(dbus.exceptions.DBusException):
 class FailedException(dbus.exceptions.DBusException):
 	_dbus_error_name = 'org.bluez.Error.Failed'
 
-class Advertisment(dbus.service.Object):
+class Advertisement(dbus.service.Object):
 	PATH_BASE = "org/bluez/bluefind/advertisement"
 
 	def __init__(self, bus, index, adtype):
