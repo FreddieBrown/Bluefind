@@ -129,9 +129,9 @@ class Advertisment(dbus.service.Object):
 
 # Write class for registering an advert for service
 
-class EmergencyAdvertisement(Advertisment):
+class EmergencyAdvertisement(Advertisement):
 	def __init__(self, bus, index):
-		Advertisment.__init__(bus, index, 'peripheral')
+		Advertisement.__init__(self, bus, index, 'peripheral')
 		# Change this when UUID is finalised
 		self.add_service_uuid('180D')
 		self.add_manufacturer_data(0xffff, [0x00, 0x01, 0x02, 0x03, 0x04])
