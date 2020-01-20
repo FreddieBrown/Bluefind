@@ -19,6 +19,7 @@ LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 DBUS_OM_IFACE = 'org.freedesktop.DBus.ObjectManager'
 DBUS_PROP_IFACE = 'org.freedesktop.DBus.Properties'
+PATH_BASE = 'org/bluez/bluefind/advertisement'
 
 class InvalidArgsException(dbus.exceptions.DBusException):
 	_dbus_error_name = 'org.freedesktop.DBus.Error.InvalidArgs'
@@ -40,7 +41,6 @@ class FailedException(dbus.exceptions.DBusException):
 	_dbus_error_name = 'org.bluez.Error.Failed'
 
 class Advertisement(dbus.service.Object):
-	PATH_BASE = "org/bluez/bluefind/advertisement"
 
 	def __init__(self, bus, index, adtype):
 		self.path = PATH_BASE + str(index)
