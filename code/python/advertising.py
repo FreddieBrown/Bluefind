@@ -19,7 +19,7 @@ LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 DBUS_OM_IFACE = 'org.freedesktop.DBus.ObjectManager'
 DBUS_PROP_IFACE = 'org.freedesktop.DBus.Properties'
-PATH_BASE = 'org/bluez/bluefind/advertisement'
+PATH_BASE = '/org/bluez/bluefind/advertisement'
 
 class InvalidArgsException(dbus.exceptions.DBusException):
 	_dbus_error_name = 'org.freedesktop.DBus.Error.InvalidArgs'
