@@ -32,7 +32,7 @@ def discoStart(bus):
 			make_option("-t", "--transport", action="store",
 					type="string", dest="transport",
 					help="Type of scan to run (le/bredr/auto)"),
-			make_option("-ty", "--type", action="store",
+			make_option("-T", "--type", action="store",
 					type="string", dest="type", 
 					help = "What sort of startup do you want?: Client (c) or Server (s)"),
 			]
