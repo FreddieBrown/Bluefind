@@ -9,11 +9,14 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server
 
+startup = "s"
+
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 
 def discoStart(bus):
+	# List of options for discovery filter
 	option_list = [
 			make_option("-i", "--device", action="store",
 					type="string", dest="dev_id"),
@@ -29,6 +32,9 @@ def discoStart(bus):
 			make_option("-t", "--transport", action="store",
 					type="string", dest="transport",
 					help="Type of scan to run (le/bredr/auto)"),
+			make_option("-ty", "--type", action="store",
+					type="string", dest="type", 
+					help = "What sort of startup do you want?: Client (c) or Server (s)"),
 			]
 	parser = OptionParser(option_list=option_list)
 
@@ -83,6 +89,9 @@ def discoStart(bus):
 
 	if options.transport:
 		scan_filter.update({ "Transport": options.transport })
+	
+	if options.type:
+		startup = options.type.lower()
 
 	# Sets the filter for device discovery
 	adapter.SetDiscoveryFilter(scan_filter)
@@ -103,17 +112,17 @@ def server(bus):
 
 
 
-# if __name__ == '__main__':
-def main():
+if __name__ == '__main__':
+
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
 	bus = dbus.SystemBus()
 
 	discoStart(bus)
-	
-	server(bus)
-	
-
+	if startup == "c" or startup == "client":
+		pass
+	else:
+		server(bus)
 
 	mainloop = GLib.MainLoop()
 	mainloop.run()
