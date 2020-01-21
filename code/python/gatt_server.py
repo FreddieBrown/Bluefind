@@ -125,7 +125,7 @@ class Characteristic(dbus.service.Object):
 		self.flag = flag
 		self.service = service
 		self.uuid = uuid
-		dbus.service.Object.__uuid__(self, bus, self.path)
+		dbus.service.Object.__init__(self, bus, self.path)
 	
 	def get_properties(self):
 		return {
