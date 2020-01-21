@@ -46,17 +46,19 @@ class Application(dbus.service.Object):
 	
 	@dbus.service.method(DBUS_OM_IFACE, out_signature='a{oa{sa{sv}}}')
 	def GetManagedObjects(self):
-		objs = {}
+		response = {}
+		print('GetManagedObjects')
+
 		for service in self.services:
-			objs[service.get_path()] = service.get_properties()
-			chars = service.get_characteristics()
-			for char in chars:
-				objs[char.get_path()] = char.get_properties()
-				descs = char.get_descriptions()
+			response[service.get_path()] = service.get_properties()
+			chrcs = service.get_characteristics()
+			for chrc in chrcs:
+				response[chrc.get_path()] = chrc.get_properties()
+				descs = chrc.get_descriptors()
 				for desc in descs:
-					objs[desc.get_path()] = desc.get_properties()
-		
-		return objs
+					response[desc.get_path()] = desc.get_properties()
+
+		return response
 	
 
 """
