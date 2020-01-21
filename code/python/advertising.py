@@ -12,7 +12,11 @@ import threading
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
-import bluezutils
+import bluezutils, exceptions
+
+"""
+Module which deals with advertising services which the application offers.
+"""
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
@@ -21,25 +25,13 @@ DBUS_OM_IFACE = 'org.freedesktop.DBus.ObjectManager'
 DBUS_PROP_IFACE = 'org.freedesktop.DBus.Properties'
 AD_PATH_BASE = '/org/bluez/bluefind/advertisement'
 
-class InvalidArgsException(dbus.exceptions.DBusException):
-	_dbus_error_name = 'org.freedesktop.DBus.Error.InvalidArgs'
-
-
-class NotSupportedException(dbus.exceptions.DBusException):
-	_dbus_error_name = 'org.bluez.Error.NotSupported'
-
-
-class NotPermittedException(dbus.exceptions.DBusException):
-	_dbus_error_name = 'org.bluez.Error.NotPermitted'
-
-
-class InvalidValueLengthException(dbus.exceptions.DBusException):
-	_dbus_error_name = 'org.bluez.Error.InvalidValueLength'
-
-
-class FailedException(dbus.exceptions.DBusException):
-	_dbus_error_name = 'org.bluez.Error.Failed'
-
+"""
+This class defines the basics for advertising services to 
+other BLE devices. It holds all the properties of the device 
+and services which are provided by the device. From this, it 
+implements a number of standard methods for the Advertising class. 
+This implements the org.bluez.LEAdvertisement1 interface.
+"""
 class Advertisement(dbus.service.Object):
 
 	def __init__(self, bus, index, adtype):
@@ -60,25 +52,25 @@ class Advertisement(dbus.service.Object):
 		properties["Type"] = self.adtype
 		if self.service_uuids is not None:
 			properties["ServiceUUIDs"] = dbus.Array(self.service_uuids, signature='s')
-		
+
 		if self.manufacturer_data is not None:
 			properties["ManufacturerData"] = dbus.Dictionary(self.manufacturer_data, signature='qv')
-		
+
 		if self.solicit_uuids is not None:
 			properties["SolicitUUIDs"] = dbus.Array(self.solicit_uuids, signature='s')
-		
+
 		if self.service_data is not None:
 			properties["ServiceData"] = dbus.Dictionary(self.service_data, signature='sv')
-		
+
 		if self.local_name is not None:
 			properties["LocalName"] = dbus.String(self.local_name)
 
 		if self.include_tx_power is not None:
 			properties['IncludeTxPower'] = dbus.Boolean(self.include_tx_power)
-		
+
 		if self.data is not None:
 			properties['Data'] = dbus.Dictionary(self.data, signature='yv')
-		
+
 		return {LE_ADVERTISEMENT_IFACE: properties}
 
 	def get_path(self):
@@ -88,15 +80,15 @@ class Advertisement(dbus.service.Object):
 		if self.service_uuids is None:
 			self.service_uuids = []
 		self.service_uuids.append(uuid)
-	
+
 	def add_solicit_uuid(self, uuid):
 		if self.solicit_uuids is None:
 			self.solicit_uuids = []
 		self.solicit_uuids.append(uuid)
-	
+
 	def add_local_name(self, local_name):
 		self.local_name = dbus.String(local_name)
-	
+
 	def tx_power(self, include):
 		self.include_tx_power = dbus.Boolean(include)
 
@@ -114,12 +106,12 @@ class Advertisement(dbus.service.Object):
 		if self.data is None:
 			self.data = dbus.Dictionary({}, signature='yv')
 		self.data[adtype] = dbus.Array(data, signature='y')
-	
+
 	@dbus.service.method(DBUS_PROP_IFACE, in_signature='s', out_signature='a{sv}')
 	def GetAll(self, interface):
 		print('GetAll')
 		if interface != LE_ADVERTISEMENT_IFACE:
-			raise InvalidArgsException()
+			raise exceptions.InvalidArgsException()
 		print('Returning Properties of Advertisement')
 		return self.get_properties()[LE_ADVERTISEMENT_IFACE]
 
@@ -127,8 +119,11 @@ class Advertisement(dbus.service.Object):
 	def Release(self):
 		print("Advertisement Unregistered: %s" % (self.path))
 
-# Write class for registering an advert for service
-
+"""
+This class takes the base advertising class and implements 
+more specific behaviours. These include specifying services 
+offered by the server, as well as service and manufacturer data. 
+"""
 class EmergencyAdvertisement(Advertisement):
 	def __init__(self, bus, index):
 		Advertisement.__init__(self, bus, index, 'peripheral')
@@ -139,7 +134,7 @@ class EmergencyAdvertisement(Advertisement):
 		self.add_local_name('EmergencyAdvertisement')
 		self.include_tx_power = True
 		self.add_data(0x26, [0x01, 0x01, 0x00])
-	
+
 def register_ad_cb():
 	print('Advertisement registered')
 
@@ -147,7 +142,7 @@ def register_ad_error_cb(error):
 	print('Failed to register advertisement: ' + str(error))
 
 
-	
+
 
 
 
