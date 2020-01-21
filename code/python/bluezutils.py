@@ -23,7 +23,7 @@ def find_adapter_path(bus, iface):
 	objects = remote_om.GetManagedObjects()
 
 	for o, props in objects.items():
-		if iface in props:
+		if iface in props or (iface in props.keys()):
 			return o
 
 	return None
