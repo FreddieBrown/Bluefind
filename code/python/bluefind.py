@@ -14,6 +14,7 @@ startup = "s"
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
+GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
 
 def discoStart(bus):
 	# List of options for discovery filter
@@ -99,7 +100,7 @@ def discoStart(bus):
 
 def server(bus):
 	# Gets the LEAdvertisingManager interface on the adapter in use
-	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus)), LE_ADVERTISING_MANAGER_IFACE)
+	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
 
 	# Creates the Advertisement class for emergency advertising
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
@@ -109,7 +110,29 @@ def server(bus):
 									reply_handler=advertising.register_ad_cb,
 									error_handler=advertising.register_ad_error_cb)
 
+def app_register_cb():
+	print("GATT Application registered!")
 
+def app_register_error_cb(error):
+	print('GATT Application not registered: ' + str(error))
+	mainloop.quit()
+
+def GATTStart(bus):
+	adapter = bluezutils.find_adapter_path(bus, GATT_MANAGER_IFACE)
+	if not adapter:
+		print("No adapter with interface: "+GATT_MANAGER_IFACE)
+	
+	service_manager = dbus.Interface(
+			bus.get_object(BLUEZ_SERVICE_NAME, adapter),
+			GATT_MANAGER_IFACE)
+	
+	app = Application(bus)
+
+	print('Registering GATT application...')
+
+	service_manager.RegisterApplication(app.get_path(), {},
+									reply_handler=app_register_cb,
+									error_handler=app_register_error_cb)
 
 
 if __name__ == '__main__':
@@ -118,11 +141,15 @@ if __name__ == '__main__':
 
 	bus = dbus.SystemBus()
 
+	mainloop = GLib.MainLoop()
+
 	discoStart(bus)
+
+	GATTStart(bus)
+
 	if startup == "c" or startup == "client":
 		pass
 	else:
 		server(bus)
 
-	mainloop = GLib.MainLoop()
 	mainloop.run()

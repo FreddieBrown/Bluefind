@@ -159,7 +159,7 @@ class Characteristic(dbus.service.Object):
 		raise NotSupportedException()
 
 	@dbus.service.method(GATT_CHRC_IFACE, in_signature='aya{sv}')
-	def WriteValue(self, options):
+	def WriteValue(self, value, options):
 		print("WriteValue: Writing value...")
 		raise NotSupportedException()
 
@@ -216,4 +216,39 @@ class Descriptor(dbus.service.Object):
 
 # Use the above classes to implement functionality for EmergencyService
 
+class EmergencyService(Service):
+	service_UUID = "b0d4d4bf-c032-4875-97d2-e7a67b5aa35b"
+	def __init__(self, bus, index):
+		Service.__init__(self, bus, index, self.service_UUID, True)
+		self.add_characteristic(EmergencyCharacteristic(bus, 0, self))
 
+class EmergencyCharacteristic(Characteristic):
+	EM_CHAR_UUID = "f473d81b-acb1-4801-9cb7-92495f8ddea8"
+	def __init__(self, bus, index, service):
+		Characteristic.__init__(
+			self, bus, index, 
+			self.EM_CHAR_UUID, 
+			['read', 'write'],
+			service)
+		self.value = None
+	
+	def WriteValue(self, value, options):
+		print("Value being Written!")
+		readVal = ""
+		for char in options.items():
+			readVal += str(int(char))+" "
+		print("Options: "+readVal)
+		print('EmergencyCharacteristic Write: ' + repr(value))
+		self.value = value
+
+	def ReadValue(self, options):
+		print("Value being Read!")
+		readVal = ""
+		for char in options.items():
+			readVal += str(int(char))+" "
+		print("Options: "+readVal)
+		print('EmergencyCharacteristic Read: ' + repr(self.value))
+		return self.value
+	
+
+	
