@@ -650,8 +650,9 @@ def main():
 
 	mainloop = GObject.MainLoop()
 
-	print('Registering GATT application...')
     print("Debugging: "+app.get_path())
+	print('Registering GATT application...')
+    
 	service_manager.RegisterApplication(app.get_path(), {},
 									reply_handler=register_app_cb,
 									error_handler=register_app_error_cb)
