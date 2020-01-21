@@ -80,7 +80,7 @@ class Service(dbus.service.Object):
 		return {
 			GATT_SERVICE_IFACE : {
 				'UUID' : self.uuid,
-				'Primary' : self.primary
+				'Primary' : self.primary,
 				'Characteristics' : dbus.Array(self.get_characteristic_paths(), signature='o')
 			}
 		}
