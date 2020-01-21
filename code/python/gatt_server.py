@@ -180,7 +180,7 @@ class Characteristic(dbus.service.Object):
 		raise exceptions.NotSupportedException()
 
 	@dbus.service.signal(DBUS_PROP_IFACE, signature='sa{sv}as')
-	def PropertiesChanges(self):
+	def PropertiesChanges(self, interface, changed, invalidated):
 		print("PropertiesChanged: Propety Changed...")
 
 """
