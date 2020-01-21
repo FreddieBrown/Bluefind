@@ -126,7 +126,7 @@ def GATTStart(bus):
 			bus.get_object(BLUEZ_SERVICE_NAME, adapter),
 			GATT_MANAGER_IFACE)
 	
-	app = Application(bus)
+	app = gatt_server.Application(bus)
 
 	print('Registering GATT application...')
 
