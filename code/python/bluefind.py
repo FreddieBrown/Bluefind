@@ -138,11 +138,12 @@ def GATTStart(bus):
 									error_handler=app_register_error_cb)
 
 def receiveSignal(signal_number, frame):
-	print('Received: '+signal_number)
+	print('Received: '+str(signal_number))
 	if startup != "c" or startup != "client":
 		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
 		print('Advertisement unregistered')
+	raise SystemExit('Exiting...')
 	return
 
 
