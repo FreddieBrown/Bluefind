@@ -15,6 +15,7 @@ BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
+em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
 def discoStart(bus):
 	# List of options for discovery filter
@@ -103,12 +104,13 @@ def server(bus):
 	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
 
 	# Creates the Advertisement class for emergency advertising
-	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
 	# Registers the advert using callbacks for the reply for success and when it has an error
 	ad_manager.RegisterAdvertisement(em_advertisement.get_path(), {},
 									reply_handler=advertising.register_ad_cb,
 									error_handler=advertising.register_ad_error_cb)
+	
+	return ad_manager
 
 def app_register_cb():
 	print("GATT Application registered!")
@@ -150,6 +152,10 @@ if __name__ == '__main__':
 	if startup == "c" or startup == "client":
 		pass
 	else:
-		server(bus)
+		ad_manager = server(bus)
 
 	mainloop.run()
+
+	if startup != "c" or startup != "client":
+		ad_manager.UnregisterAdvertisement(em_advertisement)
+		print('Advertisement unregistered')
