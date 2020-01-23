@@ -4,6 +4,7 @@ from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
+import signal
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
@@ -15,6 +16,9 @@ BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
+em_advertisement = None
+bus = None
+ad_manager = None
 
 def discoStart(bus):
 	# List of options for discovery filter
@@ -133,8 +137,18 @@ def GATTStart(bus):
 									reply_handler=app_register_cb,
 									error_handler=app_register_error_cb)
 
+def receiveSignal(signal_number, frame):
+	print('Received: '+signal_number)
+	if startup != "c" or startup != "client":
+		# Cleans up advert if it was registered
+		ad_manager.UnregisterAdvertisement(em_advertisement)
+		print('Advertisement unregistered')
+	return
+
 
 if __name__ == '__main__':
+
+	signal.signal(signal.SIGINT, receiveSignal)
 
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
