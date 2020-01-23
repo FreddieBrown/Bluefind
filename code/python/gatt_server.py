@@ -77,7 +77,7 @@ class Service(dbus.service.Object):
 	"""
 
 	def __init__(self, bus, index, uuid, primary):
-		self.path = self.GATT_PATH_BASE + str(index)
+		self.path = GATT_PATH_BASE + str(index)
 		self.bus = bus
 		self.uuid = uuid
 		self.primary = primary
