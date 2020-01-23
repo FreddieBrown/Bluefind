@@ -102,8 +102,6 @@ def server(bus, ad):
 	# Gets the LEAdvertisingManager interface on the adapter in use
 	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
 
-	# Creates the Advertisement class for emergency advertising
-
 	# Registers the advert using callbacks for the reply for success and when it has an error
 	ad_manager.RegisterAdvertisement(ad.get_path(), {},
 									reply_handler=advertising.register_ad_cb,
@@ -141,6 +139,8 @@ if __name__ == '__main__':
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
 	bus = dbus.SystemBus()
+
+	# Creates the Advertisement class for emergency advertising
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
 	mainloop = GLib.MainLoop()
@@ -157,5 +157,6 @@ if __name__ == '__main__':
 	mainloop.run()
 
 	if startup != "c" or startup != "client":
+		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
 		print('Advertisement unregistered')
