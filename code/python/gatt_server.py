@@ -262,7 +262,7 @@ indentifies it as unique. It contains characteristics which provide the
 functionality of the service.  
 """
 class EmergencyService(Service):
-	service_UUID = '0000180d-0000-1000-8000-00805f9b34fb'
+	service_UUID = '0000FFF0-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index):
 		Service.__init__(self, bus, index, self.service_UUID, True)
 		self.add_characteristic(EmergencyCharacteristic(bus, 0, self))
@@ -273,7 +273,7 @@ unique UUID. It provides both reading and writing functions to send values
 to connected devices and receive them too. 
 """
 class EmergencyCharacteristic(Characteristic):
-	EM_CHAR_UUID = '00002a37-0000-1000-8000-00805f9b34fb'
+	EM_CHAR_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index, service):
 		Characteristic.__init__(
 			self, bus, index, 
