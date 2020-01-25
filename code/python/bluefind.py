@@ -97,7 +97,7 @@ def discoStart(bus):
 	
 	if options.type:
 		print("There is a type! %s" % options.type)
-		global startup = options.type.lower()
+		startup = options.type
 
 	# Sets the filter for device discovery
 	adapter.SetDiscoveryFilter(scan_filter)
