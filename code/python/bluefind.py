@@ -96,6 +96,7 @@ def discoStart(bus):
 		scan_filter.update({ "Transport": options.transport })
 	
 	if options.type:
+		print("There is a type!")
 		startup = options.type.lower()
 
 	# Sets the filter for device discovery
