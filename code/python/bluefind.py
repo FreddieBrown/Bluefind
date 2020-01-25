@@ -145,7 +145,7 @@ def receiveSignal(signal_number, frame):
 	return
 
 def decide_device_type():
-	print("{}".str(os.urandom(2)))
+	print("%s" % str(os.urandom(2)))
 
 
 if __name__ == '__main__':
