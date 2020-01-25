@@ -148,7 +148,10 @@ def receiveSignal(signal_number, frame):
 
 def decide_device_type():
 	random.seed()
-	print("%s" % str(random.randint(0, 10)))
+	if(random.randint(0, 10) < 5):
+		return "s"
+	else:
+		return "c"
 
 
 if __name__ == '__main__':
@@ -164,7 +167,7 @@ if __name__ == '__main__':
 
 	mainloop = GLib.MainLoop()
 
-	decide_device_type()
+	startup = decide_device_type()
 
 	discoStart(bus)
 
