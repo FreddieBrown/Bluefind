@@ -168,6 +168,7 @@ if __name__ == '__main__':
 
 	GATTStart(bus)
 
+    print(startup)
 	if startup == "c" or startup == "client":
 		client(bus)
 	else:
