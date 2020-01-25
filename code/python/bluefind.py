@@ -4,6 +4,7 @@ from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
+import os
 import signal
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
