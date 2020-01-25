@@ -140,10 +140,10 @@ def GATTStart(bus):
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
 	print("Startup: %s" % startup)
-	# if startup != "c":
-	# 	# Cleans up advert if it was registered
-	# 	ad_manager.UnregisterAdvertisement(em_advertisement)
-	# 	print('Advertisement unregistered')
+	if startup == "s":
+		# Cleans up advert if it was registered
+		ad_manager.UnregisterAdvertisement(em_advertisement)
+		print('Advertisement unregistered')
 	raise SystemExit('Exiting...')
 	return
 
