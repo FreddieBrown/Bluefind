@@ -37,9 +37,6 @@ def discoStart(bus):
 			make_option("-t", "--transport", action="store",
 					type="string", dest="transport",
 					help="Type of scan to run (le/bredr/auto)"),
-			make_option("-T", "--type", action="store",
-					type="string", dest="type", 
-					help = "What sort of startup do you want?: Client (c) or Server (s)"),
 			]
 	parser = OptionParser(option_list=option_list)
 
@@ -94,10 +91,6 @@ def discoStart(bus):
 
 	if options.transport:
 		scan_filter.update({ "Transport": options.transport })
-	
-	if options.type:
-		print("There is a type! %s" % options.type)
-		startup = options.type
 
 	# Sets the filter for device discovery
 	adapter.SetDiscoveryFilter(scan_filter)
@@ -151,6 +144,9 @@ def receiveSignal(signal_number, frame):
 	raise SystemExit('Exiting...')
 	return
 
+def decide_device_type():
+	print("{}".os.urandom(2))
+
 
 if __name__ == '__main__':
 
@@ -164,6 +160,8 @@ if __name__ == '__main__':
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
 	mainloop = GLib.MainLoop()
+
+	decide_device_type()
 
 	discoStart(bus)
 
