@@ -148,7 +148,7 @@ def receiveSignal(signal_number, frame):
 
 def decide_device_type():
 	random.seed()
-	print("%s" % str(random.randint(0, 10))
+	print("%s" % str(random.randint(0, 10)))
 
 
 if __name__ == '__main__':
