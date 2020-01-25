@@ -12,7 +12,7 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server
 
-startup = None
+global startup = None
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
@@ -139,10 +139,11 @@ def GATTStart(bus):
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
-	if startup != "c" or startup != "client":
-		# Cleans up advert if it was registered
-		ad_manager.UnregisterAdvertisement(em_advertisement)
-		print('Advertisement unregistered')
+	print("Startup: %s" % startup)
+	# if startup != "c":
+	# 	# Cleans up advert if it was registered
+	# 	ad_manager.UnregisterAdvertisement(em_advertisement)
+	# 	print('Advertisement unregistered')
 	raise SystemExit('Exiting...')
 	return
 
@@ -174,7 +175,7 @@ if __name__ == '__main__':
 	GATTStart(bus)
 
 	print(startup)
-	if startup == "c" or startup == "client":
+	if startup == "c":
 		client(bus)
 	else:
 		ad_manager = server(bus, em_advertisement)
