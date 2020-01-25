@@ -139,7 +139,7 @@ def GATTStart(bus):
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
-	print("Startup: %s" % startup)
+	print("Device Type: %s" % startup)
 	if startup == "s":
 		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
@@ -150,8 +150,10 @@ def receiveSignal(signal_number, frame):
 def decide_device_type():
 	random.seed()
 	if(random.randint(0, 10) < 5):
+		print("Server")
 		return "s"
 	else:
+		print("Client")
 		return "c"
 
 
@@ -174,7 +176,6 @@ if __name__ == '__main__':
 
 	GATTStart(bus)
 
-	print(startup)
 	if startup == "c":
 		client(bus)
 	else:
