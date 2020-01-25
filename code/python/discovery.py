@@ -37,6 +37,7 @@ def print_info(address, properties):
 	properties["Logged"] = True
 
 def interfaces_added(path, interfaces):
+    print("New Device!")
 	properties = interfaces["org.bluez.Device1"]
 	if not properties:
 		return
@@ -55,6 +56,7 @@ def interfaces_added(path, interfaces):
 	print_info(address, devices[path])
 
 def properties_changed(interface, changed, invalidated, path):
+    print("Property Changed!")
 	if interface != "org.bluez.Device1":
 		return
 
