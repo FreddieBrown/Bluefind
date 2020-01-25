@@ -5,6 +5,7 @@ import re
 import sys
 import dbus
 import os
+import random
 import signal
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
@@ -146,7 +147,8 @@ def receiveSignal(signal_number, frame):
 	return
 
 def decide_device_type():
-	print("%s" % str(os.urandom(2)))
+	random.seed()
+	print("%s" % str(random.randint(0, 10))
 
 
 if __name__ == '__main__':
