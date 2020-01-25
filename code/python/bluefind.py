@@ -24,7 +24,7 @@ ad_manager = None
 
 def discoStart(bus):
 
-	adapter = bluezutils.find_adapter(options.dev_id)
+	adapter = bluezutils.find_adapter()
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
 					"org.freedesktop.DBus.Properties")
 
