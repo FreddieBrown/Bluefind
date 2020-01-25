@@ -104,7 +104,7 @@ def discoStart(bus):
 
 def server(bus, ad):
 	print("Server mode started")
-    # Gets the LEAdvertisingManager interface on the adapter in use
+	# Gets the LEAdvertisingManager interface on the adapter in use
 	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
 
 	# Registers the advert using callbacks for the reply for success and when it has an error
@@ -115,7 +115,7 @@ def server(bus, ad):
 	return ad_manager
 
 def client(bus):
-    print("Client mode started")
+	print("Client mode started")
 
 def app_register_cb():
 	print("GATT Application registered!")
@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
 	GATTStart(bus)
 
-    print(startup)
+	print(startup)
 	if startup == "c" or startup == "client":
 		client(bus)
 	else:
