@@ -12,7 +12,7 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server
 
-global startup = None
+startup = None
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
