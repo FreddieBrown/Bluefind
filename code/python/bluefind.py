@@ -23,26 +23,6 @@ bus = None
 ad_manager = None
 
 def discoStart(bus):
-	# List of options for discovery filter
-	option_list = [
-			make_option("-i", "--device", action="store",
-					type="string", dest="dev_id"),
-			make_option("-u", "--uuids", action="store",
-					type="string", dest="uuids",
-					help="Filtered service UUIDs [uuid1,uuid2,...]"),
-			make_option("-r", "--rssi", action="store",
-					type="int", dest="rssi",
-					help="RSSI threshold value"),
-			make_option("-p", "--pathloss", action="store",
-					type="int", dest="pathloss",
-					help="Pathloss threshold value"),
-			make_option("-t", "--transport", action="store",
-					type="string", dest="transport",
-					help="Type of scan to run (le/bredr/auto)"),
-			]
-	parser = OptionParser(option_list=option_list)
-
-	(options, args) = parser.parse_args()
 
 	adapter = bluezutils.find_adapter(options.dev_id)
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
@@ -77,22 +57,7 @@ def discoStart(bus):
 	# Builds the filter for the scan filter
 	scan_filter = dict()
 
-	if options.uuids:
-		uuids = []
-		uuid_list = options.uuids.split(',')
-		for uuid in uuid_list:
-			uuids.append(uuid)
-
-		scan_filter.update({ "UUIDs": uuids })
-
-	if options.rssi:
-		scan_filter.update({ "RSSI": dbus.Int16(options.rssi) })
-
-	if options.pathloss:
-		scan_filter.update({ "Pathloss": dbus.UInt16(options.pathloss) })
-
-	if options.transport:
-		scan_filter.update({ "Transport": options.transport })
+	scan_filter.update({ "UUIDs": ['0000FFF0-0000-1000-8000-00805f9b34fb'] })
 
 	# Sets the filter for device discovery
 	adapter.SetDiscoveryFilter(scan_filter)
