@@ -31,9 +31,9 @@ class Agent(dbus.service.Object):
 		self.exit_on_release = eor
 	
 	def trust_device(self, path):
-	properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
-								"org.freedesktop.DBus.Properties")
-	properties.Set("org.bluez.Device1", "Trusted", True)
+		properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
+									"org.freedesktop.DBus.Properties")
+		properties.Set("org.bluez.Device1", "Trusted", True)
 
 	def connect_dev(self, path):
 		device = dbus.Interface(bus.get_object(BUS_NAME, path), "org.bluez.Device1")
