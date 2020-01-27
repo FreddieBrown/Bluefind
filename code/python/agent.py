@@ -34,7 +34,10 @@ def connect_dev(path):
     return device
 
 class Agent(dbus.service.Object):
-    exit_on_release = True
+    def __init__(self, bus, path):
+        self.bus = bus
+        self.path = path
+        self.exit_on_release = True
 
     def set_eor(self, eor):
         self.exit_on_release = eor

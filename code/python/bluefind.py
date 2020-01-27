@@ -10,7 +10,7 @@ import signal
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
-import bluezutils, discovery, advertising, gatt_server
+import bluezutils, discovery, advertising, gatt_server, agent
 
 startup = None
 
@@ -18,7 +18,9 @@ BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
+capability = "KeyboardDisplay"
 em_advertisement = None
+agent_manager = None
 bus = None
 ad_manager = None
 
@@ -102,13 +104,23 @@ def GATTStart(bus):
 									reply_handler=app_register_cb,
 									error_handler=app_register_error_cb)
 
+def AgentReg(bus):
+    em_agent = Agent(bus, agent.AGENT_PATH)
+    obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
+    agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
+	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
+    print("Agent Registered")
+
+
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
 	print("Device Type: %s" % startup)
+    agent_manager.UnregisterAgent(agent.AGENT_PATH)
+    print("Agent Unregistered!")
 	if startup == "s":
 		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
-		print('Advertisement unregistered')
+		print('Advertisement Unregistered')
 	raise SystemExit('Exiting...')
 	return
 
@@ -133,6 +145,8 @@ if __name__ == '__main__':
 	# Creates the Advertisement class for emergency advertising
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
+    AgentReg(bus)
+
 	mainloop = GLib.MainLoop()
 
 	startup = decide_device_type()
@@ -150,5 +164,7 @@ if __name__ == '__main__':
 
 	if startup != "c" or startup != "client":
 		# Cleans up advert if it was registered
+        agent_manager.UnregisterAgent(agent.AGENT_PATH)
+        print("Agent Unregistered!")
 		ad_manager.UnregisterAdvertisement(em_advertisement)
-		print('Advertisement unregistered')
+		print('Advertisement Unregistered')
