@@ -106,7 +106,7 @@ def GATTStart(bus):
 									error_handler=app_register_error_cb)
 
 def AgentReg(bus):
-	em_agent = Agent(bus, agent.AGENT_PATH)
+	em_agent = agent.Agent(bus, agent.AGENT_PATH)
 	obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
 	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
 	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
