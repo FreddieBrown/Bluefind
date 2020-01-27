@@ -111,6 +111,7 @@ def AgentReg(bus):
 	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
 	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
 	print("Agent Registered")
+	return agent_manager
 
 
 def receiveSignal(signal_number, frame):
@@ -150,7 +151,7 @@ if __name__ == '__main__':
 
 	startup = decide_device_type()
 
-	AgentReg(bus)
+	agent_manager = AgentReg(bus)
 
 	discoStart(bus)
 
