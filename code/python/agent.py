@@ -8,7 +8,7 @@ import dbus
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
-import bluezutils
+import bluezutils, exceptions
 
 """
 This module is used to define an Agent which will control the security aspects of 
@@ -51,32 +51,45 @@ class Agent(dbus.service.Object):
     def RequestPinCode(self, device):
         print("RequestPinCode (%s)" % (device))
         trust_device(device)
-        return "placeholder string"
+        return input("Enter Pin Code: ")
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="os", out_signature="")
     def DisplayPinCode(self, device, pin):
-        pass
+        print("DisplayPinCode (%s, %s)" % (device, pincode))
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="u")
     def RequestPasskey(self, device):
-        pass
+        print("RequestPasskey: (%s)", % (device))
+        trust_device(device)
+        return dbus.UInt32(input("Enter Passkey: "))
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="ouq", out_signature="")
     def DisplayPasskey(self, device, passkey, entered):
-        pass
+        print("DisplayPasskey (%s, %06u entered %u)" % (device, passkey, entered))
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="ou", out_signature="")
     def RequestConfirmation(self, device, passkey):
-        pass
+        print("RequestConfirmation (%s, %06d)", %(device, passkey))
+        if input("Confirm Passkey? (yes/no): ") is "yes":
+            trust_device(device)
+            return
+        print("Rejected")
+        raise exceptions.RejectedException("Passkey doesn't match")
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="")
     def RequestAuthorization(self, device):
-        pass
+        print("RequestAuthorization (%s)", %(device))
+        if input("Authorize? (yes/no): ") is "yes":
+            return
+        raise exceptions.RejectedException("Device not authorized, pairing rejected")
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="os", out_signature="")
     def AuthorizeService(self, device, uuid):
-        pass  
+        print("AuthorizeService (%s, %s)", % (device, uuid))
+        if input("Authorize Connection? (yes/no): ") is "yes":
+            return
+        raise exceptions.RejectedException("Connection not authorized")
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="", out_signature="")
     def Cancel(self):
-        pass
+        print("Cancel")
