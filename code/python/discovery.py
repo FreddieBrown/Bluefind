@@ -38,6 +38,10 @@ def print_info(address, properties):
 
 def interfaces_added(path, interfaces):
 	print("New Device!")
+	print(list(interfaces))
+	if "org.bluez.Device1" not in list(interfaces):
+		return
+		
 	properties = interfaces["org.bluez.Device1"]
 	if not properties:
 		return
