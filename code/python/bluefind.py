@@ -23,6 +23,7 @@ em_advertisement = None
 agent_manager = None
 bus = None
 ad_manager = None
+mainloop = None
 
 def discoStart(bus):
 
@@ -145,11 +146,11 @@ if __name__ == '__main__':
 	# Creates the Advertisement class for emergency advertising
 	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
-    AgentReg(bus)
-
 	mainloop = GLib.MainLoop()
 
 	startup = decide_device_type()
+
+    AgentReg(bus)
 
 	discoStart(bus)
 

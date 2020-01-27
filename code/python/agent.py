@@ -8,7 +8,7 @@ import dbus
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
-import bluezutils, exceptions
+import bluezutils, exceptions, bluefind
 
 """
 This module is used to define an Agent which will control the security aspects of 
@@ -21,18 +21,6 @@ AGENT_PATH = "/test/agent"
 device_obj = None
 dev_path = None
 
-def trust_device(path):
-    # TODO: Change bluefind.py so bus can be accessed here
-    properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
-                                "org.freedesktop.DBus.Properties")
-    properties.Set("org.bluez.Device1", "Trusted", True)
-
-def connect_dev(path):
-    # TODO: Change bluefind.py so bus can be accessed here
-    device = dbus.Interface(bus.get_object(BUS_NAME, path), "org.bluez.Device1")
-    device.Connect()
-    return device
-
 class Agent(dbus.service.Object):
     def __init__(self, bus, path):
         self.bus = bus
@@ -41,19 +29,28 @@ class Agent(dbus.service.Object):
 
     def set_eor(self, eor):
         self.exit_on_release = eor
+    
+    def trust_device(self, path):
+    properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
+                                "org.freedesktop.DBus.Properties")
+    properties.Set("org.bluez.Device1", "Trusted", True)
+
+    def connect_dev(self, path):
+        device = dbus.Interface(bus.get_object(BUS_NAME, path), "org.bluez.Device1")
+        device.Connect()
+        return device
 
 	@dbus.service.method(AGENT_INTERFACE,
 					in_signature="", out_signature="")
     def Release(self):
         print("Release Agent")
         if self.exit_on_release:
-            # TODO: Change bluefind.py so mainloop can be accessed here
-            mainloop.quit()
+            bluefind.mainloop.quit()
     
     @dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="s")
     def RequestPinCode(self, device):
         print("RequestPinCode (%s)" % (device))
-        trust_device(device)
+        self.trust_device(device)
         return input("Enter Pin Code: ")
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="os", out_signature="")
@@ -63,7 +60,7 @@ class Agent(dbus.service.Object):
     @dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="u")
     def RequestPasskey(self, device):
         print("RequestPasskey: (%s)", % (device))
-        trust_device(device)
+        self.trust_device(device)
         return dbus.UInt32(input("Enter Passkey: "))
 
     @dbus.service.method(AGENT_INTERFACE, in_signature="ouq", out_signature="")
@@ -74,7 +71,7 @@ class Agent(dbus.service.Object):
     def RequestConfirmation(self, device, passkey):
         print("RequestConfirmation (%s, %06d)", %(device, passkey))
         if input("Confirm Passkey? (yes/no): ") is "yes":
-            trust_device(device)
+            self.trust_device(device)
             return
         print("Rejected")
         raise exceptions.RejectedException("Passkey doesn't match")
