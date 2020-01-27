@@ -106,18 +106,18 @@ def GATTStart(bus):
 									error_handler=app_register_error_cb)
 
 def AgentReg(bus):
-    em_agent = Agent(bus, agent.AGENT_PATH)
-    obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
-    agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
+	em_agent = Agent(bus, agent.AGENT_PATH)
+	obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
+	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
 	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
-    print("Agent Registered")
+	print("Agent Registered")
 
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
 	print("Device Type: %s" % startup)
-    agent_manager.UnregisterAgent(agent.AGENT_PATH)
-    print("Agent Unregistered!")
+	agent_manager.UnregisterAgent(agent.AGENT_PATH)
+	print("Agent Unregistered!")
 	if startup == "s":
 		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
 	startup = decide_device_type()
 
-    AgentReg(bus)
+	AgentReg(bus)
 
 	discoStart(bus)
 
@@ -165,7 +165,7 @@ if __name__ == '__main__':
 
 	if startup != "c" or startup != "client":
 		# Cleans up advert if it was registered
-        agent_manager.UnregisterAgent(agent.AGENT_PATH)
-        print("Agent Unregistered!")
+		agent_manager.UnregisterAgent(agent.AGENT_PATH)
+		print("Agent Unregistered!")
 		ad_manager.UnregisterAdvertisement(em_advertisement)
 		print('Advertisement Unregistered')
