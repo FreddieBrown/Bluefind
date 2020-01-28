@@ -295,7 +295,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = value
 
 	def ReadValue(self, options):
-		print('Battery Level read: ' + repr(self.battery_lvl))
+		print('Sending Cute Hello Message')
 		return [dbus.Byte(104), dbus.Byte(105)]
 		# return DEVICE_COORDINATES
 		# readVal = ""
