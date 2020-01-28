@@ -335,7 +335,7 @@ class BodySensorLocationChrc(Characteristic):
 
 	def ReadValue(self, options):
 		# Return 'Chest' as the sensor location.
-		return [ 0x01 ]
+		return [ dbus.Byte(1) ]
 
 class HeartRateControlPointChrc(Characteristic):
 	HR_CTRL_PT_UUID = '00002a39-0000-1000-8000-00805f9b34fb'

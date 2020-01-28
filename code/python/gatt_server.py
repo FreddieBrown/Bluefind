@@ -282,6 +282,7 @@ class EmergencyCharacteristic(Characteristic):
 			self.EM_CHAR_UUID, 
 			['read', 'write'],
 			service)
+		self.battery_lvl = 100
 		self.value = None
 	
 	def WriteValue(self, value, options):
@@ -294,7 +295,8 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = value
 
 	def ReadValue(self, options):
-		return [ 0x01 ]
+		print('Battery Level read: ' + repr(self.battery_lvl))
+		return [dbus.Byte(self.battery_lvl)]
 		# return DEVICE_COORDINATES
 		# readVal = ""
 		# for char in options.items():
