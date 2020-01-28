@@ -12,7 +12,7 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server, agent
 
-startup = None
+client = None
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
@@ -24,6 +24,9 @@ agent_manager = None
 bus = None
 ad_manager = None
 mainloop = None
+
+def get_client_type():
+	return client
 
 def discoStart(bus):
 
@@ -46,7 +49,8 @@ def discoStart(bus):
 			path_keyword = "path")
 
 	# Sets the Discoverable option to on, meaning devices can discover it
-	bluezutils.properties(adapter_props, "Discoverable", "on")    
+	if client is "n":
+		bluezutils.properties(adapter_props, "Discoverable", "on")    
 
 	# Gets all objects for Bluez on Dbus. This looks for the 
 	# Device1 interface so that it can be used later on
@@ -107,6 +111,7 @@ def GATTStart(bus):
 
 def AgentReg(bus):
 	em_agent = agent.Agent(bus, agent.AGENT_PATH)
+	em_agent.set_eor(False)
 	obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
 	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
 	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
@@ -116,10 +121,10 @@ def AgentReg(bus):
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
-	print("Device Type: %s" % startup)
+	print("Client: %s" % client)
 	agent_manager.UnregisterAgent(agent.AGENT_PATH)
 	print("Agent Unregistered!")
-	if startup == "s":
+	if client is "n":
 		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
 		print('Advertisement Unregistered')
@@ -130,10 +135,10 @@ def decide_device_type():
 	random.seed()
 	if(random.randint(0, 10) < 5):
 		print("Server")
-		return "s"
+		return "n"
 	else:
 		print("Client")
-		return "c"
+		return "y"
 
 
 if __name__ == '__main__':
@@ -149,7 +154,7 @@ if __name__ == '__main__':
 
 	mainloop = GLib.MainLoop()
 
-	startup = decide_device_type()
+	client = decide_device_type()
 
 	agent_manager = AgentReg(bus)
 
@@ -157,14 +162,14 @@ if __name__ == '__main__':
 
 	GATTStart(bus)
 
-	if startup == "c":
+	if client is "y":
 		client(bus)
 	else:
 		ad_manager = server(bus, em_advertisement)
 
 	mainloop.run()
 
-	if startup != "c" or startup != "client":
+	if client is "n":
 		# Cleans up advert if it was registered
 		agent_manager.UnregisterAgent(agent.AGENT_PATH)
 		print("Agent Unregistered!")

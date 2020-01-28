@@ -51,7 +51,7 @@ class Agent(dbus.service.Object):
 	def RequestPinCode(self, device):
 		print("RequestPinCode (%s)" % (device))
 		self.trust_device(device)
-		return input("Enter Pin Code: ")
+		return "0000"
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="os", out_signature="")
 	def DisplayPinCode(self, device, pin):
@@ -70,25 +70,18 @@ class Agent(dbus.service.Object):
 	@dbus.service.method(AGENT_INTERFACE, in_signature="ou", out_signature="")
 	def RequestConfirmation(self, device, passkey):
 		print("RequestConfirmation (%s, %06d)" %(device, passkey))
-		if input("Confirm Passkey? (yes/no): ") is "yes":
-			self.trust_device(device)
-			return
-		print("Rejected")
-		raise exceptions.RejectedException("Passkey doesn't match")
+		self.trust_device(device)
+		return
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="")
 	def RequestAuthorization(self, device):
 		print("RequestAuthorization (%s)" %(device))
-		if input("Authorize? (yes/no): ") is "yes":
-			return
-		raise exceptions.RejectedException("Device not authorized, pairing rejected")
+		return
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="os", out_signature="")
 	def AuthorizeService(self, device, uuid):
 		print("AuthorizeService (%s, %s)" % (device, uuid))
-		if input("Authorize Connection? (yes/no): ") is "yes":
-			return
-		raise exceptions.RejectedException("Connection not authorized")
+		return
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="", out_signature="")
 	def Cancel(self):
