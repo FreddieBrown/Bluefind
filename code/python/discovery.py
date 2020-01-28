@@ -13,17 +13,17 @@ devices = {}
 device_obj = None
 
 def pair_reply():
-    pass
+	pass
 
 def pair_error():
-    pass
+	pass
 
 def print_info(address, properties):
-    """
-    Passed a device address and the properties of the 
-    device. Contains information about connecting to 
-    devices and UUIDs
-    """
+	"""
+	Passed a device address and the properties of the 
+	device. Contains information about connecting to 
+	devices and UUIDs
+	"""
 	print("[ " + address + " ]")
 
 	for key in properties.keys():
@@ -50,12 +50,12 @@ def print_info(address, properties):
 	properties["Logged"] = True
 
 def interfaces_added(path, interfaces):
-    """
-    This function will be called when a new interface is added 
-    to the org.bluez object on DBus. It will extract the relevant 
-    information and will try and connect to devices if it is a client.
-    It will also print any information about the interfaces it encounters.
-    """
+	"""
+	This function will be called when a new interface is added 
+	to the org.bluez object on DBus. It will extract the relevant 
+	information and will try and connect to devices if it is a client.
+	It will also print any information about the interfaces it encounters.
+	"""
 	print("New Device!")
 	print(list(interfaces))
 	if "org.bluez.Device1" not in list(interfaces):
@@ -77,12 +77,12 @@ def interfaces_added(path, interfaces):
 		address = "<unknown>"
 
 
-    if bluefind.get_client_type() is "y": 
-        device = bluezutils.find_device(address)
-        dev_path = device.object_path
-        device.Pair(reply_handler=pair_reply, error_handler=pair_error,
-                                        timeout=60000)
-        device_obj = device
+	if bluefind.get_client_type() is "y": 
+		device = bluezutils.find_device(address)
+		dev_path = device.object_path
+		device.Pair(reply_handler=pair_reply, error_handler=pair_error,
+										timeout=60000)
+		device_obj = device
 
 	print_info(address, devices[path])
 
