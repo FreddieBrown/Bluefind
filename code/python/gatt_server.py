@@ -23,6 +23,7 @@ GATT_SERVICE_IFACE = 'org.bluez.GattService1'
 GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
 GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
+DEVICE_COORDINATES = '52.281807, -1.532221'
 
 """
 Implements the org.bluez.GattApplication1 interface. This is 
@@ -262,7 +263,7 @@ indentifies it as unique. It contains characteristics which provide the
 functionality of the service.  
 """
 class EmergencyService(Service):
-    # FFF0
+	# FFF0
 	service_UUID = '0000FFF0-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index):
 		Service.__init__(self, bus, index, self.service_UUID, True)
@@ -284,7 +285,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = None
 	
 	def WriteValue(self, value, options):
-		print("Value being Written!")
+		print("Value being Written!: "+repr(value))
 		readVal = ""
 		for char in options.items():
 			readVal += str(int(char))+" "
@@ -293,11 +294,15 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = value
 
 	def ReadValue(self, options):
-		print("Value being Read!")
-		readVal = ""
-		for char in options.items():
-			readVal += str(int(char))+" "
-		print("Options: "+readVal)
-		print('EmergencyCharacteristic Read: ' + repr(self.value))
-		return self.value
+		print("Value being Read!: "+DEVICE_COORDINATES)
+		# return DEVICE_COORDINATES
+		return [
+				dbus.Byte('T'), dbus.Byte('e'), dbus.Byte('s'), dbus.Byte('t')
+		]
+		# readVal = ""
+		# for char in options.items():
+		# 	readVal += str(int(char))+" "
+		# print("Options: "+readVal)
+		# print('EmergencyCharacteristic Read: ' + repr(self.value))
+		# return self.value
 	
