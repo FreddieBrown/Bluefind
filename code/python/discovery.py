@@ -8,15 +8,28 @@ from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 import bluezutils
 import bluefind
+import agent
 
 devices = {}
+dev_path = None
 device_obj = None
 
 def pair_reply():
-	pass
+	print("PAIRING SUCCESS")
+	agent.trust_device(dev_path, bluefind.bus)
+	dev = dbus.Interface(bus.get_object("org.bluez", dev_path),
+						"org.bluez.Device1")
+	dev.Connect()
+
 
 def pair_error():
-	pass
+	print("PAIRING ERROR")
+	err_name = error.get_dbus_name()
+	if err_name == "org.freedesktop.DBus.Error.NoReply" and device_obj:
+		print("Timed out. Cancelling pairing")
+		device_obj.CancelPairing()
+	else:
+		print("Creating device failed: %s" % (error))
 
 def print_info(address, properties):
 	"""
@@ -78,6 +91,7 @@ def interfaces_added(path, interfaces):
 
 
 	if bluefind.get_client_type() is "y": 
+		print("Trying to pair with %s"%(str(address)))
 		device = bluezutils.find_device(address)
 		dev_path = device.object_path
 		device.Pair(reply_handler=pair_reply, error_handler=pair_error,

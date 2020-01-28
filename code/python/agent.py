@@ -18,8 +18,11 @@ with incoming parining/connection requests for the device.
 BUS_NAME = 'org.bluez'
 AGENT_INTERFACE = 'org.bluez.Agent1'
 AGENT_PATH = "/test/agent"
-device_obj = None
-dev_path = None
+
+def trust_device(path, bus):
+	properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
+								"org.freedesktop.DBus.Properties")
+	properties.Set("org.bluez.Device1", "Trusted", True)
 
 class Agent(dbus.service.Object):
 	def __init__(self, bus, path):
@@ -30,10 +33,7 @@ class Agent(dbus.service.Object):
 	def set_eor(self, eor):
 		self.exit_on_release = eor
 	
-	def trust_device(self, path):
-		properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
-									"org.freedesktop.DBus.Properties")
-		properties.Set("org.bluez.Device1", "Trusted", True)
+
 
 	def connect_dev(self, path):
 		device = dbus.Interface(bus.get_object(BUS_NAME, path), "org.bluez.Device1")
@@ -50,7 +50,7 @@ class Agent(dbus.service.Object):
 	@dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="s")
 	def RequestPinCode(self, device):
 		print("RequestPinCode (%s)" % (device))
-		self.trust_device(device)
+		trust_device(device, self.bus)
 		return "0000"
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="os", out_signature="")
@@ -60,7 +60,7 @@ class Agent(dbus.service.Object):
 	@dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="u")
 	def RequestPasskey(self, device):
 		print("RequestPasskey: (%s)" % (device))
-		self.trust_device(device)
+		trust_device(device, self.bus)
 		return dbus.UInt32(input("Enter Passkey: "))
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="ouq", out_signature="")
@@ -70,7 +70,7 @@ class Agent(dbus.service.Object):
 	@dbus.service.method(AGENT_INTERFACE, in_signature="ou", out_signature="")
 	def RequestConfirmation(self, device, passkey):
 		print("RequestConfirmation (%s, %06d)" %(device, passkey))
-		self.trust_device(device)
+		trust_device(device, self.bus)
 		return
 
 	@dbus.service.method(AGENT_INTERFACE, in_signature="o", out_signature="")
