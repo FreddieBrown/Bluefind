@@ -75,14 +75,14 @@ def discoStart(bus):
 def server(bus, ad):
 	print("Server mode started")
 	# Gets the LEAdvertisingManager interface on the adapter in use
-	# ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
+	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
 
-	# # Registers the advert using callbacks for the reply for success and when it has an error
-	# ad_manager.RegisterAdvertisement(ad.get_path(), {},
-	# 								reply_handler=advertising.register_ad_cb,
-	# 								error_handler=advertising.register_ad_error_cb)
+	# Registers the advert using callbacks for the reply for success and when it has an error
+	ad_manager.RegisterAdvertisement(ad.get_path(), {},
+									reply_handler=advertising.register_ad_cb,
+									error_handler=advertising.register_ad_error_cb)
 	
-	# return ad_manager
+	return ad_manager
 
 def client(bus):
 	print("Client mode started")
@@ -126,10 +126,10 @@ def receiveSignal(signal_number, frame):
 	print("Client: %s" % client_ty)
 	agent_manager.UnregisterAgent(agent.AGENT_PATH)
 	print("Agent Unregistered!")
-	# if client_ty is "n":
-	# 	# Cleans up advert if it was registered
-	# 	ad_manager.UnregisterAdvertisement(em_advertisement)
-	# 	print('Advertisement Unregistered')
+	if client_ty is "n":
+		# Cleans up advert if it was registered
+		ad_manager.UnregisterAdvertisement(em_advertisement)
+		print('Advertisement Unregistered')
 	raise SystemExit('Exiting...')
 	return
 
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 	bus = dbus.SystemBus()
 
 	# Creates the Advertisement class for emergency advertising
-	# em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
+	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 
 	mainloop = GLib.MainLoop()
 
@@ -167,8 +167,7 @@ if __name__ == '__main__':
 	if client_ty is "y":
 		client(bus)
 	else:
-		# ad_manager = server(bus, em_advertisement)
-		server(bus, em_advertisement)
+		ad_manager = server(bus, em_advertisement)
 
 	mainloop.run()
 
@@ -176,5 +175,5 @@ if __name__ == '__main__':
 		# Cleans up advert if it was registered
 		agent_manager.UnregisterAgent(agent.AGENT_PATH)
 		print("Agent Unregistered!")
-		# ad_manager.UnregisterAdvertisement(em_advertisement)
-		# print('Advertisement Unregistered')
+		ad_manager.UnregisterAdvertisement(em_advertisement)
+		print('Advertisement Unregistered')

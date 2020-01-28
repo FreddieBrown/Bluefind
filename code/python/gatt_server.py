@@ -262,18 +262,19 @@ indentifies it as unique. It contains characteristics which provide the
 functionality of the service.  
 """
 class EmergencyService(Service):
-	service_UUID = '7288949f-a66a-44a3-97cc-d4de5e6580fa'
+    # FFF0
+	service_UUID = '0000FFF0-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index):
 		Service.__init__(self, bus, index, self.service_UUID, True)
 		self.add_characteristic(EmergencyCharacteristic(bus, 0, self))
 
 """
-This characteristic belongs tot eh EmergencyService. It has its own 
+This characteristic belongs to the EmergencyService. It has its own 
 unique UUID. It provides both reading and writing functions to send values 
 to connected devices and receive them too. 
 """
 class EmergencyCharacteristic(Characteristic):
-	EM_CHAR_UUID = 'b8cfa79b-c78d-4162-9ca0-24e537ab3a89'
+	EM_CHAR_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index, service):
 		Characteristic.__init__(
 			self, bus, index, 
