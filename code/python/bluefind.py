@@ -12,7 +12,7 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server, agent
 
-client = None
+client_ty = None
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
@@ -26,7 +26,7 @@ ad_manager = None
 mainloop = None
 
 def get_client_type():
-	return client
+	return client_ty
 
 def discoStart(bus):
 
@@ -49,7 +49,7 @@ def discoStart(bus):
 			path_keyword = "path")
 
 	# Sets the Discoverable option to on, meaning devices can discover it
-	if client is "n":
+	if client_ty is "n":
 		bluezutils.properties(adapter_props, "Discoverable", "on")    
 
 	# Gets all objects for Bluez on Dbus. This looks for the 
@@ -121,10 +121,10 @@ def AgentReg(bus):
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
-	print("Client: %s" % client)
+	print("Client: %s" % client_ty)
 	agent_manager.UnregisterAgent(agent.AGENT_PATH)
 	print("Agent Unregistered!")
-	if client is "n":
+	if client_ty is "n":
 		# Cleans up advert if it was registered
 		ad_manager.UnregisterAdvertisement(em_advertisement)
 		print('Advertisement Unregistered')
@@ -154,7 +154,7 @@ if __name__ == '__main__':
 
 	mainloop = GLib.MainLoop()
 
-	client = decide_device_type()
+	client_ty = decide_device_type()
 
 	agent_manager = AgentReg(bus)
 
@@ -162,14 +162,14 @@ if __name__ == '__main__':
 
 	GATTStart(bus)
 
-	if client is "y":
+	if client_ty is "y":
 		client(bus)
 	else:
 		ad_manager = server(bus, em_advertisement)
 
 	mainloop.run()
 
-	if client is "n":
+	if client_ty is "n":
 		# Cleans up advert if it was registered
 		agent_manager.UnregisterAgent(agent.AGENT_PATH)
 		print("Agent Unregistered!")
