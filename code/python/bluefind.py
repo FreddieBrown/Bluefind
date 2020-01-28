@@ -50,7 +50,9 @@ def discoStart(bus):
 
 	# Sets the Discoverable option to on, meaning devices can discover it
 	if client_ty is "n":
-		bluezutils.properties(adapter_props, "Discoverable", "on")    
+		bluezutils.properties(adapter_props, "Discoverable", "on")
+	else:
+		bluezutils.properties(adapter_props, "Discoverable", "off")		    
 
 	# Gets all objects for Bluez on Dbus. This looks for the 
 	# Device1 interface so that it can be used later on
