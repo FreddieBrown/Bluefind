@@ -294,11 +294,10 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = value
 
 	def ReadValue(self, options):
+		val = dbus.Array([dbus.Byte('T'), dbus.Byte('e'), dbus.Byte('s'), dbus.Byte('t')], signature=dbus.Signature('y'))
 		print("Value being Read!: "+DEVICE_COORDINATES)
 		# return DEVICE_COORDINATES
-		return [
-				dbus.Byte('T'), dbus.Byte('e'), dbus.Byte('s'), dbus.Byte('t')
-		]
+		return val
 		# readVal = ""
 		# for char in options.items():
 		# 	readVal += str(int(char))+" "
