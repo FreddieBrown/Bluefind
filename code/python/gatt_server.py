@@ -308,22 +308,11 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = None
 	
 	def WriteValue(self, value, options):
-		print("Value being Written!: "+repr(value))
-		readVal = ""
-		for char in options.items():
-			readVal += str(int(char))+" "
-		print("Options: "+readVal)
-		print('EmergencyCharacteristic Write: ' + repr(value))
-		self.value = value
+		print("Value being Written!: "+from_byte_array(value))
+
 
 	def ReadValue(self, options):
 		print('Sending Cute Hello Message')
-		return [dbus.Byte(104), dbus.Byte(105)]
-		# return DEVICE_COORDINATES
-		# readVal = ""
-		# for char in options.items():
-		# 	readVal += str(int(char))+" "
-		# print("Options: "+readVal)
-		# print('EmergencyCharacteristic Read: ' + repr(self.value))
-		# return self.value
+		return to_byte_array(DEVICE_COORDINATES)
+
 	

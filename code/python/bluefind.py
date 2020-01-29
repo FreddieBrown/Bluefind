@@ -145,8 +145,8 @@ def decide_device_type():
 
 if __name__ == '__main__':
 
-	print(repr(gatt_server.to_byte_array('52.281807, -1.532221')))
-	print(gatt_server.from_byte_array([dbus.Byte(104), dbus.Byte(105)]))
+	darray = dbus.Array([dbus.Byte(53)], signature=dbus.Signature('y'))
+	print(from_byte_array(darray))
 
 	signal.signal(signal.SIGINT, receiveSignal)
 
