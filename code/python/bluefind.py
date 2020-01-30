@@ -103,13 +103,14 @@ def receiveSignal(signal_number, frame):
 	return
 
 def decide_device_type():
+	global client_ty
 	random.seed()
 	if(random.randint(0, 10) < 5):
 		print("Server")
-		return "n"
+		client_ty = "n"
 	else:
 		print("Client")
-		return "y"
+		client_ty = "y"
 
 
 if __name__ == '__main__':
@@ -121,10 +122,6 @@ if __name__ == '__main__':
 	bus = dbus.SystemBus()
 
 	mainloop = GLib.MainLoop()
-
-	global client_ty
-
-	client_ty = decide_device_type()
 
 	agent_manager = agent.register_agent(bus)
 
