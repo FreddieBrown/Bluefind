@@ -18,7 +18,6 @@ BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
-capability = "NoInputNoOutput"
 em_advertisement = None
 agent_manager = None
 bus = None

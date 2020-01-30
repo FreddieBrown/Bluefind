@@ -18,6 +18,7 @@ with incoming parining/connection requests for the device.
 BUS_NAME = 'org.bluez'
 AGENT_INTERFACE = 'org.bluez.Agent1'
 AGENT_PATH = "/test/agent"
+capability = "NoInputNoOutput"
 
 def trust_device(path, bus):
 	properties = dbus.Interface(bus.get_object(BUS_NAME, path), 
