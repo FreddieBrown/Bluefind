@@ -315,4 +315,26 @@ class EmergencyCharacteristic(Characteristic):
 		print('Sending Cute Hello Message')
 		return to_byte_array(DEVICE_COORDINATES)
 
+def app_register_cb():
+	print("GATT Application registered!")
+
+def app_register_error_cb(error):
+	print('GATT Application not registered: ' + str(error))
+	mainloop.quit()
+
+def GATTStart(bus):
+	adapter = bluezutils.find_adapter_path(bus, GATT_MANAGER_IFACE)
+	if not adapter:
+		print("No adapter with interface: "+GATT_MANAGER_IFACE)
 	
+	service_manager = dbus.Interface(
+			bus.get_object(BLUEZ_SERVICE_NAME, adapter),
+			GATT_MANAGER_IFACE)
+	
+	app = Application(bus)
+
+	print('Registering GATT application...')
+	print("Debugging: "+app.get_path())
+	service_manager.RegisterApplication(app.get_path(), {},
+									reply_handler=app_register_cb,
+									error_handler=app_register_error_cb)	

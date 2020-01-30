@@ -28,7 +28,7 @@ mainloop = None
 def get_client_type():
 	return client_ty
 
-def discoStart(bus):
+def disco_start(bus):
 
 	adapter = bluezutils.find_adapter()
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
@@ -65,8 +65,9 @@ def discoStart(bus):
 
 	# Builds the filter for the scan filter
 	scan_filter = dict()
-
-	scan_filter.update({ "UUIDs": ['0000FFF0-0000-1000-8000-00805f9b34fb'] })
+	
+	if client_ty is "y":
+		scan_filter.update({ "UUIDs": ['0000FFF0-0000-1000-8000-00805f9b34fb'] })
 
 	# Sets the filter for device discovery
 	adapter.SetDiscoveryFilter(scan_filter)
@@ -74,6 +75,7 @@ def discoStart(bus):
 
 def server(bus, ad):
 	print("Server mode started")
+	gatt_server.GATTStart(bus)
 	# Gets the LEAdvertisingManager interface on the adapter in use
 	ad_manager = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, bluezutils.find_adapter_path(bus, LE_ADVERTISING_MANAGER_IFACE)), LE_ADVERTISING_MANAGER_IFACE)
 
@@ -86,39 +88,6 @@ def server(bus, ad):
 
 def client(bus):
 	print("Client mode started")
-
-def app_register_cb():
-	print("GATT Application registered!")
-
-def app_register_error_cb(error):
-	print('GATT Application not registered: ' + str(error))
-	mainloop.quit()
-
-def GATTStart(bus):
-	adapter = bluezutils.find_adapter_path(bus, GATT_MANAGER_IFACE)
-	if not adapter:
-		print("No adapter with interface: "+GATT_MANAGER_IFACE)
-	
-	service_manager = dbus.Interface(
-			bus.get_object(BLUEZ_SERVICE_NAME, adapter),
-			GATT_MANAGER_IFACE)
-	
-	app = gatt_server.Application(bus)
-
-	print('Registering GATT application...')
-	print("Debugging: "+app.get_path())
-	service_manager.RegisterApplication(app.get_path(), {},
-									reply_handler=app_register_cb,
-									error_handler=app_register_error_cb)
-
-def AgentReg(bus):
-	em_agent = agent.Agent(bus, agent.AGENT_PATH)
-	em_agent.set_eor(False)
-	obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
-	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
-	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
-	print("Agent Registered")
-	return agent_manager
 
 
 def receiveSignal(signal_number, frame):
@@ -145,31 +114,25 @@ def decide_device_type():
 
 if __name__ == '__main__':
 
-	darray = dbus.Array([dbus.Byte(53)], signature=dbus.Signature('y'))
-	print(gatt_server.from_byte_array(darray))
-
 	signal.signal(signal.SIGINT, receiveSignal)
 
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
 	bus = dbus.SystemBus()
 
-	# Creates the Advertisement class for emergency advertising
-	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
-
 	mainloop = GLib.MainLoop()
 
 	client_ty = decide_device_type()
 
-	agent_manager = AgentReg(bus)
+	agent_manager = agent.register_agent(bus)
 
-	discoStart(bus)
-
-	GATTStart(bus)
+	disco_start(bus)
 
 	if client_ty is "y":
 		client(bus)
 	else:
+		# Creates the Advertisement class for emergency advertising
+		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 		ad_manager = server(bus, em_advertisement)
 
 	mainloop.run()

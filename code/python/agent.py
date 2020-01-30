@@ -86,3 +86,13 @@ class Agent(dbus.service.Object):
 	@dbus.service.method(AGENT_INTERFACE, in_signature="", out_signature="")
 	def Cancel(self):
 		print("Cancel")
+
+
+def register_agent(bus):
+	em_agent = Agent(bus, agent.AGENT_PATH)
+	em_agent.set_eor(False)
+	obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
+	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
+	agent_manager.RegisterAgent(agent.AGENT_PATH, capability)
+	print("Agent Registered")
+	return agent_manager
