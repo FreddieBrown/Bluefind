@@ -25,6 +25,7 @@ bus = None
 mainloop = None
 
 def get_client_type():
+	global client_ty
 	return client_ty
 
 def disco_start(bus):
@@ -112,10 +113,6 @@ def decide_device_type():
 
 
 if __name__ == '__main__':
-
-	global client_ty
-	global bus
-	global mainloop
 
 	signal.signal(signal.SIGINT, receiveSignal)
 
