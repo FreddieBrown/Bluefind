@@ -20,6 +20,9 @@ GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
 em_advertisement = None
 agent_manager = None
 ad_manager = None
+client_ty = None
+bus = None
+mainloop = None
 
 def get_client_type():
 	return client_ty
