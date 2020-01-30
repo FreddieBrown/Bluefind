@@ -12,7 +12,6 @@ from gi.repository import GLib
 
 import bluezutils, discovery, advertising, gatt_server, agent
 
-client_ty = None
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
@@ -20,9 +19,7 @@ LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
 em_advertisement = None
 agent_manager = None
-bus = None
 ad_manager = None
-mainloop = None
 
 def get_client_type():
 	return client_ty
@@ -112,6 +109,10 @@ def decide_device_type():
 
 
 if __name__ == '__main__':
+
+	global client_ty
+	global bus
+	global mainloop
 
 	signal.signal(signal.SIGINT, receiveSignal)
 
