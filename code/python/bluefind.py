@@ -123,6 +123,8 @@ if __name__ == '__main__':
 
 	mainloop = GLib.MainLoop()
 
+	decide_device_type()
+
 	agent_manager = agent.register_agent(bus)
 
 	disco_start(bus)
