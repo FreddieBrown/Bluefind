@@ -28,51 +28,6 @@ def get_client_type():
 	global client_ty
 	return client_ty
 
-def disco_start(bus):
-
-	adapter = bluezutils.find_adapter()
-	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
-					"org.freedesktop.DBus.Properties")
-
-	# Adds a callback to listen for signals from InterfacesAdded.
-	# This will be activated when a new device is found
-	bus.add_signal_receiver(discovery.interfaces_added,
-			dbus_interface = "org.freedesktop.DBus.ObjectManager",
-			signal_name = "InterfacesAdded")
-
-	# This creates a callback when something changes about a 
-	# device. This is usually the UUIDs or if it is connected.
-	bus.add_signal_receiver(discovery.properties_changed,
-			dbus_interface = "org.freedesktop.DBus.Properties",
-			signal_name = "PropertiesChanged",
-			arg0 = "org.bluez.Device1",
-			path_keyword = "path")
-
-	# Sets the Discoverable option to on, meaning devices can discover it
-	if client_ty is "n":
-		bluezutils.properties(adapter_props, "Discoverable", "on")
-	else:
-		bluezutils.properties(adapter_props, "Discoverable", "off")		    
-
-	# Gets all objects for Bluez on Dbus. This looks for the 
-	# Device1 interface so that it can be used later on
-	om = dbus.Interface(bus.get_object("org.bluez", "/"),
-				"org.freedesktop.DBus.ObjectManager")
-	objects = om.GetManagedObjects()
-	for path, interfaces in objects.items():
-		if "org.bluez.Device1" in interfaces:
-			discovery.devices[path] = interfaces["org.bluez.Device1"]
-
-	# Builds the filter for the scan filter
-	scan_filter = dict()
-	
-	if client_ty is "y":
-		scan_filter.update({ "UUIDs": ['0000FFF0-0000-1000-8000-00805f9b34fb'] })
-
-	# Sets the filter for device discovery
-	adapter.SetDiscoveryFilter(scan_filter)
-	adapter.StartDiscovery()
-
 def server(bus, ad):
 	print("Server mode started")
 	gatt_server.GATTStart(bus)
@@ -127,7 +82,7 @@ if __name__ == '__main__':
 
 	agent_manager = agent.register_agent(bus)
 
-	disco_start(bus)
+	discovery.disco_start(bus, client_ty)
 
 	if client_ty is "y":
 		client(bus)

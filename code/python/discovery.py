@@ -13,6 +13,7 @@ import agent
 devices = {}
 dev_path = None
 device_obj = None
+client_ty = None
 
 def pair_reply():
 	print("PAIRING SUCCESS")
@@ -89,8 +90,8 @@ def interfaces_added(path, interfaces):
 	else:
 		address = "<unknown>"
 
-	print("Thinking about pairing, is device Client?: "+bluefind.client_ty)
-	if bluefind.client_ty is "y": 
+	print("Thinking about pairing, is device Client?: "+client_ty)
+	if client_ty is "y": 
 		print("Trying to pair with %s"%(str(address)))
 		device = bluezutils.find_device(address)
 		dev_path = device.object_path
@@ -115,3 +116,50 @@ def properties_changed(interface, changed, invalidated, path):
 	else:
 		address = "<unknown>"
 		print_info(address, devices[path])
+
+def disco_start(bus, client_type):
+	global client_ty
+	client_ty = client_type
+
+	adapter = bluezutils.find_adapter()
+	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
+					"org.freedesktop.DBus.Properties")
+
+	# Adds a callback to listen for signals from InterfacesAdded.
+	# This will be activated when a new device is found
+	bus.add_signal_receiver(interfaces_added,
+			dbus_interface = "org.freedesktop.DBus.ObjectManager",
+			signal_name = "InterfacesAdded")
+
+	# This creates a callback when something changes about a 
+	# device. This is usually the UUIDs or if it is connected.
+	bus.add_signal_receiver(properties_changed,
+			dbus_interface = "org.freedesktop.DBus.Properties",
+			signal_name = "PropertiesChanged",
+			arg0 = "org.bluez.Device1",
+			path_keyword = "path")
+
+	# Sets the Discoverable option to on, meaning devices can discover it
+	if client_ty is "n":
+		bluezutils.properties(adapter_props, "Discoverable", "on")
+	else:
+		bluezutils.properties(adapter_props, "Discoverable", "off")		    
+
+	# Gets all objects for Bluez on Dbus. This looks for the 
+	# Device1 interface so that it can be used later on
+	om = dbus.Interface(bus.get_object("org.bluez", "/"),
+				"org.freedesktop.DBus.ObjectManager")
+	objects = om.GetManagedObjects()
+	for path, interfaces in objects.items():
+		if "org.bluez.Device1" in interfaces:
+			devices[path] = interfaces["org.bluez.Device1"]
+
+	# Builds the filter for the scan filter
+	scan_filter = dict()
+	
+	if client_ty is "y":
+		scan_filter.update({ "UUIDs": ['0000FFF0-0000-1000-8000-00805f9b34fb'] })
+
+	# Sets the filter for device discovery
+	adapter.SetDiscoveryFilter(scan_filter)
+	adapter.StartDiscovery()
