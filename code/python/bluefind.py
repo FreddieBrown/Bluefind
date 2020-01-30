@@ -122,6 +122,8 @@ if __name__ == '__main__':
 
 	mainloop = GLib.MainLoop()
 
+	global client_ty
+
 	client_ty = decide_device_type()
 
 	agent_manager = agent.register_agent(bus)
