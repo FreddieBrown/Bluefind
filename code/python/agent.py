@@ -91,7 +91,7 @@ class Agent(dbus.service.Object):
 def register_agent(bus):
 	em_agent = Agent(bus, AGENT_PATH)
 	em_agent.set_eor(False)
-	obj = bus.get_object(BLUEZ_SERVICE_NAME, "/org/bluez");
+	obj = bus.get_object(BUS_NAME, "/org/bluez");
 	agent_manager = dbus.Interface(obj, "org.bluez.AgentManager1")
 	agent_manager.RegisterAgent(AGENT_PATH, capability)
 	print("Agent Registered")
