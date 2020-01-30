@@ -89,7 +89,7 @@ def interfaces_added(path, interfaces):
 	else:
 		address = "<unknown>"
 
-	print("Thinking about pairing, is device Client?: "+bluefind.get_client_type())
+	print("Thinking about pairing, is device Client?: "+bluefind.client_ty)
 	if bluefind.client_ty is "y": 
 		print("Trying to pair with %s"%(str(address)))
 		device = bluezutils.find_device(address)
