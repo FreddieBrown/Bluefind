@@ -342,4 +342,4 @@ def GATTStart(bus):
 	em_service = EmergencyService(bus, 0)
 	service_manager.RegisterService(em_service.get_path(), {},
 									reply_handler=app_register_cb,
-                                    error_handler=app_register_error_cb)	
+									error_handler=app_register_error_cb)	
