@@ -331,15 +331,11 @@ def GATTStart(bus):
 			bus.get_object(BLUEZ_SERVICE_NAME, adapter),
 			GATT_MANAGER_IFACE)
 	
-	# app = Application(bus)
+	app = Application(bus)
 
-	# print('Registering GATT application...')
-	# print("Debugging: "+app.get_path())
-	# service_manager.RegisterApplication(app.get_path(), {},
-	# 								reply_handler=app_register_cb,
-	# 								error_handler=app_register_error_cb)
-	print('Registering GATT Service')
-	em_service = EmergencyService(bus, 0)
-	service_manager.RegisterService(em_service.get_path(), {},
+	print('Registering GATT application...')
+	print("Debugging: "+app.get_path())
+	service_manager.RegisterApplication(app.get_path(), {},
 									reply_handler=app_register_cb,
-									error_handler=app_register_error_cb)	
+									error_handler=app_register_error_cb)
+	
