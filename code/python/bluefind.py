@@ -70,7 +70,7 @@ def decide_device_type():
 
 if __name__ == '__main__':
 
-	signal.signal(signal.SIGINT, receiveSignal)
+	# signal.signal(signal.SIGINT, receiveSignal)
 
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 

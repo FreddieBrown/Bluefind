@@ -74,12 +74,14 @@ def interfaces_added(path, interfaces):
 	else:
 		address = "<unknown>"
 
+
 	print("Thinking about connecting, is device Client?: "+client_ty)
+	print_info(address, devices[path])
 	if client_ty is "y": 
 		client_obj = Client()
 		# TODO: Add in better validation of address
 		if address is not "<unknown>":
-			print("Valid address")
+			print("Valid address: {}".format(address))
 			# Connect to device
 			client_obj.connect_to_device(address)
 			# Read value from device
@@ -88,9 +90,6 @@ def interfaces_added(path, interfaces):
 			client_obj.write_value(str(bytearray([4])))
 			# Disconnect from device
 			client_obj.disconnect()
-		
-
-	print_info(address, devices[path])
 
 def properties_changed(interface, changed, invalidated, path):
 	if interface != "org.bluez.Device1":
