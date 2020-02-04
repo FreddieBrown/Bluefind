@@ -41,17 +41,17 @@ def server(bus, ad):
 	
 	return ad_manager
 
-def client(bus):
+def client():
 	print("Client mode started")
 
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
 	print("Client: %s" % client_ty)
-	agent_manager.UnregisterAgent(agent.AGENT_PATH)
-	print("Agent Unregistered!")
 	if client_ty is "n":
 		# Cleans up advert if it was registered
+		agent_manager.UnregisterAgent(agent.AGENT_PATH)
+		print("Agent Unregistered!")
 		ad_manager.UnregisterAdvertisement(em_advertisement)
 		print('Advertisement Unregistered')
 	raise SystemExit('Exiting...')
@@ -73,7 +73,7 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, receiveSignal)
 
 	if client_ty is "y":
-		client(bus)
+		client()
 	else:
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 		ad_manager = server(bus, em_advertisement)
 
-	mainloop.run()
+		mainloop.run()
 
 	if client_ty is "n":
 		# Cleans up advert if it was registered
