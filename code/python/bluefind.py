@@ -72,6 +72,8 @@ if __name__ == '__main__':
 
 	signal.signal(signal.SIGINT, receiveSignal)
 
+	decide_device_type()
+
 	if client_ty is "y":
 		client()
 	else:
@@ -81,7 +83,6 @@ if __name__ == '__main__':
 
 		mainloop = GLib.MainLoop()
 
-		decide_device_type()
 
 		agent_manager = agent.register_agent(bus)
 
@@ -93,7 +94,6 @@ if __name__ == '__main__':
 
 		mainloop.run()
 
-	if client_ty is "n":
 		# Cleans up advert if it was registered
 		agent_manager.UnregisterAgent(agent.AGENT_PATH)
 		print("Agent Unregistered!")
