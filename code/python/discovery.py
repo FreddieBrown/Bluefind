@@ -9,28 +9,12 @@ from gi.repository import GLib
 import bluezutils
 import bluefind
 import agent
+from client import Client
 
 devices = {}
 dev_path = None
 device_obj = None
 client_ty = None
-
-def pair_reply():
-	print("PAIRING SUCCESS")
-	agent.trust_device(dev_path, bluefind.bus)
-	dev = dbus.Interface(bus.get_object("org.bluez", dev_path),
-						"org.bluez.Device1")
-	dev.Connect()
-
-
-def pair_error():
-	print("PAIRING ERROR")
-	err_name = error.get_dbus_name()
-	if err_name == "org.freedesktop.DBus.Error.NoReply" and device_obj:
-		print("Timed out. Cancelling pairing")
-		device_obj.CancelPairing()
-	else:
-		print("Creating device failed: %s" % (error))
 
 def print_info(address, properties):
 	"""
@@ -90,14 +74,21 @@ def interfaces_added(path, interfaces):
 	else:
 		address = "<unknown>"
 
-	print("Thinking about pairing, is device Client?: "+client_ty)
+	print("Thinking about connecting, is device Client?: "+client_ty)
 	if client_ty is "y": 
-		print("Trying to pair with %s"%(str(address)))
-		device = bluezutils.find_device(address)
-		dev_path = device.object_path
-		device.Pair(reply_handler=pair_reply, error_handler=pair_error,
-										timeout=60000)
-		device_obj = device
+        client_obj = Client()
+        # TODO: Add in better validation of address
+        if address is not "<unknown>":
+            print("Valid address")
+            # Connect to device
+            client_obj.connect_to_device(address)
+            # Read value from device
+            read_val = client_obj.read_value()
+            # Write value to address
+            client_obj.write_value(str(bytearray([4])))
+            # Disconnect from device
+            client_obj.disconnect()
+		
 
 	print_info(address, devices[path])
 

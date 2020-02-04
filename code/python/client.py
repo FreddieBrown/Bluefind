@@ -17,14 +17,16 @@ import bluezutils, exceptions
 
 class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
-	RW_HANDLE = 0xFFF1
+	RW_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
 
 	def __init__(self):
 		self.requester = None
+		self.address = None
 
 	def connect_to_device(self, address):
 		self.requester = GATTRequester(address)
-		self.requester.connect(True)
+		# self.requester.connect(True)
+		self.address = address
 		
 		data = self.read_value(requester)
 
@@ -34,7 +36,8 @@ class Client():
 		if not self.requester:
 			print("Cannot write as no device to send to")
 		else:
-			self.requester.write_by_handle(self.RW_HANDLE, data)
+			for i in range(0, 256):
+				self.requester.write_cmd(i, data)
 
 	def read_value(self):
 		if not self.requester:
@@ -43,11 +46,18 @@ class Client():
 		else:
 			response = GATTResponse()
 
-			self.requester.read_by_handle_async(self.RW_HANDLE, response)
+			requester.read_by_uuid_async(self.RW_UUID, response)
 			while not response.received():
 				time.sleep(0.1)
 			
 			return response.received()[0]
+	
+	def disconnect(self):
+		if not self.requester:
+			print("No connected device so cannot disconnect")
+		else:
+			print("Disconnecting device")
+			self.requester.disconnect()
 
 
 
