@@ -12,3 +12,8 @@ forms/
 *.log
 */obj/
 code/main*
+.vscode
+code/dbus/bluefind*
+code/old_code/obj/
+code/old_code/main*
+code/python/__pycache__
