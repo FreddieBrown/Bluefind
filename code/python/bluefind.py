@@ -70,23 +70,23 @@ def decide_device_type():
 
 if __name__ == '__main__':
 
-	# signal.signal(signal.SIGINT, receiveSignal)
-
-	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-
-	bus = dbus.SystemBus()
-
-	mainloop = GLib.MainLoop()
-
-	decide_device_type()
-
-	agent_manager = agent.register_agent(bus)
-
-	discovery.disco_start(bus, client_ty)
+	signal.signal(signal.SIGINT, receiveSignal)
 
 	if client_ty is "y":
 		client(bus)
 	else:
+		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+		bus = dbus.SystemBus()
+
+		mainloop = GLib.MainLoop()
+
+		decide_device_type()
+
+		agent_manager = agent.register_agent(bus)
+
+		discovery.disco_start(bus, client_ty)
+
 		# Creates the Advertisement class for emergency advertising
 		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 		ad_manager = server(bus, em_advertisement)

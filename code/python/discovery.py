@@ -9,7 +9,6 @@ from gi.repository import GLib
 import bluezutils
 import bluefind
 import agent
-from client import Client
 
 devices = {}
 dev_path = None
@@ -74,22 +73,7 @@ def interfaces_added(path, interfaces):
 	else:
 		address = "<unknown>"
 
-
-	print("Thinking about connecting, is device Client?: "+client_ty)
 	print_info(address, devices[path])
-	if client_ty is "y": 
-		client_obj = Client()
-		# TODO: Add in better validation of address
-		if address is not "<unknown>":
-			print("Valid address: {}".format(address))
-			# Connect to device
-			client_obj.connect_to_device(address)
-			# Read value from device
-			read_val = client_obj.read_value()
-			# Write value to address
-			client_obj.write_value(str(bytearray([4])))
-			# Disconnect from device
-			client_obj.disconnect()
 
 def properties_changed(interface, changed, invalidated, path):
 	if interface != "org.bluez.Device1":

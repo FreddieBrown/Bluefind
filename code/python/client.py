@@ -59,5 +59,14 @@ class Client():
 			print("Disconnecting device")
 			self.requester.disconnect()
 
+if __name__ == '__main__':
+	print("Starting")
+	cli = Client()
+	print("Connecting to device")
+	data = cli.connect_to_device("DC:A6:32:26:CE:70")
+	print("Data from device: {}".format(data))
+	cli.write_value(str(bytearray([4])))
+	print("Done")
+	
 
 
