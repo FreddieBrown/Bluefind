@@ -11,6 +11,7 @@ import array
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 from gattlib import GATTRequester, GATTResponse
+import time
 
 import bluezutils, exceptions
 
