@@ -46,7 +46,7 @@ class Client():
 			return None
 		else:
 			response = GATTResponse()
-
+			print("Reading data")
 			self.requester.read_by_uuid_async(self.RW_UUID, response)
 			while not response.received():
 				time.sleep(0.1)
@@ -67,9 +67,12 @@ if __name__ == '__main__':
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
 	cli.write_value(str(bytearray([4])))
-	data = cli.read_value()
-	print("Data from device: {}".format(data))
-	time.sleep(0.5)
+	i = 10
+	while i > 0:
+		data = cli.read_value()
+		print("Data from device: {}".format(data))
+		time.sleep(0.1)
+		i = i-1
 
 	print("Done")
 	
