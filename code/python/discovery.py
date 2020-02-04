@@ -98,7 +98,7 @@ def disco_start(bus, client_type):
 	adapter = bluezutils.find_adapter()
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
 					"org.freedesktop.DBus.Properties")
-	bluezutils.get_mac_addr()
+	bluezutils.get_mac_addr(bus)
 	
 
 	# Adds a callback to listen for signals from InterfacesAdded.

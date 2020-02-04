@@ -71,7 +71,7 @@ def properties(adapter_p, prop, onoff):
 	print("\t%s = %s" % (prop, onoff))
 	adapter_p.Set("org.bluez.Adapter1", prop, status)
 
-def get_mac_addr():
+def get_mac_addr(bus):
 	adapter = find_adapter()
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
 					"org.freedesktop.DBus.Properties")

@@ -75,8 +75,6 @@ if __name__ == '__main__':
 
 	decide_device_type()
 
-	
-
 	if client_ty is "y":
 		client()
 	else:
