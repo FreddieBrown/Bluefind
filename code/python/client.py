@@ -67,12 +67,13 @@ if __name__ == '__main__':
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
 	cli.write_value(str(bytearray([4])))
-	i = 10
-	while i > 0:
+	i = 0
+	while True:
 		data = cli.read_value()
 		print("Data from device: {}".format(data))
 		time.sleep(0.1)
-		i = i-1
+		i = i+1
+		print("I: {}".format(i))
 	cli.disconnect()
 
 	print("Done")
