@@ -28,9 +28,9 @@ class Client():
 		# self.requester.connect(True)
 		self.address = address
 		
-		data = self.read_value(requester)
+		data = self.read_value()
 
-		return requester, data
+		return data
 
 	def write_value(self, data):
 		if not self.requester:
