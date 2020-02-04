@@ -46,7 +46,7 @@ class Client():
 		else:
 			response = GATTResponse()
 
-			requester.read_by_uuid_async(self.RW_UUID, response)
+			self.requester.read_by_uuid_async(self.RW_UUID, response)
 			while not response.received():
 				time.sleep(0.1)
 			
