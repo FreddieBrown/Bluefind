@@ -66,11 +66,10 @@ if __name__ == '__main__':
 	print("Connecting to device")
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
-	while True:
-		cli.write_value(str(bytearray([4])))
-		data = cli.read_value()
-		print("Data from device: {}".format(data))
-		time.sleep(0.5)
+	cli.write_value(str(bytearray([4])))
+	data = cli.read_value()
+	print("Data from device: {}".format(data))
+	time.sleep(0.5)
 
 	print("Done")
 	
