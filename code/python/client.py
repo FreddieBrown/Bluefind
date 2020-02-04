@@ -73,6 +73,7 @@ if __name__ == '__main__':
 		print("Data from device: {}".format(data))
 		time.sleep(0.1)
 		i = i-1
+	cli.disconnect()
 
 	print("Done")
 	
