@@ -23,7 +23,7 @@ GATT_SERVICE_IFACE = 'org.bluez.GattService1'
 GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
 GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
-DEVICE_COORDINATES = '52.281807, -1.532221'
+DEVICE_COORDINATES = '1=(52.281807, -1.532221) | 2=DC:A6:32:26:CE:70'
 
 def to_byte_array(value):
 	# Convert string into some sort of char array
@@ -309,10 +309,12 @@ class EmergencyCharacteristic(Characteristic):
 	
 	def WriteValue(self, value, options):
 		print("Value being Written!: "+from_byte_array(value))
+        # Take value are pass into method to split and store data
 
 
 	def ReadValue(self, options):
-		print('Sending Cute Hello Message')
+		print('Sending Device Information')
+        # Generate message to send
 		return to_byte_array(DEVICE_COORDINATES)
 
 def app_register_cb():

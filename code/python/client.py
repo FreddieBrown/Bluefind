@@ -59,6 +59,19 @@ class Client():
 		else:
 			print("Disconnecting device")
 			self.requester.disconnect()
+"""
+
+1. Start to Discover devices and information about them
+2. Get the devices which utilise the EmergencyService
+3. Connect to that device (if it wasn't the last seen device (only ok if 1 device visible) )
+4. Read data from the connected device
+5. Write data to connected device
+6. Split up and save message
+7. Set device to last seen device
+8. Disconnect device
+9. Go back to step 2
+
+"""
 
 if __name__ == '__main__':
 	print("Starting")
@@ -78,5 +91,3 @@ if __name__ == '__main__':
 
 	print("Done")
 	
-
-
