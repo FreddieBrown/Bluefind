@@ -72,5 +72,5 @@ def properties(adapter_p, prop, onoff):
 	adapter_p.Set("org.bluez.Adapter1", prop, status)
 
 def get_mac_addr(adapter_p):
-    address = adapter_p.Get("org.bluez.Adapter1", "Address")
-    print("Address is : {}".format(address))
+	address = adapter_p.Get("org.bluez.Adapter1", "Address")
+	print("Address is : {}".format(address))

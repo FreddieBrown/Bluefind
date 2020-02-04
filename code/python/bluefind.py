@@ -75,12 +75,14 @@ if __name__ == '__main__':
 
 	decide_device_type()
 
-    bus = dbus.SystemBus()
+	
 
 	if client_ty is "y":
 		client()
 	else:
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+		bus = dbus.SystemBus()
 
 		mainloop = GLib.MainLoop()
 
