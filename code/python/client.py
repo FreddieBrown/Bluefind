@@ -78,6 +78,7 @@ if __name__ == '__main__':
 	cli = Client()
 	bus = dbus.SystemBus()
 	dev_addr = bluezutils.get_mac_addr(bus)
+	print(dev_addr)
 	coord = "52.281799, -1.532315"
 	message = bluezutils.build_message([coord], [dev_addr])
 	print("Connecting to device")
