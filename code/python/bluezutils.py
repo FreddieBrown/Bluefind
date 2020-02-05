@@ -83,8 +83,10 @@ def build_message(locations, addresses):
 	for i in range(0,len(locations)):
 		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
 
-	print("Built Message: {}".format(''.join(message)))
-	return ''.join(message)
+	true_mess = ''.join(message)
+	print("Built Message: {}".format(true_mess))
+	
+	return true_mess
 
 def to_byte_array(value):
 	# Convert string into some sort of char array
