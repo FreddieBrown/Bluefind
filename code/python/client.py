@@ -73,10 +73,9 @@ class Client():
 
 """
 
-if __name__ == '__main__':
+def client_start(bus):
 	print("Starting")
 	cli = Client()
-	bus = dbus.SystemBus()
 	dev_addr = bluezutils.get_mac_addr(bus)
 	coord = "52.281799, -1.532315"
 	# After this should start disc

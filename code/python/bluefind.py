@@ -10,7 +10,7 @@ import signal
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
-import bluezutils, discovery, advertising, gatt_server, agent
+import bluezutils, discovery, advertising, gatt_server, agent, client
 
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 	bus = dbus.SystemBus()
 
 	if client_ty is "y":
-		client(bus)
+		client.client_start(bus)
 	else:
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
