@@ -42,9 +42,6 @@ def server(bus, ad):
 	
 	return ad_manager
 
-def client(bus):
-	print("Client mode started")
-
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
