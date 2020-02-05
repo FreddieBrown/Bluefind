@@ -79,14 +79,15 @@ class Client():
 
 """
 
-def client_start(bus):
+if __name__ == '__main__':
 	print("Starting")
 	cli = Client()
+	bus = dbus.SystemBus()
 	dev_addr = bluezutils.get_mac_addr(bus)
 	coord = "52.281799, -1.532315"
 	# After this should start disc
 	message = bluezutils.build_message([coord], [dev_addr])
-	print(bluezutils.break_down_message(message))
+	# print(bluezutils.break_down_message(message))
 	print("Connecting to device")
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))

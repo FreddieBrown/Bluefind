@@ -75,22 +75,18 @@ if __name__ == '__main__':
 	bus = dbus.SystemBus()
 	mainloop = GLib.MainLoop()
 
-	if client_ty is "y":
-		client.client_start(bus)
-	else:
+	agent_manager = agent.register_agent(bus)
 
-		agent_manager = agent.register_agent(bus)
-
-		discovery.disco_start(bus, client_ty)
+	discovery.disco_start(bus, client_ty)
 
 		# Creates the Advertisement class for emergency advertising
-		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
-		ad_manager = server(bus, em_advertisement)
+	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
+	ad_manager = server(bus, em_advertisement)
 
-		mainloop.run()
+	mainloop.run()
 
 		# Cleans up advert if it was registered
-		agent_manager.UnregisterAgent(agent.AGENT_PATH)
-		print("Agent Unregistered!")
-		ad_manager.UnregisterAdvertisement(em_advertisement)
-		print('Advertisement Unregistered')
+	agent_manager.UnregisterAgent(agent.AGENT_PATH)
+	print("Agent Unregistered!")
+	ad_manager.UnregisterAdvertisement(em_advertisement)
+	print('Advertisement Unregistered')
