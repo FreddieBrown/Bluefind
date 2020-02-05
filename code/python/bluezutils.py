@@ -79,12 +79,12 @@ def get_mac_addr(bus):
 	print("Address is : {}".format(address))
 
 def build_message(locations, addresses):
-	message=""
+	message=[]
 	for i in range(0,len(locations)):
-		message+="1=({})|2={}|".format(locations[i], addresses[i])
+		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
 
-	print("Built Message: {}".format(message))
-	return message
+	print("Built Message: {}".format(''.join(message)))
+	return ''.join(message)
 
 def to_byte_array(value):
 	# Convert string into some sort of char array
