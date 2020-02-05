@@ -77,6 +77,7 @@ def get_mac_addr(bus):
 					"org.freedesktop.DBus.Properties")
 	address = adapter_props.Get("org.bluez.Adapter1", "Address")
 	print("Address is : {}".format(address))
+	return address
 
 def build_message(locations, addresses):
 	message=[]
