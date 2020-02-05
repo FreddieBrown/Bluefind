@@ -74,16 +74,13 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, receiveSignal)
 
 	decide_device_type()
-
+	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	bus = dbus.SystemBus()
+	mainloop = GLib.MainLoop()
 
 	if client_ty is "y":
 		client.client_start(bus)
 	else:
-		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-
-
-		mainloop = GLib.MainLoop()
 
 		agent_manager = agent.register_agent(bus)
 
