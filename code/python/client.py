@@ -59,6 +59,12 @@ class Client():
 		else:
 			print("Disconnecting device")
 			self.requester.disconnect()
+	
+	def is_connected(self):
+		if not self.requester:
+			return False
+		else:
+			return self.requester.is_connected()
 """
 
 1. Start to Discover devices and information about them
@@ -80,17 +86,17 @@ def client_start(bus):
 	coord = "52.281799, -1.532315"
 	# After this should start disc
 	message = bluezutils.build_message([coord], [dev_addr])
+	print(bluezutils.break_down_message(message))
 	print("Connecting to device")
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
 	cli.write_value(bluezutils.to_byte_array(message))
-	i = 0
-	while True:
+
+	while cli.is_connected():
+		# Do stuff with other device e.g write to it and read from it
 		data = cli.read_value()
 		print("Data from device: {}".format(bluezutils.from_byte_array(data)))
 		time.sleep(0.1)
-		i = i+1
-		print("I: {}".format(i))
 	cli.disconnect()
 
 	print("Done")
