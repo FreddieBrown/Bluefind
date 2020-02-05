@@ -84,8 +84,8 @@ def build_message(locations, addresses):
 		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
 
 	true_mess = ''.join(message)
-	print("Built Message: {}".format(true_mess))
-	
+	print("Built Message: "+true_mess)
+
 	return true_mess
 
 def to_byte_array(value):
