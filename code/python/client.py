@@ -79,6 +79,7 @@ if __name__ == '__main__':
 	bus = dbus.SystemBus()
 	dev_addr = bluezutils.get_mac_addr(bus)
 	coord = "52.281799, -1.532315"
+	# After this should start disc
 	message = bluezutils.build_message([coord], [dev_addr])
 	print("Connecting to device")
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")

@@ -89,6 +89,19 @@ def build_message(locations, addresses):
 
 	return true_mess
 
+def break_down_message(message):
+	locations = []
+	addresses = []
+	tvps = message.split("|")
+	for tvp in tvps:
+		tvp_no_equals = tvp.split("=")
+		if tvp_no_equals[0] is "1":
+			locations.append(tvp_no_equals[1])
+		elif  tvp_no_equals[0] is "2":
+			addresses.append(tvp_no_equals[1])
+	
+	return [locations, addresses]
+
 def to_byte_array(value):
 	# Convert string into some sort of char array
 	char_arr = list(value)
