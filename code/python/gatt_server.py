@@ -25,27 +25,7 @@ GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
 DEVICE_COORDINATES = '1=(52.281807, -1.532221) | 2=DC:A6:32:26:CE:70'
 
-def to_byte_array(value):
-	# Convert string into some sort of char array
-	char_arr = list(value)
-	ret_list = []
-	# For each member of the char array, get the ASCII code for each character
-	for char in char_arr:
-		ascii_v = ord(char)
-		# Take each ASCII code and create a dbus.Byte object with it and add it to another array
-		ret_list.append(dbus.Byte(ascii_v))
-	# Once byte array built, return
-	return ret_list
 
-def from_byte_array(val_arr):
-	med_arr = []
-	# Take byte array and work out character of each value
-	for value in val_arr:
-		med_arr.append(chr(value)) 
-	# With each character, add it to a string
-	ret_string = ''.join(med_arr)
-	# return string
-	return ret_string
 
 """
 Implements the org.bluez.GattApplication1 interface. This is 
@@ -308,14 +288,14 @@ class EmergencyCharacteristic(Characteristic):
 		self.value = None
 	
 	def WriteValue(self, value, options):
-		print("Value being Written!: "+from_byte_array(value))
+		print("Value being Written!: "+bluezutils.from_byte_array(value))
         # Take value are pass into method to split and store data
 
 
 	def ReadValue(self, options):
 		print('Sending Device Information')
         # Generate message to send
-		return to_byte_array(DEVICE_COORDINATES)
+		return bluezutils.to_byte_array(DEVICE_COORDINATES)
 
 def app_register_cb():
 	print("GATT Application registered!")

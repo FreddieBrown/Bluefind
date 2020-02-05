@@ -77,3 +77,33 @@ def get_mac_addr(bus):
 					"org.freedesktop.DBus.Properties")
 	address = adapter_props.Get("org.bluez.Adapter1", "Address")
 	print("Address is : {}".format(address))
+
+def build_message(locations, addresses):
+	message=""
+	for i in range(0,len(locations)):
+		message+="1=({})|2={}|".format(locations[i], addresses[i])
+
+	print("Built Message: {}".format(message))
+	return message
+
+def to_byte_array(value):
+	# Convert string into some sort of char array
+	char_arr = list(value)
+	ret_list = []
+	# For each member of the char array, get the ASCII code for each character
+	for char in char_arr:
+		ascii_v = ord(char)
+		# Take each ASCII code and create a dbus.Byte object with it and add it to another array
+		ret_list.append(dbus.Byte(ascii_v))
+	# Once byte array built, return
+	return ret_list
+
+def from_byte_array(val_arr):
+	med_arr = []
+	# Take byte array and work out character of each value
+	for value in val_arr:
+		med_arr.append(chr(value)) 
+	# With each character, add it to a string
+	ret_string = ''.join(med_arr)
+	# return string
+	return ret_string

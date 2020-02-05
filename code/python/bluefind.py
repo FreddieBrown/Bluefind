@@ -42,7 +42,7 @@ def server(bus, ad):
 	
 	return ad_manager
 
-def client():
+def client(bus):
 	print("Client mode started")
 
 
@@ -75,12 +75,13 @@ if __name__ == '__main__':
 
 	decide_device_type()
 
+	bus = dbus.SystemBus()
+
 	if client_ty is "y":
-		client()
+		client(bus)
 	else:
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-		bus = dbus.SystemBus()
 
 		mainloop = GLib.MainLoop()
 
