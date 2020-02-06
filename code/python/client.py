@@ -91,7 +91,7 @@ if __name__ == '__main__':
 	print("Connecting to device")
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
-	cli.write_value(bluezutils.to_byte_array(message))
+	cli.write_value(str(bluezutils.to_byte_array(message)))
 
 	while cli.is_connected():
 		# Do stuff with other device e.g write to it and read from it
