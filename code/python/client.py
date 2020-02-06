@@ -118,7 +118,7 @@ if __name__ == '__main__':
 	for address, name in list(devices.items()):
 		print("name: {}, address: {}".format(name, address))
 		if name.strip(' ') is not '':
-			cli.prepare_device(address, false)
+			cli.prepare_device(address, False)
 			chrcs = cli.device_characteristics(address)
 
 
