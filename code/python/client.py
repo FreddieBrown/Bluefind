@@ -91,7 +91,8 @@ if __name__ == '__main__':
 	message = bluezutils.build_message([coord], [dev_addr])
 
 	devices = cli.discover(5)
-	for address, name in devices:
+	print("Devices: {}".format(devices))
+	for address, name in list(devices.items()):
 		print("name: {}, address: {}".format(name, address))
 
 	print("Connecting to device")
