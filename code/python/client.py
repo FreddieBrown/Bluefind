@@ -51,7 +51,7 @@ class Client():
 			self.requester.read_by_uuid_async(self.RW_UUID, response)
 			while not response.received() and self.is_connected():
 				time.sleep(0.1)
-			
+			print("Response: {}".format(response.received()))
 			return response.received()[0]
 	
 	def disconnect(self):
