@@ -124,7 +124,7 @@ if __name__ == '__main__':
 				if dev['uuid'].lower() == cli.RW_UUID.lower():
 					# If one of them is the same as the emergency UUID, allow it to talk to it
 					handle = int(dev['handle'])
-					cli.write_value(handle, str(bytearray(message)))
+					cli.write_value(handle, str(bytearray([2])))
 					while cli.is_connected():
 						# Do stuff with other device e.g write to it and read from it
 						data = cli.read_value()
