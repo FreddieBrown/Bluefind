@@ -297,9 +297,11 @@ class EmergencyCharacteristic(Characteristic):
 		print('Sending Device Information')
 		# Create method to get device address from options['device']
 		global current_client
-		print("Current Client: {}".format(current_client))
-		current_client = bluezutils.dbus_to_MAC(options['device'])
-		print("Current Client: {}".format(current_client))
+		if current_client is bluezutils.dbus_to_MAC(options['device']):
+			pass
+		else: 
+			current_client = bluezutils.dbus_to_MAC(options['device'])
+			print("New client: {}".format(current_client))
 		# Generate message to send
 		return bluezutils.to_byte_array(DEVICE_COORDINATES)
 

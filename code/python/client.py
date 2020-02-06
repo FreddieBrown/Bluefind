@@ -10,7 +10,7 @@ import dbus.service
 import array
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
-from gattlib import GATTRequester, GATTResponse
+from gattlib import GATTRequester, GATTResponse, DiscoveryService
 import time
 
 import bluezutils, exceptions
@@ -23,6 +23,7 @@ class Client():
 	def __init__(self):
 		self.requester = None
 		self.address = None
+		self.discovery = DiscoveryService("hci0")
 
 	def connect_to_device(self, address):
 		self.requester = GATTRequester(address)
@@ -65,6 +66,8 @@ class Client():
 			return False
 		else:
 			return self.requester.is_connected()
+	def discover(self, timeout):
+		return self.discover.discover(timeout)
 """
 
 1. Start to Discover devices and information about them
@@ -85,9 +88,12 @@ if __name__ == '__main__':
 	bus = dbus.SystemBus()
 	dev_addr = bluezutils.get_mac_addr(bus)
 	coord = "52.281799, -1.532315"
-	# After this should start disc
 	message = bluezutils.build_message([coord], [dev_addr])
-	# print(bluezutils.break_down_message(message))
+
+	devices = cli.discover(5)
+	for address, name in devices:
+		print("name: {}, address: {}".format(name, address))
+
 	print("Connecting to device")
 	data = cli.connect_to_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
