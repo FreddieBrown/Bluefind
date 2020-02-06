@@ -38,7 +38,7 @@ class Client():
 		if not self.requester:
 			print("Cannot write as no device to send to")
 		else:
-				self.requester.write_cmd(i, data)
+				self.requester.write_cmd(handle, data)
 
 	def read_value(self):
 		if not self.requester:
