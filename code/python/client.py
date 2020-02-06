@@ -52,7 +52,7 @@ class Client():
 				time.sleep(0.1)
 				if not self.is_connected():
 					print("Lost connection, reconnecting")
-					self.requester.connect()
+					self.reconnect(3)
 
 			print("Response: {}".format(response.received()))
 			if len(response.received()) is 0:
@@ -81,11 +81,15 @@ class Client():
 				self.requester.connect()
 				if self.is_connected():
 					break
+
 	def device_characteristics(self):
 		response = GATTResponse()
 		self.requester.discover_characteristics_async(response)
 		while not response.received():
 			time.sleep(0.1)
+			if not self.is_connected():
+				print("Lost connection, reconnecting")
+				self.reconnect(3)
 		print("Characteristics for {}: {}".format(self.target_address, response.received()))
 		return response.received()
 	def update_location(self, location):
