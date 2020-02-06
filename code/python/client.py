@@ -52,10 +52,7 @@ class Client():
 			print("Reading data")
 			self.requester.read_by_uuid_async(self.RW_UUID, response)
 			while not response.received():
-				time.sleep(0.1)
-				if not self.is_connected():
-					print("Lost connection, reconnecting")
-					self.reconnect(3)
+				time.sleep(0.1)	
 
 			print("Response: {}".format(response.received()))
 			if len(response.received()) is 0:
@@ -90,9 +87,7 @@ class Client():
 		self.requester.discover_characteristics_async(response)
 		while not response.received():
 			time.sleep(0.1)
-			if not self.is_connected():
-				print("Lost connection, reconnecting")
-				self.reconnect(3)
+			
 		print("Characteristics for {}: {}".format(self.target_address, response.received()))
 		return response.received()
 	def update_location(self, location):
@@ -130,7 +125,7 @@ if __name__ == '__main__':
 				if dev['uuid'].lower() == cli.RW_UUID.lower():
 					# If one of them is the same as the emergency UUID, allow it to talk to it
 					handle = int(dev['handle'])
-					cli.write_value(bytes([10, 11, 12]))
+					cli.write_value("Hello")
 					# while cli.is_connected():
 						# Do stuff with other device e.g write to it and read from it
 					data = cli.read_value()
