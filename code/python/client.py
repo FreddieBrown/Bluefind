@@ -20,25 +20,24 @@ class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
 	RW_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
 
-	def __init__(self):
+	def __init__(self, location, device_address):
+		self.device_address = device_address
+		self.location = location
 		self.requester = None
-		self.address = None
+		self.target_address = None
 		self.discovery = DiscoveryService("hci0")
 
-	def prepare_device(self, address, connect=True):
-		self.requester = GATTRequester(address)
-		# self.requester.connect(True)
-		self.address = address
-		
+	def prepare_device(self, target_address, connect=True):
+		self.requester = GATTRequester(target_address, connect)
+		self.target_address = target_address
 		data = self.read_value()
-
 		return data
 
 	def write_value(self, handle, data):
 		if not self.requester:
 			print("Cannot write as no device to send to")
 		else:
-				self.requester.write_cmd(handle, data)
+			self.requester.write_cmd(handle, data)
 
 	def read_value(self):
 		if not self.requester:
@@ -86,8 +85,10 @@ class Client():
 		self.requester.discover_characteristics_async(response)
 		while not response.received():
 			time.sleep(0.1)
-		print("Characteristics for {}: {}".format(self.address, response.received()))
+		print("Characteristics for {}: {}".format(self.target_address, response.received()))
 		return response.received()
+	def update_location(self, location):
+		self.location = location
 
 
 """
@@ -106,35 +107,28 @@ class Client():
 
 if __name__ == '__main__':
 	print("Starting")
-	cli = Client()
-	bus = dbus.SystemBus()
-	dev_addr = bluezutils.get_mac_addr(bus)
-	coord = "52.281799, -1.532315"
-	message = bluezutils.build_message([coord], [dev_addr])
+	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
+	message = bluezutils.build_message([cli.location], [cli.device_address])
 
 	devices = cli.discover(5)
 	print("Devices: {}".format(devices))
 	for address, name in list(devices.items()):
 		print("name: {}, address: {}".format(name, address))
-		if name.strip(' ') is not '':
+		if "EmergencyAdvertisement" in name:
 			cli.prepare_device(address)
 			chrcs = cli.device_characteristics()
-			cli.write_value(36, str(message))
-			while cli.is_connected():
-				# Do stuff with other device e.g write to it and read from it
-				data = cli.read_value()
-				print("Data from device: {}".format(bluezutils.from_byte_array(data)))
-				time.sleep(0.1)
+			for dev in chrcs:
+				# Go through the dict and inspect the UUIDs
+				if dev['uuid'] is cli.RW_UUID:
+					# If one of them is the same as the emergency UUID, allow it to talk to it
+					handle = int(dev['handle'])
+					cli.write_value(handle, str(message))
+					while cli.is_connected():
+						# Do stuff with other device e.g write to it and read from it
+						data = cli.read_value()
+						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
+						time.sleep(0.1)
+			# Otherwise, disconnect from device
 			cli.disconnect()
-
-
-	# print("Connecting to device")
-	# data = cli.prepare_device("DC:A6:32:26:CE:70")
-	# print("Data from device: {}".format(data))
-	
-
-	
-	cli.disconnect()
-
 	print("Done")
 	
