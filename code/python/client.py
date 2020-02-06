@@ -103,6 +103,7 @@ class Client():
 		else:
 			message_buffer = bluezutils.split_message(self.message)
 			for i in message_buffer:
+				print("Writing: {}".format(i))
 				cli.write_value(i)
 			print("Written whole message to {}".format(self.target_address))
 	
