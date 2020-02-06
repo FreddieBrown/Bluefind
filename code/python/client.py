@@ -177,7 +177,7 @@ if __name__ == '__main__':
 						data = cli.read_value()
 						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
 						# Write the whole planned message to the server
-						cli.write_value(handle, "Hello")
+						cli.send_message(handle)
 				# Otherwise, disconnect from device
 				cli.disconnect()
 	print("Done")
