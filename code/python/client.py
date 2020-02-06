@@ -5,16 +5,15 @@ import re
 import sys
 import dbus
 import dbus.exceptions
-import dbus.mainloop.glib
 import dbus.service
 import array
-from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import GLib
+import signal
 from gattlib import GATTRequester, GATTResponse, DiscoveryService
 import time
 
 import bluezutils, exceptions
 
+cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
 
 class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
@@ -93,6 +92,14 @@ class Client():
 	def update_location(self, location):
 		self.location = location
 
+def sig_handler(signal_number, frame):
+	print('Received: '+str(signal_number))
+	try:
+		cli.disconnect()
+	except:
+		print("Error disconnecting")
+	raise SystemExit('Exiting...')
+	return
 
 """
 
@@ -109,29 +116,31 @@ class Client():
 """
 
 if __name__ == '__main__':
+	signal.signal(signal.SIGINT, sig_handler)
 	print("Starting")
-	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
-	message = bluezutils.build_message([cli.location], [cli.device_address])
 
-	devices = cli.discover(5)
-	print("Devices: {}".format(devices))
-	for address, name in list(devices.items()):
-		print("name: {}, address: {}".format(name, address))
-		if "EmergencyAdvertisement" in name:
-			cli.prepare_device(address)
-			chrcs = cli.device_characteristics()
-			for dev in chrcs:
-				# Go through the dict and inspect the UUIDs
-				if dev['uuid'].lower() == cli.RW_UUID.lower():
-					# If one of them is the same as the emergency UUID, allow it to talk to it
-					handle = int(dev['handle'])
-					cli.write_value("Hello")
-					# while cli.is_connected():
-						# Do stuff with other device e.g write to it and read from it
-					data = cli.read_value()
-					print("Data from device: {}".format(bluezutils.from_byte_array(data)))
-					# time.sleep(0.1)
-			# Otherwise, disconnect from device
-			cli.disconnect()
+	while True:
+		# Build message at start of each iteration
+		message = bluezutils.build_message([cli.location], [cli.device_address])
+		devices = cli.discover(5)
+		print("Devices: {}".format(devices))
+		for address, name in list(devices.items()):
+			print("name: {}, address: {}".format(name, address))
+			if "EmergencyAdvertisement" in name:
+				cli.prepare_device(address)
+				chrcs = cli.device_characteristics()
+				for dev in chrcs:
+					# Go through the dict and inspect the UUIDs
+					if dev['uuid'].lower() == cli.RW_UUID.lower():
+						# If one of them is the same as the emergency UUID, allow it to talk to it
+						handle = int(dev['handle'])
+						cli.write_value("Hello")
+						# while cli.is_connected():
+							# Do stuff with other device e.g write to it and read from it
+						data = cli.read_value()
+						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
+						# time.sleep(0.1)
+				# Otherwise, disconnect from device
+				cli.disconnect()
 	print("Done")
 	
