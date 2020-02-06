@@ -49,9 +49,15 @@ class Client():
 			response = GATTResponse()
 			print("Reading data")
 			self.requester.read_by_uuid_async(self.RW_UUID, response)
-			while not response.received() and self.is_connected():
+			while not response.received():
 				time.sleep(0.1)
+				if not self.is_connected():
+					print("Lost connection, reconnecting")
+					self.reconnect()
+
 			print("Response: {}".format(response.received()))
+			if len(response.received()) is 0:
+				return '' 
 			return response.received()[0]
 	
 	def disconnect(self):
@@ -68,6 +74,15 @@ class Client():
 			return self.requester.is_connected()
 	def discover(self, timeout):
 		return self.discovery.discover(timeout)
+	def reconnect(self, chances):
+		if self.requester is None:
+			print("No device to reconnect with")
+		else:
+			for i in range(chances):
+				self.requester.connect()
+				if self.is_connected():
+					break
+
 """
 
 1. Start to Discover devices and information about them
