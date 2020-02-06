@@ -131,7 +131,7 @@ def split_message(message):
 	"""
 	Method splits message into 19byte chunks 
 	"""
-    mess_size = 18
+    mess_size = 16
 	byte_arr = []
 	message_len = len(message)
 	for i in range(0, int(message_len/mess_size)):

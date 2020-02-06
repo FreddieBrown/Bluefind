@@ -101,10 +101,11 @@ class Client():
 			return None
 		else:
 			message_buffer = bluezutils.split_message(self.message)
-			seq = 1
+			seq = 0
 			for i in message_buffer:
 				# Uses a sequence number to let server know which packet in sequence it is
-				mess_with_seq = str(seq)+i
+				# Can do up to a max of 99 packets in sequence
+				mess_with_seq = str(seq)+"\x01"+i
 				print("Writing: {}".format(mess_with_seq))
 				cli.write_value(handle, mess_with_seq)
 				seq += 1
