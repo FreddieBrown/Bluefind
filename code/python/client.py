@@ -33,7 +33,8 @@ class Client():
 		else:
 			print("Writing data")
 			for i in range(1, 100):
-				self.requester.write_cmd(i, data+str(i))
+				mess = str(i)+data+str(i)
+				self.requester.write_cmd(i, mess)
 
 
 
