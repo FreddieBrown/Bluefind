@@ -294,6 +294,7 @@ class EmergencyCharacteristic(Characteristic):
 
 	def ReadValue(self, options):
 		print('Sending Device Information')
+        print("Options: {}".format(options))
         # Generate message to send
 		return bluezutils.to_byte_array(DEVICE_COORDINATES)
 
