@@ -1,14 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
-import bluezutils
-import bluefind
-import agent
+import bluezutils, bluefind, agent
 
 devices = {}
 dev_path = None

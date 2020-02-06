@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
@@ -11,7 +10,6 @@ import array
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 from random import randint
-
 import bluezutils, exceptions
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
