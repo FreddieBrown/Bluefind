@@ -42,7 +42,7 @@ def server(bus, ad):
 	
 	return ad_manager
 
-def client(bus):
+def client():
 	print("Client mode started")
 
 def receiveSignal(signal_number, frame):
@@ -74,14 +74,14 @@ if __name__ == '__main__':
 
 	decide_device_type()
 
-	bus = dbus.SystemBus()
+
 
 	if client_ty is "y":
-		client(bus)
+		client()
 	else:
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-
+		bus = dbus.SystemBus()
 		mainloop = GLib.MainLoop()
 
 		agent_manager = agent.register_agent(bus)
