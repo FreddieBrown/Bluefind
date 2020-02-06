@@ -34,11 +34,10 @@ class Client():
 
 		return data
 
-	def write_value(self, data):
+	def write_value(self, handle, data):
 		if not self.requester:
 			print("Cannot write as no device to send to")
 		else:
-			for i in range(0, 256):
 				self.requester.write_cmd(i, data)
 
 	def read_value(self):
@@ -120,18 +119,21 @@ if __name__ == '__main__':
 		if name.strip(' ') is not '':
 			cli.prepare_device(address)
 			chrcs = cli.device_characteristics()
+			cli.write_value(35, str(message))
+			while cli.is_connected():
+				# Do stuff with other device e.g write to it and read from it
+				data = cli.read_value()
+				print("Data from device: {}".format(bluezutils.from_byte_array(data)))
+				time.sleep(0.1)
+			cli.disconnect()
 
 
-	print("Connecting to device")
-	data = cli.prepare_device("DC:A6:32:26:CE:70")
-	print("Data from device: {}".format(data))
-	cli.write_value(str(message))
+	# print("Connecting to device")
+	# data = cli.prepare_device("DC:A6:32:26:CE:70")
+	# print("Data from device: {}".format(data))
+	
 
-	while cli.is_connected():
-		# Do stuff with other device e.g write to it and read from it
-		data = cli.read_value()
-		print("Data from device: {}".format(bluezutils.from_byte_array(data)))
-		time.sleep(0.1)
+	
 	cli.disconnect()
 
 	print("Done")
