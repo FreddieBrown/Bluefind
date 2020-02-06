@@ -33,7 +33,7 @@ class Client():
 		else:
 			print("Writing data")
 			for i in range(1, 100):
-				self.requester.write_cmd(i, data)
+				self.requester.write_cmd(i, data+str(i))
 
 
 
@@ -172,12 +172,12 @@ if __name__ == '__main__':
 						# If one of them is the same as the emergency UUID, allow it to talk to it
 					if dev['uuid'].lower() == cli.RW_UUID.lower():
 						# Get the handle of the service
-						handle = int(dev['handle'])
+						print("Handle: {}, Properties: {}, Value Handle {}".format(dev['handle'], dev['properties'], dev['value_handle']))
 						# Read a value from the server
 						data = cli.read_value()
 						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
 						# Write the whole planned message to the server
-						cli.send_message()
+						cli.write_value("Hello")
 				# Otherwise, disconnect from device
 				cli.disconnect()
 	print("Done")
