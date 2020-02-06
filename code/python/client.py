@@ -52,7 +52,7 @@ class Client():
 				time.sleep(0.1)
 				if not self.is_connected():
 					print("Lost connection, reconnecting")
-					self.reconnect()
+					self.requester.connect()
 
 			print("Response: {}".format(response.received()))
 			if len(response.received()) is 0:
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 		if name.strip(' ') is not '':
 			cli.prepare_device(address)
 			chrcs = cli.device_characteristics()
-			cli.write_value(35, str(message))
+			cli.write_value(36, str(message))
 			while cli.is_connected():
 				# Do stuff with other device e.g write to it and read from it
 				data = cli.read_value()
