@@ -120,8 +120,8 @@ if __name__ == '__main__':
 			chrcs = cli.device_characteristics()
 			for dev in chrcs:
 				# Go through the dict and inspect the UUIDs
-				print("CHRC_UUID: {}, DEV_UUID: {}, MATCH: {}".format(dev['uuid'].lower(), cli.RW_UUID.lower(), dev['uuid'].lower() is cli.RW_UUID.lower()))
-				if dev['uuid'].lower() is cli.RW_UUID.lower():
+				print("CHRC_UUID: {}, DEV_UUID: {}, MATCH: {}".format(dev['uuid'].lower(), cli.RW_UUID.lower(), dev['uuid'].lower() == cli.RW_UUID.lower()))
+				if dev['uuid'].lower() == cli.RW_UUID.lower():
 					# If one of them is the same as the emergency UUID, allow it to talk to it
 					handle = int(dev['handle'])
 					cli.write_value(handle, str(bytearray(message)))
