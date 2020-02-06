@@ -10,7 +10,7 @@ import signal
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 
-import bluezutils, discovery, advertising, gatt_server, agent, client
+import bluezutils, discovery, advertising, gatt_server, agent
 
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
@@ -42,6 +42,8 @@ def server(bus, ad):
 	
 	return ad_manager
 
+def client(bus):
+	print("Client mode started")
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
@@ -71,22 +73,29 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, receiveSignal)
 
 	decide_device_type()
-	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
 	bus = dbus.SystemBus()
-	mainloop = GLib.MainLoop()
 
-	agent_manager = agent.register_agent(bus)
+	if client_ty is "y":
+		client(bus)
+	else:
+		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-	discovery.disco_start(bus, client_ty)
+
+		mainloop = GLib.MainLoop()
+
+		agent_manager = agent.register_agent(bus)
+
+		discovery.disco_start(bus, client_ty)
 
 		# Creates the Advertisement class for emergency advertising
-	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
-	ad_manager = server(bus, em_advertisement)
+		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
+		ad_manager = server(bus, em_advertisement)
 
-	mainloop.run()
+		mainloop.run()
 
 		# Cleans up advert if it was registered
-	agent_manager.UnregisterAgent(agent.AGENT_PATH)
-	print("Agent Unregistered!")
-	ad_manager.UnregisterAdvertisement(em_advertisement)
-	print('Advertisement Unregistered')
+		agent_manager.UnregisterAgent(agent.AGENT_PATH)
+		print("Agent Unregistered!")
+		ad_manager.UnregisterAdvertisement(em_advertisement)
+		print('Advertisement Unregistered')
