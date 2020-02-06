@@ -77,6 +77,8 @@ class Client():
 					break
 
 	def device_characteristics(self):
+		while not self.is_connected():
+			time.sleep(0.1)
 		response = GATTResponse()
 		self.requester.discover_characteristics_async(response)
 		while not response.received():
