@@ -139,3 +139,6 @@ def split_message(message):
 		byte_arr.append(message[(i+1)*19:(i+1)*19+message_len%19])
 	byte_arr.append(chr(5))
 	return byte_arr
+
+def dbus_to_MAC(name):
+	return ":".join(name.lstrip("/org/bluez/hci0/dev_").split("_"))
