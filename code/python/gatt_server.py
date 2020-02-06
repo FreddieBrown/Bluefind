@@ -289,13 +289,13 @@ class EmergencyCharacteristic(Characteristic):
 	
 	def WriteValue(self, value, options):
 		print("Value being Written!: "+bluezutils.from_byte_array(value))
-        # Take value are pass into method to split and store data
+		# Take value are pass into method to split and store data
 
 
 	def ReadValue(self, options):
 		print('Sending Device Information')
-        print("Options: {}".format(options))
-        # Generate message to send
+		print("Options: {}".format(options))
+		# Generate message to send
 		return bluezutils.to_byte_array(DEVICE_COORDINATES)
 
 def app_register_cb():
