@@ -67,7 +67,7 @@ class Client():
 		else:
 			return self.requester.is_connected()
 	def discover(self, timeout):
-		return self.discover.discover(timeout)
+		return self.discovery.discover(timeout)
 """
 
 1. Start to Discover devices and information about them
