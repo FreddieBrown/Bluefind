@@ -82,12 +82,12 @@ class Client():
 				self.requester.connect()
 				if self.is_connected():
 					break
-	def device_characteristics(self, uuid):
+	def device_characteristics(self):
 		response = GATTResponse()
-		self.requester.discover_characteristics_async(response,0x0001, 0xffff, uuid)
+		self.requester.discover_characteristics_async(response)
 		while not response.received():
 			time.sleep(0.1)
-		print("Characteristics for {}: {}".format(uuid, response.received()))
+		print("Characteristics for {}: {}".format(self.address, response.received()))
 		return response.received()
 
 
@@ -118,8 +118,8 @@ if __name__ == '__main__':
 	for address, name in list(devices.items()):
 		print("name: {}, address: {}".format(name, address))
 		if name.strip(' ') is not '':
-			cli.prepare_device(address, False)
-			chrcs = cli.device_characteristics(address)
+			cli.prepare_device(address)
+			chrcs = cli.device_characteristics()
 
 
 	print("Connecting to device")
