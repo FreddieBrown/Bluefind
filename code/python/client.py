@@ -121,9 +121,8 @@ if __name__ == '__main__':
 		# Build message at start of each iteration
 		message = bluezutils.build_message([cli.location], [cli.device_address])
 		devices = cli.discover(5)
-		print("Devices: {}".format(devices))
 		for address, name in list(devices.items()):
-			print("name: {}, address: {}".format(name, address))
+			print("Device: {} {}".format(address, name))
 			if "EmergencyAdvertisement" in name:
 				cli.prepare_device(address)
 				chrcs = cli.device_characteristics()
@@ -133,11 +132,8 @@ if __name__ == '__main__':
 						# If one of them is the same as the emergency UUID, allow it to talk to it
 						handle = int(dev['handle'])
 						cli.write_value("Hello")
-						# while cli.is_connected():
-							# Do stuff with other device e.g write to it and read from it
 						data = cli.read_value()
 						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
-						# time.sleep(0.1)
 				# Otherwise, disconnect from device
 				cli.disconnect()
 	print("Done")
