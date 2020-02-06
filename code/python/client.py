@@ -39,6 +39,15 @@ class Client():
 		else:
 			print("Writing data")
 			self.requester.write_cmd(handle, data)
+		
+	def write_value_req(self, handle, data):
+		if not self.requester:
+			print("Cannot write as no device to send to")
+		else:
+			print("REQ write")
+			self.requester.write_by_handle(handle, data)
+
+
 
 	def read_value(self):
 		if not self.requester:
@@ -124,11 +133,11 @@ if __name__ == '__main__':
 			chrcs = cli.device_characteristics()
 			for dev in chrcs:
 				# Go through the dict and inspect the UUIDs
-				print("CHRC_UUID: {}, DEV_UUID: {}, MATCH: {}".format(dev['uuid'].lower(), cli.RW_UUID.lower(), dev['uuid'].lower() == cli.RW_UUID.lower()))
 				if dev['uuid'].lower() == cli.RW_UUID.lower():
 					# If one of them is the same as the emergency UUID, allow it to talk to it
 					handle = int(dev['handle'])
-					cli.write_value(handle, str(bytearray([2])))
+					cli.write_value(handle, bytes([10, 11, 12]))
+					cli.write_value_req(handle, bytes([10, 11, 12]))
 					# while cli.is_connected():
 						# Do stuff with other device e.g write to it and read from it
 					data = cli.read_value()
