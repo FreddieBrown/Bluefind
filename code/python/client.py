@@ -129,11 +129,11 @@ if __name__ == '__main__':
 					# If one of them is the same as the emergency UUID, allow it to talk to it
 					handle = int(dev['handle'])
 					cli.write_value(handle, str(bytearray([2])))
-					while cli.is_connected():
+					# while cli.is_connected():
 						# Do stuff with other device e.g write to it and read from it
-						data = cli.read_value()
-						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
-						time.sleep(0.1)
+					data = cli.read_value()
+					print("Data from device: {}".format(bluezutils.from_byte_array(data)))
+					# time.sleep(0.1)
 			# Otherwise, disconnect from device
 			cli.disconnect()
 	print("Done")
