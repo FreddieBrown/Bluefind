@@ -38,7 +38,7 @@ class Client():
 			print("Cannot write as no device to send to")
 		else:
 			print("Writing data")
-			for i in range(0x0001, 0xffff):
+			for i in range(0x0001, 0xff):
 				self.requester.write_cmd(i, data)
 
 
