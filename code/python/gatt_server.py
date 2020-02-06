@@ -24,6 +24,7 @@ GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
 GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
 DEVICE_COORDINATES = '1=(52.281807, -1.532221)|2=DC:A6:32:26:CE:70'
+current_client = ''
 
 
 
@@ -295,7 +296,10 @@ class EmergencyCharacteristic(Characteristic):
 	def ReadValue(self, options):
 		print('Sending Device Information')
 		# Create method to get device address from options['device']
-		print("Options: {}".format(bluezutils.dbus_to_MAC(options['device'])))
+		global current_client
+		print("Current Client: {}".format(current_client))
+		current_client = bluezutils.dbus_to_MAC(options['device'])
+		print("Current Client: {}".format(current_client))
 		# Generate message to send
 		return bluezutils.to_byte_array(DEVICE_COORDINATES)
 
