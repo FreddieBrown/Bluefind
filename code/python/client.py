@@ -13,7 +13,7 @@ import time
 
 import bluezutils, exceptions
 
-cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
+
 
 class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
@@ -91,6 +91,8 @@ class Client():
 		return response.received()
 	def update_location(self, location):
 		self.location = location
+
+cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
 
 def sig_handler(signal_number, frame):
 	print('Received: '+str(signal_number))
