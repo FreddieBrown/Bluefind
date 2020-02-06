@@ -40,12 +40,15 @@ class Client():
 			print("Writing data")
 			self.requester.write_cmd(handle, data)
 		
-	def write_value_req(self, handle, data):
+	def write_value_async(self, handle, data):
 		if not self.requester:
 			print("Cannot write as no device to send to")
 		else:
-			print("REQ write")
-			self.requester.write_by_handle(handle, data)
+			print("ASYNC write")
+			response = GATTResponse()
+			self.requester.write_by_handle_async(handle, data, response)
+			while not response.received():
+				time.sleep(0.1)
 
 
 
@@ -137,7 +140,7 @@ if __name__ == '__main__':
 					# If one of them is the same as the emergency UUID, allow it to talk to it
 					handle = int(dev['handle'])
 					cli.write_value(handle, bytes([10, 11, 12]))
-					cli.write_value_req(handle, bytes([10, 11, 12]))
+					cli.write_value_async(handle, bytes([10, 11, 12]))
 					# while cli.is_connected():
 						# Do stuff with other device e.g write to it and read from it
 					data = cli.read_value()
