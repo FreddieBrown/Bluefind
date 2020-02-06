@@ -101,9 +101,13 @@ class Client():
 			return None
 		else:
 			message_buffer = bluezutils.split_message(self.message)
+			seq = 1
 			for i in message_buffer:
-				print("Writing: {}".format(i))
-				cli.write_value(handle, i)
+				# Uses a sequence number to let server know which packet in sequence it is
+				mess_with_seq = str(seq)+i
+				print("Writing: {}".format(mess_with_seq))
+				cli.write_value(handle, mess_with_seq)
+				seq += 1
 			print("Written whole message to {}".format(self.target_address))
 	
 	def read_message(self):
@@ -135,15 +139,14 @@ def sig_handler(signal_number, frame):
 
 """
 
-1. Start to Discover devices and information about them
-2. Get the devices which utilise the EmergencyService
-3. Connect to that device (if it wasn't the last seen device (only ok if 1 device visible) )
+1. Start to Discover devices and information about them DONE
+2. Get the devices which utilise the EmergencyService DONE
+3. Connect to that device (if it wasn't the last seen device (only ok if 1 device visible) ) DONE
 4. Read data from the connected device
-5. Write data to connected device
+5. Write data to connected device DONE
 6. Split up and save message
-7. Set device to last seen device
-8. Disconnect device
-9. Go back to step 2
+7. Disconnect device DONE
+8. Go back to step 2 DONE
 
 """
 
