@@ -291,6 +291,7 @@ class EmergencyCharacteristic(Characteristic):
 	def WriteValue(self, value, options):
 		print("Value being Written!: "+bluezutils.from_byte_array(value))
 		# Take value are pass into method to split and store data
+		return bluezutils.to_byte_array("Thanks")
 
 
 	def ReadValue(self, options):
