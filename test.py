@@ -1,20 +1,15 @@
-from gattlib import DiscoveryService, GATTRequester, GATTResponse
-import time
+def split_message(message):
+	"""
+	Method splits message into 19byte chunks 
+	"""
+	byte_arr = []
+	message_len = len(message)
+	for i in range(0, int(message_len/19)):
+		j = (i+1)*19
+		byte_arr.append(message[i*19:j])
+	if message_len%19 is not 0:
+		byte_arr.append(message[(i+1)*19:(i+1)*19+message_len%19])
+	byte_arr.append(chr(5))
+	return byte_arr
 
-#service = DiscoveryService("hci0")
-#devices = service.discover(60)
-
-#for address, name in devices.items():
-#    print("name: {}, address: {}".format(name, address))
-
-req = GATTRequester("DC:A6:32:26:CE:70")
-#req.connect(False)
-
-response = GATTResponse()
-req.read_by_uuid_async('0000FFF1-0000-1000-8000-00805f9b34fb', response)
-while not response.received():
-    time.sleep(0.1)
-
-print(response.received()[0])
-for i in range(0, 256):
-    req.write_cmd(i, str(bytearray([4])))
+print(split_message("Hey there how are you doing? I am doing well"))
