@@ -27,14 +27,12 @@ class Client():
 		self.requester = GATTRequester(target_address, connect)
 		self.target_address = target_address
 
-	def write_value(self,data):
+	def write_value(self, handle, data):
 		if not self.requester:
 			print("Cannot write as no device to send to")
 		else:
 			print("Writing data")
-			for i in range(1, 100):
-				mess = str(i)+data+str(i)
-				self.requester.write_cmd(i, mess)
+			self.requester.write_cmd(handle, data)
 
 
 
@@ -94,7 +92,7 @@ class Client():
 	def set_message(self, message):
 		self.message = message
 	
-	def send_message(self):
+	def send_message(self, handle):
 		if not self.requester:
 			print("No connected device so cannot write message")
 			return None
@@ -105,7 +103,7 @@ class Client():
 			message_buffer = bluezutils.split_message(self.message)
 			for i in message_buffer:
 				print("Writing: {}".format(i))
-				cli.write_value(i)
+				cli.write_value(handle, i)
 			print("Written whole message to {}".format(self.target_address))
 	
 	def read_message(self):
@@ -174,11 +172,12 @@ if __name__ == '__main__':
 					if dev['uuid'].lower() == cli.RW_UUID.lower():
 						# Get the handle of the service
 						print("Handle: {}, Properties: {}, Value Handle {}".format(dev['handle'], dev['properties'], dev['value_handle']))
+						handle = int(dev['value_handle'])
 						# Read a value from the server
 						data = cli.read_value()
 						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
 						# Write the whole planned message to the server
-						cli.write_value("Hello")
+						cli.write_value(handle, "Hello")
 				# Otherwise, disconnect from device
 				cli.disconnect()
 	print("Done")
