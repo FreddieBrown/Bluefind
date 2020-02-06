@@ -48,7 +48,7 @@ class Client():
 			response = GATTResponse()
 			print("Reading data")
 			self.requester.read_by_uuid_async(self.RW_UUID, response)
-			while not response.received():
+			while not response.received() and self.is_connected():
 				time.sleep(0.1)
 			
 			return response.received()[0]

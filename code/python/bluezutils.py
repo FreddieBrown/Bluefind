@@ -100,7 +100,8 @@ def break_down_message(message):
 			ret_dict[tvp_no_equals[0]].append(tvp_no_equals[1])
 		else:
 			# If it doesn't, create new list with element in it associated with tag
-			ret_dict[tvp_no_equals[0]] = [tvp_no_equals[1]]
+			if len(tvp_no_equals) is 2:
+				ret_dict[tvp_no_equals[0]] = [tvp_no_equals[1]]
 	return ret_dict
 		
 

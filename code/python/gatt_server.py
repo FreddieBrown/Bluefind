@@ -23,7 +23,7 @@ GATT_SERVICE_IFACE = 'org.bluez.GattService1'
 GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
 GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
-DEVICE_COORDINATES = '1=(52.281807, -1.532221) | 2=DC:A6:32:26:CE:70'
+DEVICE_COORDINATES = '1=(52.281807, -1.532221)|2=DC:A6:32:26:CE:70'
 
 
 
