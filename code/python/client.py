@@ -25,7 +25,7 @@ class Client():
 		self.address = None
 		self.discovery = DiscoveryService("hci0")
 
-	def connect_to_device(self, address):
+	def prepare_device(self, address, connect=True):
 		self.requester = GATTRequester(address)
 		# self.requester.connect(True)
 		self.address = address
@@ -82,6 +82,14 @@ class Client():
 				self.requester.connect()
 				if self.is_connected():
 					break
+	def device_characteristics(self, uuid):
+		response = GATTResponse()
+		self.requester.discover_characteristics_async(response,0x0001, 0xffff, uuid)
+		while not response.received():
+			time.sleep(0.1)
+		print("Characteristics for {}: {}".format(uuid, response.received()))
+		return response.received()
+
 
 """
 
@@ -109,9 +117,13 @@ if __name__ == '__main__':
 	print("Devices: {}".format(devices))
 	for address, name in list(devices.items()):
 		print("name: {}, address: {}".format(name, address))
+		if name.strip(' ') is not '':
+			cli.prepare_device(address, false)
+			chrcs = cli.device_characteristics(address)
+
 
 	print("Connecting to device")
-	data = cli.connect_to_device("DC:A6:32:26:CE:70")
+	data = cli.prepare_device("DC:A6:32:26:CE:70")
 	print("Data from device: {}".format(data))
 	cli.write_value(str(message))
 
