@@ -13,6 +13,6 @@ peri = Peripheral(address)
 svc = peri.getServiceByUUID( SERVICE_UUID )
 ch = svc.getCharacteristics( RW_UUID )[0]
 handle = ch.getHandle()
-peri.writeCharacteristic(handle, '\1\0')
+peri.writeCharacteristic(handle, bytearray([50, 51, 52]))
 # while True:
 #     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
