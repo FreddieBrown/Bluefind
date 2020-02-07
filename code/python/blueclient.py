@@ -11,4 +11,4 @@ for dev in devices:
 peri = Peripheral(address)
 svc = peri.getServiceByUUID( SERVICE_UUID )
 ch = svc.getCharacteristics( RW_UUID )[0]
-ch.write( bytes[5, 6, 7] )
+ch.write( '\1\0')
