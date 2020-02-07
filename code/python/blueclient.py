@@ -12,5 +12,7 @@ for dev in devices:
 peri = Peripheral(address)
 svc = peri.getServiceByUUID( SERVICE_UUID )
 ch = svc.getCharacteristics( RW_UUID )[0]
-while True:
-    print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
+handle = ch.getHandle()
+peri.writeCharacteristic(handle, '\1\0')
+# while True:
+#     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
