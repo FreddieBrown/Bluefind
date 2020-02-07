@@ -55,7 +55,7 @@ class Client():
 			self.peripheral.disconnect()
 
 	def discover(self, timeout):
-		return devices = self.scanner.scan(timeout)
+		return self.scanner.scan(timeout)
 
 	def reconnect(self, chances):
 		if self.peripheral is None:
