@@ -10,5 +10,5 @@ for dev in devices:
     print("Scan Data: {}".format(dev.getScanData()))
 peri = Peripheral(address)
 svc = peri.getServiceByUUID( SERVICE_UUID )
-ch = svc.getCharacteristics( char_uuid )[0]
+ch = svc.getCharacteristics( RW_UUID )[0]
 ch.write( "Hello" )
