@@ -21,7 +21,6 @@ GATT_SERVICE_IFACE = 'org.bluez.GattService1'
 GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
 GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
-DEVICE_COORDINATES = '1=(52.281807, -1.532221)|2=DC:A6:32:26:CE:70'
 current_client = ''
 
 
@@ -285,6 +284,9 @@ class EmergencyCharacteristic(Characteristic):
 			service)
 		self.battery_lvl = 100
 		self.value = None
+		self.address = bluezutils.get_mac_addr(bus)
+		self.location = '52.281807, -1.532221'
+		self.read_states = {}
 	
 	def WriteValue(self, value, options):
 		print("Value being Written!: "+bluezutils.from_byte_array(value))
@@ -295,13 +297,32 @@ class EmergencyCharacteristic(Characteristic):
 		print('Sending Device Information')
 		# Create method to get device address from options['device']
 		global current_client
-		if current_client is bluezutils.dbus_to_MAC(options['device']):
-			pass
+		packet = ''
+		dev = bluezutils.dbus_to_MAC(options['device'])
+		if (current_client == dev) and (dev in self.read_states):
+			# Same device connected
+			dev_state = self.read_states[dev]
+			position = dev_state['position']
+			message_packets = dev_state['message']
+			packet = str(position)+"\x01"+message_packets[position]
+			dev_state['position']+=1
+			self.read_states[dev] = dev_state
 		else: 
-			current_client = bluezutils.dbus_to_MAC(options['device'])
+			# New device or device which has already received whole packet
+			current_client = dev
 			print("New client: {}".format(current_client))
-		# Generate message to send
-		return bluezutils.to_byte_array(DEVICE_COORDINATES)
+			message = bluezutils.build_message([self.location], [self.address])
+			message_packets = bluezutils.split_message(message)
+			dev_state = dict()
+			dev_state['message'] = message_packets
+			dev_state['position'] = 1
+			self.read_states[dev] = dev_state
+			packet = str(0)+"\x01"+message_packets[0]
+		
+		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
+			del self.read_states[dev]
+
+		return bluezutils.to_byte_array(packet)
 
 def app_register_cb():
 	print("GATT Application registered!")
