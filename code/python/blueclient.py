@@ -12,4 +12,5 @@ for dev in devices:
 peri = Peripheral(address)
 svc = peri.getServiceByUUID( SERVICE_UUID )
 ch = svc.getCharacteristics( RW_UUID )[0]
-print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
+while True:
+    print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
