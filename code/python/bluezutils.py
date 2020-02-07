@@ -121,6 +121,7 @@ def from_byte_array(val_arr):
 	med_arr = []
 	# Take byte array and work out character of each value
 	for value in val_arr:
+		print("Value: {}".format(value))
 		med_arr.append(chr(value)) 
 	# With each character, add it to a string
 	ret_string = ''.join(med_arr)
@@ -146,6 +147,6 @@ def dbus_to_MAC(name):
 	return ":".join(name.lstrip("/org/bluez/hci0/dev_").split("_"))
 
 def get_sequence_number(message):
-    message_parts = message.split("\x01")
-    print("Sequence Number: {}".format(message_parts[0]))
-    return message_parts[0], message_parts[1]
+	message_parts = message.split("\x01")
+	print("Sequence Number: {}".format(message_parts[0]))
+	return message_parts[0], message_parts[1]
