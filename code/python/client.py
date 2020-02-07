@@ -178,7 +178,7 @@ if __name__ == '__main__':
 						print("Handle: {}, Properties: {}, Value Handle {}".format(dev['handle'], dev['properties'], dev['value_handle']))
 						handle = int(dev['value_handle'])
 						# Read a value from the server
-						data = cli.read_value()
+						data = cli.read_message()
 						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
 						# Write the whole planned message to the server
 						cli.send_message(handle)

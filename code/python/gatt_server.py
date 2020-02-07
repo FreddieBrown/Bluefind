@@ -290,11 +290,17 @@ class EmergencyCharacteristic(Characteristic):
 		self.write_states = {}
 	
 	def WriteValue(self, value, options):
-		print("Options: {}".format(options))
+		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
+		if dev in self.write_states:
+			self.write_states[dev].append(message.strip(chr(5)))
+			if chr(5) in message:
+				# If it is in message, join up message, break it down and save content
+				print("Message: {}".format(''.join(self.write_states[dev])))
 		# Take value are pass into method to split and store data
+		return sequence_num
 
 
 	def ReadValue(self, options):
