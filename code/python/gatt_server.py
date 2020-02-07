@@ -290,6 +290,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.write_states = {}
 	
 	def WriteValue(self, value, options):
+		print("Options: {}".format(options))
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
