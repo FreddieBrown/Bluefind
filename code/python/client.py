@@ -116,13 +116,18 @@ class Client():
 			print("No connected device so cannot read message")
 			return None
 		message = []
+		first_mess = False
 		while True:
-			data = bluezutils.from_byte_array(self.read_value())
-			if str(chr(5)) not in data:
-				message.append(data)
-			else:
-				message.append(data.strip(str(chr(5))))
-				break
+			recvd = bluezutils.from_byte_array(self.read_value())
+			seq_num, data = bluezutils.get_sequence_number(recvd)
+			if not first_mess:
+				first_mess = (int(seq_num) == 0)
+			if first_mess:
+				if str(chr(5)) not in data:
+					message.append(data)
+				else:
+					message.append(data.strip(str(chr(5))))
+					break
 		print("Read whole message from {}".format(self.target_address))	
 		return ''.join(message)
 		
