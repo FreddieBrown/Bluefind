@@ -292,7 +292,7 @@ class EmergencyCharacteristic(Characteristic):
 	def WriteValue(self, value, options):
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
-		print("Sequence Number: "+message)
+		print("Sequence Number: "+sequence_num)
 		# Take value are pass into method to split and store data
 
 
