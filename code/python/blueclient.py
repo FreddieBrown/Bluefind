@@ -32,11 +32,13 @@ class Client():
 		self.handle = self.characteristic.getHandle()
 		self.target_address = target_address
 
-	def write_value(self, data):
+	def write_value(self, data, response=False):
 		if not self.peripheral:
 			print("Cannot write as no device to send to")
 		else:
 			print("Writing data")
+			if response:
+				return self.peripheral.writeCharacteristic(self.handle, data, True) 
 			self.peripheral.writeCharacteristic(self.handle, data)
 
 	def read_value(self):
@@ -89,10 +91,12 @@ class Client():
 				mess_with_seq = str(seq)+"\x01"+i
 				print("Writing: {}".format(mess_with_seq))
 				try: 
-					self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)))
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)), True)
+					print("Returned Value: {}".format(ret))
 				except:
 					self.reconnect(5)
-					self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)))
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)), True)
+					print("Returned Value: {}".format(ret))
 				seq += 1
 			print("Written whole message to {}".format(self.target_address))
 	
