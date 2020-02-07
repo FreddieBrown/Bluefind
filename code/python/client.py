@@ -179,7 +179,7 @@ if __name__ == '__main__':
 						handle = int(dev['value_handle'])
 						# Read a value from the server
 						data = cli.read_message()
-						print("Data from device: {}".format(bluezutils.from_byte_array(data)))
+						print("Data from device: {}".format(data))
 						# Write the whole planned message to the server
 						cli.send_message(handle)
 				# Otherwise, disconnect from device

@@ -121,7 +121,6 @@ def from_byte_array(val_arr):
 	med_arr = []
 	# Take byte array and work out character of each value
 	for value in val_arr:
-		print("Value: {}".format(value))
 		med_arr.append(chr(value)) 
 	# With each character, add it to a string
 	ret_string = ''.join(med_arr)
