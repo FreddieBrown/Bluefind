@@ -73,7 +73,7 @@ class Client():
 	def set_message(self, message):
 		self.message = message
 	
-	def send_message(self, handle):
+	def send_message(self):
 		if not self.requester:
 			print("No connected device so cannot write message")
 			return None
@@ -88,7 +88,11 @@ class Client():
 				# Can do up to a max of 99 packets in sequence
 				mess_with_seq = str(seq)+"\x01"+i
 				print("Writing: {}".format(mess_with_seq))
-				cli.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)))
+				try: 
+					self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)))
+				except:
+					self.reconnect(5)
+					self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)))
 				seq += 1
 			print("Written whole message to {}".format(self.target_address))
 	
@@ -130,20 +134,18 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, sig_handler)
 	print("Starting")
 	address = 'DC:A6:32:26:CE:70'
-	cli.prepare_device(address)
+	message = bluezutils.build_message([cli.location], [cli.device_address])
 	devices = cli.discover(5.0)
 	for dev in devices:
 		print("Scan Data: {}".format(dev.getScanData()))
+
+	cli.prepare_device(address)
 	try:
 		print("Read Message: {}".format(cli.read_message()))
 	except:
 		cli.reconnect(5)
 		print("Read Message: {}".format(cli.read_message()))
-	try: 
-		cli.write_value(bytearray(bluezutils.to_byte_array("Hello")))
-	except:
-		cli.reconnect(5)
-		cli.write_value(bytearray(bluezutils.to_byte_array("Hello")))
 
+	cli.send_message()
 	# while True:
 	#     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
