@@ -287,9 +287,12 @@ class EmergencyCharacteristic(Characteristic):
 		self.address = bluezutils.get_mac_addr(bus)
 		self.location = '52.281807, -1.532221'
 		self.read_states = {}
+		self.write_states = {}
 	
 	def WriteValue(self, value, options):
-		print("Value being Written!: "+bluezutils.from_byte_array(value))
+		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
+		print("Value being Written!: "+message)
+		print("Sequence Number: "+message)
 		# Take value are pass into method to split and store data
 
 

@@ -144,3 +144,8 @@ def split_message(message):
 
 def dbus_to_MAC(name):
 	return ":".join(name.lstrip("/org/bluez/hci0/dev_").split("_"))
+
+def get_sequence_number(message):
+    message_parts = message.split("\x01")
+    print("Sequence Number: {}".format(message_parts[0]))
+    return message_parts[0], message_parts[1]
