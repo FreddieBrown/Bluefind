@@ -134,12 +134,16 @@ if __name__ == '__main__':
 	devices = cli.discover(5.0)
 	for dev in devices:
 		print("Scan Data: {}".format(dev.getScanData()))
-	# cli.write_value(bytearray(bluezutils.to_byte_array("Hello")))
 	try:
 		print("Read Message: {}".format(cli.read_message()))
 	except:
 		cli.reconnect(5)
 		print("Read Message: {}".format(cli.read_message()))
+	try: 
+		cli.write_value(bytearray(bluezutils.to_byte_array("Hello")))
+	except:
+		cli.reconnect(5)
+		cli.write_value(bytearray(bluezutils.to_byte_array("Hello")))
 
 	# while True:
 	#     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
