@@ -93,7 +93,7 @@ class Client():
 			print("Written whole message to {}".format(self.target_address))
 	
 	def read_message(self):
-		if not self.requester:
+		if not self.peripheral:
 			print("No connected device so cannot read message")
 			return None
 		message = []
