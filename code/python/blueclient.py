@@ -74,7 +74,7 @@ class Client():
 		self.message = message
 	
 	def send_message(self):
-		if not self.requester:
+		if not self.peripheral:
 			print("No connected device so cannot write message")
 			return None
 		elif not self.message:
