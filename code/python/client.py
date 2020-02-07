@@ -34,8 +34,6 @@ class Client():
 			print("Writing data")
 			self.requester.write_cmd(handle, data)
 
-
-
 	def read_value(self):
 		if not self.requester:
 			print("Cannot write as no device to read from")
