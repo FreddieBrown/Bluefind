@@ -135,6 +135,7 @@ if __name__ == '__main__':
 	print("Starting")
 	address = 'DC:A6:32:26:CE:70'
 	message = bluezutils.build_message([cli.location], [cli.device_address])
+	cli.set_message(message)
 	devices = cli.discover(5.0)
 	for dev in devices:
 		print("Scan Data: {}".format(dev.getScanData()))
