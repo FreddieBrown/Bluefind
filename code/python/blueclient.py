@@ -1,5 +1,6 @@
 import bluepy
 from bluepy.btle import Scanner, UUID, Peripheral, DefaultDelegate
+import bluezutils
 
 address = 'DC:A6:32:26:CE:70'
 SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
@@ -11,4 +12,4 @@ for dev in devices:
 peri = Peripheral(address)
 svc = peri.getServiceByUUID( SERVICE_UUID )
 ch = svc.getCharacteristics( RW_UUID )[0]
-print("READ: {}".format(ch.read()))
+print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
