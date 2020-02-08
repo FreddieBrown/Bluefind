@@ -155,8 +155,8 @@ if __name__ == '__main__':
 						have_service = True
 			if have_service:
 				message = bluezutils.build_message([cli.location], [cli.device_address])
-				cli.set_message(dev.addr)
-				cli.prepare_device(address)
+				cli.set_message(message)
+				cli.prepare_device(dev.addr)
 				print("Read Message: {}".format(cli.read_message()))
 				cli.send_message()
 				cli.disconnect()
