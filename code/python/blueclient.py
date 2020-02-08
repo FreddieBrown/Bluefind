@@ -150,10 +150,10 @@ if __name__ == '__main__':
 		for dev in devices:
 			print("Scan Data: {}".format(dev.getScanData()))
 			if dev.getScanData() >= 3:
-			    print("COMPLETE_128B_SERVICES: ",dev.COMPLETE_128B_SERVICES)
-        		print("COMPLETE_16B_SERVICES ",dev.COMPLETE_16B_SERVICES)
-        		print("COMPLETE_32B_SERVICES ",dev.COMPLETE_32B_SERVICES)
-        		print("COMPLETE_LOCAL_NAME ",dev.COMPLETE_LOCAL_NAME)
+				print("COMPLETE_128B_SERVICES: ",dev.COMPLETE_128B_SERVICES)
+				print("COMPLETE_16B_SERVICES ",dev.COMPLETE_16B_SERVICES)
+				print("COMPLETE_32B_SERVICES ",dev.COMPLETE_32B_SERVICES)
+				print("COMPLETE_LOCAL_NAME ",dev.COMPLETE_LOCAL_NAME)
 				print("addr ",dev.addr)
 				for uno in dev.scanData.keys():
 					print("getDescription ",dev.getDescription(uno))
