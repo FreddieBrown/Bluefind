@@ -106,8 +106,13 @@ class Client():
 			return None
 		message = []
 		first_mess = False
+		recvd = ''
 		while True:
-			recvd = bluezutils.from_byte_array(self.read_value())
+			try:
+				recvd = bluezutils.from_byte_array(self.read_value())
+			except:
+				self.reconnect(5)
+				recvd = bluezutils.from_byte_array(self.read_value())
 			seq_num, data = bluezutils.get_sequence_number(recvd)
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
@@ -138,19 +143,26 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, sig_handler)
 	print("Starting")
 	address = 'DC:A6:32:26:CE:70'
-	message = bluezutils.build_message([cli.location], [cli.device_address])
-	cli.set_message(message)
-	devices = cli.discover(5.0)
-	for dev in devices:
-		print("Scan Data: {}".format(dev.getScanData()))
+	while True:
+		message = bluezutils.build_message([cli.location], [cli.device_address])
+		cli.set_message(message)
+		devices = cli.discover(5.0)
+		for dev in devices:
+			print("Scan Data: {}".format(dev.getScanData()))
+			if dev.getScanData() >= 3:
+			    print("COMPLETE_128B_SERVICES: ",dev.COMPLETE_128B_SERVICES)
+        		print("COMPLETE_16B_SERVICES ",dev.COMPLETE_16B_SERVICES)
+        		print("COMPLETE_32B_SERVICES ",dev.COMPLETE_32B_SERVICES)
+        		print("COMPLETE_LOCAL_NAME ",dev.COMPLETE_LOCAL_NAME)
+				print("addr ",dev.addr)
+				for uno in dev.scanData.keys():
+					print("getDescription ",dev.getDescription(uno))
+					print("getValue",dev.getValue(uno))
+					print("getValueText ",dev.getValueText(uno))
 
-	cli.prepare_device(address)
-	try:
+		cli.prepare_device(address)
 		print("Read Message: {}".format(cli.read_message()))
-	except:
-		cli.reconnect(5)
-		print("Read Message: {}".format(cli.read_message()))
-
-	cli.send_message()
+		cli.send_message()
+		cli.disconnect()
 	# while True:
 	#     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
