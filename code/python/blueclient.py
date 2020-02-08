@@ -26,7 +26,12 @@ class Client():
 		self.message = None
 
 	def prepare_device(self, target_address):
-		self.peripheral = Peripheral(target_address)
+		self.peripheral = Peripheral(None)
+		try:
+			self.peripheral.connect(target_address)
+		except:
+			time.sleep(1)
+			self.peripheral.connect(target_address)
 		self.service = self.peripheral.getServiceByUUID( self.SERVICE_UUID )
 		self.characteristic = self.service.getCharacteristics( self.RW_UUID )[0]
 		self.handle = self.characteristic.getHandle()
