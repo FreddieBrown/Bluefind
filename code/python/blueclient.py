@@ -144,25 +144,22 @@ if __name__ == '__main__':
 	print("Starting")
 	address = 'DC:A6:32:26:CE:70'
 	while True:
-		message = bluezutils.build_message([cli.location], [cli.device_address])
-		cli.set_message(message)
 		devices = cli.discover(5.0)
 		for dev in devices:
 			print("Scan Data: {}".format(dev.getScanData()))
+			have_service = False
 			if len(dev.getScanData()) >= 3:
-				print("COMPLETE_128B_SERVICES: ",dev.COMPLETE_128B_SERVICES)
-				print("COMPLETE_16B_SERVICES ",dev.COMPLETE_16B_SERVICES)
-				print("COMPLETE_32B_SERVICES ",dev.COMPLETE_32B_SERVICES)
-				print("COMPLETE_LOCAL_NAME ",dev.COMPLETE_LOCAL_NAME)
-				print("addr ",dev.addr)
 				for uno in dev.scanData.keys():
-					print("getDescription ",dev.getDescription(uno))
-					print("getValue",dev.getValue(uno))
 					print("getValueText ",dev.getValueText(uno))
-
-		cli.prepare_device(address)
-		print("Read Message: {}".format(cli.read_message()))
-		cli.send_message()
-		cli.disconnect()
+					if dev.getValueText(uno) == cli.SERVICE_UUID:
+						have_service = True
+			if have_service:
+				message = bluezutils.build_message([cli.location], [cli.device_address])
+				cli.set_message(dev.addr)
+				cli.prepare_device(address)
+				print("Read Message: {}".format(cli.read_message()))
+				cli.send_message()
+				cli.disconnect()
+		
 	# while True:
 	#     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
