@@ -151,7 +151,7 @@ if __name__ == '__main__':
 			if len(dev.getScanData()) >= 3:
 				for uno in dev.scanData.keys():
 					print("getValueText ",dev.getValueText(uno))
-					if dev.getValueText(uno) == cli.SERVICE_UUID:
+					if dev.getValueText(uno).lower() == cli.SERVICE_UUID.lower():
 						have_service = True
 			if have_service:
 				message = bluezutils.build_message([cli.location], [cli.device_address])
