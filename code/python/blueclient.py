@@ -149,7 +149,7 @@ if __name__ == '__main__':
 		devices = cli.discover(5.0)
 		for dev in devices:
 			print("Scan Data: {}".format(dev.getScanData()))
-			if dev.getScanData() >= 3:
+			if len(dev.getScanData()) >= 3:
 				print("COMPLETE_128B_SERVICES: ",dev.COMPLETE_128B_SERVICES)
 				print("COMPLETE_16B_SERVICES ",dev.COMPLETE_16B_SERVICES)
 				print("COMPLETE_32B_SERVICES ",dev.COMPLETE_32B_SERVICES)
