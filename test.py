@@ -1,7 +1,8 @@
-def get_sequence_number(message):
-    message_parts = message.split("\x01")
-    print("Sequence Number: {}".format(message_parts[0]))
-    return message_parts[0], message_parts[1]
-	
-	
-print(get_sequence_number('0\x011=(52.281807, -1'))
+from db import Database
+import datetime
+now = datetime.datetime.now()
+values = [("AB:CD:EF:GH:IJ", "55.00, 64.00", now), ("AB:CD:EF:GH:IJ", "55.00, 64.00", now), ("AB:CD:EF:GH:IJ", "55.00, 64.00", now), ("AB:CD:EF:GH:IJ", "55.00, 64.00", now)]
+
+data = Database()
+data.insert(values)
+data.select(50)

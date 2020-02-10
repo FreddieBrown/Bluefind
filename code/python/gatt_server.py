@@ -10,6 +10,7 @@ import array
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 from random import randint
+import datetime
 import bluezutils, exceptions
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
@@ -296,8 +297,12 @@ class EmergencyCharacteristic(Characteristic):
 		if (dev in self.write_states) and  int(sequence_num) is len(self.write_states[dev]):
 			self.write_states[dev].append(message.strip(chr(5)))
 			if chr(5) in message:
-				# If it is in message, join up message, break it down and save content
-				print("Message Written To Server: {}".format(''.join(self.write_states[dev])))
+				# If it is in message, join up message
+				full_message = ''.join(self.write_states[dev])
+				print("Message Written To Server: {}".format(full_message))
+				# break down message
+				message_parts = bluezutils.break_down_message(full_message)
+				# Go through message, build tuples with datetime and commit to db
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:

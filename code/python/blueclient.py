@@ -5,10 +5,9 @@ import signal
 import bluepy
 from bluepy.btle import Scanner, UUID, Peripheral, DefaultDelegate
 import time
+import datetime
 
 import bluezutils, exceptions
-
-cli = None
 
 class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
@@ -122,18 +121,20 @@ class Client():
 					message.append(data.strip(str(chr(5))))
 					break
 		print("Read whole message from {}".format(self.target_address))	
-		return ''.join(message)
+		# join up whole message
+		full_message = ''.join(message)
+		print("Read Message: {}".format(full_message))
+		# break down whole message
+		message_parts = bluezutils.break_down_message(full_message)
+		# Commit found data to database
 
 def sig_handler(signal_number, frame):
 	print('Received: '+str(signal_number))
-	try:
-		cli.disconnect()
-	except:
-		print("Error disconnecting")
 	raise SystemExit('Exiting...')
 	return
 
 def start_client():
+	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
 	print("Starting")
 	while True:
 		devices = cli.discover(5.0)
@@ -150,7 +151,7 @@ def start_client():
 				cli.set_message(message)
 				try:
 					cli.prepare_device(dev.addr)
-					print("Read Message: {}".format(cli.read_message()))
+					cli.read_message()
 					cli.send_message()
 					cli.disconnect()
 				except Exception as e:
@@ -160,7 +161,6 @@ def start_client():
 
 
 if __name__ == '__main__':
-	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
 	signal.signal(signal.SIGINT, sig_handler)
 	start_client()
 	

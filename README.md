@@ -8,9 +8,14 @@ This project is investigating how a system could be developed to be used in an e
 
 Included in this repository are 3 solutions, 2 of which are redudant. They are kept to show progress of the project. The working solution is under the folder `code/python`. To run the project, use the command `sudo python3 code/python/bluefind.py` to start it up. The device will either become a client or a server and will start performing actions as such.
 
+Furthermore, this project uses a SQLite databse to store any data is collects from communicating with other devices. For this to work, a file called `find.db` needs to be created in the highest level of the project. After this is created, a file called `code/setup.sql` needs to be executed in the database to define the table needed. To do this in one, just run `setup.sh`.
+
 ## Libraries Needed
+
+All of these libraries are available on `apt` and `python` version `3.7.3`:
 
 - `libboost-all-dev`
 - `libgtk2.0-dev`
 - `libdbus-1-dev`
+- `sqlite3`
 - Python packages used are included in `requirements.txt`
