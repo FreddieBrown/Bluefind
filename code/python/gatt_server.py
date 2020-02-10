@@ -12,6 +12,7 @@ from gi.repository import GLib
 from random import randint
 import datetime
 import bluezutils, exceptions
+from db import Database
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
@@ -288,6 +289,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.location = '52.281807, -1.532221'
 		self.read_states = {}
 		self.write_states = {}
+		self.db = Database()
 	
 	def WriteValue(self, value, options):
 		dev = bluezutils.dbus_to_MAC(options['device'])

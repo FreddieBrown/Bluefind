@@ -17,6 +17,10 @@ class Database:
 		This function will select data from the database from the 'find' table.
 		num will dictate how many entries are retrieved from the database.
 		"""
+		addresses = []
+		coords = []
 		stmt = "SELECT mac, coord FROM find ORDER BY recvd LIMIT {}".format(num)
 		for row in self.cursor.execute(stmt):
-			print(row)
+			addresses.append(row[0])
+			coords.append(row[1])
+		return [coords, addresses]

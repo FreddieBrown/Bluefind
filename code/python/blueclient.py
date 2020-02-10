@@ -8,6 +8,7 @@ import time
 import datetime
 
 import bluezutils, exceptions
+from db import Database
 
 class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
@@ -22,6 +23,7 @@ class Client():
 		self.target_address = None
 		self.scanner = Scanner()
 		self.message = None
+		self.db = Database()
 
 	def prepare_device(self, target_address):
 		self.peripheral = Peripheral(target_address)
