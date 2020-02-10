@@ -297,7 +297,7 @@ class EmergencyCharacteristic(Characteristic):
 			self.write_states[dev].append(message.strip(chr(5)))
 			if chr(5) in message:
 				# If it is in message, join up message, break it down and save content
-				print("Message: {}".format(''.join(self.write_states[dev])))
+				print("Message Written To Server: {}".format(''.join(self.write_states[dev])))
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:
