@@ -282,7 +282,6 @@ class EmergencyCharacteristic(Characteristic):
 			self.EM_CHAR_UUID, 
 			['read', 'write'],
 			service)
-		self.battery_lvl = 100
 		self.value = None
 		self.address = bluezutils.get_mac_addr(bus)
 		self.location = '52.281807, -1.532221'
@@ -294,13 +293,23 @@ class EmergencyCharacteristic(Characteristic):
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
-		if dev in self.write_states:
+		if (dev in self.write_states) and  int(sequence_num) is len(self.write_states[dev]):
 			self.write_states[dev].append(message.strip(chr(5)))
 			if chr(5) in message:
 				# If it is in message, join up message, break it down and save content
 				print("Message: {}".format(''.join(self.write_states[dev])))
+				del self.write_states[dev] 
+			return sequence_num
+		elif int(sequence_num) is 0:
+			if chr(5) in message:
+				print(message.strip(chr(5)))
+			else:
+				self.write_states[dev] = [message.strip(chr(5))]
+			return sequence_num
 		# Take value are pass into method to split and store data
-		return sequence_num
+		else:
+			return len(self.write_states[dev])-1
+		
 
 
 	def ReadValue(self, options):

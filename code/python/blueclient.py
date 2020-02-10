@@ -8,8 +8,7 @@ import time
 
 import bluezutils, exceptions
 
-
-
+cli = None
 
 class Client():
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
@@ -26,12 +25,7 @@ class Client():
 		self.message = None
 
 	def prepare_device(self, target_address):
-		self.peripheral = Peripheral(None)
-		try:
-			self.peripheral.connect(target_address)
-		except:
-			time.sleep(1)
-			self.peripheral.connect(target_address)
+		self.peripheral = Peripheral(target_address)
 		self.service = self.peripheral.getServiceByUUID( self.SERVICE_UUID )
 		self.characteristic = self.service.getCharacteristics( self.RW_UUID )[0]
 		self.handle = self.characteristic.getHandle()
@@ -129,9 +123,6 @@ class Client():
 					break
 		print("Read whole message from {}".format(self.target_address))	
 		return ''.join(message)
-		
-
-cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
 
 def sig_handler(signal_number, frame):
 	print('Received: '+str(signal_number))
@@ -142,12 +133,8 @@ def sig_handler(signal_number, frame):
 	raise SystemExit('Exiting...')
 	return
 
-
-
-if __name__ == '__main__':
-	signal.signal(signal.SIGINT, sig_handler)
+def start_client():
 	print("Starting")
-	address = 'DC:A6:32:26:CE:70'
 	while True:
 		devices = cli.discover(5.0)
 		for dev in devices:
@@ -161,10 +148,19 @@ if __name__ == '__main__':
 			if have_service:
 				message = bluezutils.build_message([cli.location], [cli.device_address])
 				cli.set_message(message)
-				cli.prepare_device(dev.addr)
-				print("Read Message: {}".format(cli.read_message()))
-				cli.send_message()
-				cli.disconnect()
-		
-	# while True:
-	#     print("READ: {}".format(bluezutils.from_byte_array(ch.read())))
+				try:
+					cli.prepare_device(dev.addr)
+					print("Read Message: {}".format(cli.read_message()))
+					cli.send_message()
+					cli.disconnect()
+				except Exception as e:
+					print("Connection Error for {}: {}".format(dev.addr, e))
+
+
+
+
+if __name__ == '__main__':
+	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
+	signal.signal(signal.SIGINT, sig_handler)
+	start_client()
+	
