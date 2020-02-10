@@ -5,4 +5,4 @@ values = [("AB:CD:EF:GH:IJ", "55.00, 64.00", now), ("AB:CD:EF:GH:IJ", "55.00, 64
 
 data = Database()
 data.insert(values)
-data.select(50)
+print(data.select(50))
