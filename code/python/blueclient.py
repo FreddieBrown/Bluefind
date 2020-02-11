@@ -129,7 +129,7 @@ class Client():
 		# break down whole message
 		message_parts = bluezutils.break_down_message(full_message)
 		# Commit found data to database
-        bluezutils.add_to_db(self.db, message_parts)
+		bluezutils.add_to_db(self.db, message_parts)
 
 def sig_handler(signal_number, frame):
 	print('Received: '+str(signal_number))
