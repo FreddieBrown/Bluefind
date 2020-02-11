@@ -45,13 +45,26 @@ class Application(dbus.service.Object):
 		self.add_service(EmergencyService(bus, 0))
 
 	def get_path(self):
+		"""
+		Function to return the path of the object for DBUS
+		"""
 		return dbus.ObjectPath(self.path)
 
 	def add_service(self, service):
+		"""
+		Function to add a service to the application. 
+		Adds an association between the services and application. 
+		Means they are contained within the application.
+		"""
 		self.services.append(service)
 
 	@dbus.service.method(DBUS_OM_IFACE, out_signature='a{oa{sa{sv}}}')
 	def GetManagedObjects(self):
+		"""
+		Function to return a dictionary of the properties of the 
+		services that an application offers and the characteristics and 
+		descriptors withtin them.
+		"""
 		response = {}
 		print('Getting Objects')
 
@@ -88,6 +101,10 @@ class Service(dbus.service.Object):
 		dbus.service.Object.__init__(self, bus, self.path)
 
 	def get_properties(self):
+		"""
+		Returns an object containing information 
+		about the service.
+		"""
 		return {
 				GATT_SERVICE_IFACE: {
 						'UUID': self.uuid,
@@ -99,24 +116,42 @@ class Service(dbus.service.Object):
 		}
 
 	def get_path(self):
+		"""
+		Function to return the path of the object for DBUS
+		"""
 		return dbus.ObjectPath(self.path)
 
 	def add_characteristic(self, characteristic):
+		"""
+		Function to add a characteristic to a service. This makes
+		the characteristic part of the service.
+		"""
 		self.characteristics.append(characteristic)
 
 	def get_characteristic_paths(self):
+		"""
+		Function gets the object paths of each characteristic 
+		which belongs to it and returns them as a list.
+		"""
 		result = []
 		for chrc in self.characteristics:
 			result.append(chrc.get_path())
 		return result
 
 	def get_characteristics(self):
+		"""
+		Function to return list of characteristics
+		"""
 		return self.characteristics
 
 	@dbus.service.method(DBUS_PROP_IFACE,
 						 in_signature='s',
 						 out_signature='a{sv}')
 	def GetAll(self, interface):
+		"""
+		Function to return the properties about the 
+		service associated with the GATT service interface.
+		"""
 		if interface != GATT_SERVICE_IFACE:
 			raise exceptions.InvalidArgsException()
 
@@ -144,6 +179,10 @@ class Characteristic(dbus.service.Object):
 		dbus.service.Object.__init__(self, bus, self.path)
 
 	def get_properties(self):
+		"""
+		Function to return information about the 
+		characteristic.
+		"""
 		return {
 				GATT_CHRC_IFACE: {
 						'Service': self.service.get_path(),
@@ -156,24 +195,42 @@ class Characteristic(dbus.service.Object):
 		}
 
 	def get_path(self):
+		"""
+		Function to return the path of the object for DBUS
+		"""
 		return dbus.ObjectPath(self.path)
 
 	def add_descriptor(self, descriptor):
+		"""
+		Function to add a descriptor to the characteristic
+		"""
 		self.descriptors.append(descriptor)
 
 	def get_descriptor_paths(self):
+		"""
+		Function to return a list of the object paths 
+		of descriptors associated with the characteristic
+		"""
 		result = []
 		for desc in self.descriptors:
 			result.append(desc.get_path())
 		return result
 
 	def get_descriptors(self):
+		"""
+		Function that returns the descriptors associated 
+		with the characteristic
+		"""
 		return self.descriptors
 
 	@dbus.service.method(DBUS_PROP_IFACE,
 						 in_signature='s',
 						 out_signature='a{sv}')
 	def GetAll(self, interface):
+		"""
+		Function to return the properties about the characteristic 
+		associated with the GATT characteristic interface.
+		"""
 		if interface != GATT_CHRC_IFACE:
 			raise exceptions.InvalidArgsException()
 
@@ -183,21 +240,39 @@ class Characteristic(dbus.service.Object):
 						in_signature='a{sv}',
 						out_signature='ay')
 	def ReadValue(self, options):
+		"""
+		Function which can be called by external connected 
+		devices to read a certain value from the device.
+		"""
 		print('Default ReadValue called, returning error')
 		raise exceptions.NotSupportedException()
 
 	@dbus.service.method(GATT_CHRC_IFACE, in_signature='aya{sv}')
 	def WriteValue(self, value, options):
+		"""
+		Function which can be used by external connected devices 
+		to send data to the server.
+		"""
 		print('Default WriteValue called, returning error')
 		raise exceptions.NotSupportedException()
 
 	@dbus.service.method(GATT_CHRC_IFACE)
 	def StartNotify(self):
+		"""
+		Function to tell the server that a client wants to 
+		be notified of any changes to the value of the 
+		characteristic.
+		"""
 		print('Default StartNotify called, returning error')
 		raise exceptions.NotSupportedException()
 
 	@dbus.service.method(GATT_CHRC_IFACE)
 	def StopNotify(self):
+		"""
+		Function to tell the server that a client wants to 
+		be not notified of any changes to the value of the 
+		characteristic any more.
+		"""
 		print('Default StopNotify called, returning error')
 		raise exceptions.NotSupportedException()
 
@@ -225,6 +300,10 @@ class Descriptor(dbus.service.Object):
 		dbus.service.Object.__init__(self, bus, self.path)
 
 	def get_properties(self):
+		"""
+		Function to return information about the 
+		descriptor and the characteristic it belongs to.
+		"""
 		return {
 				GATT_DESC_IFACE: {
 						'Characteristic': self.chrc.get_path(),
@@ -234,12 +313,19 @@ class Descriptor(dbus.service.Object):
 		}
 
 	def get_path(self):
+		"""
+		Function to return the path of the object for DBUS
+		"""
 		return dbus.ObjectPath(self.path)
 
 	@dbus.service.method(DBUS_PROP_IFACE,
 						 in_signature='s',
 						 out_signature='a{sv}')
 	def GetAll(self, interface):
+		"""
+		Function to return the properties about the descriptor 
+		associated with the GATT descriptor interface.
+		"""
 		if interface != GATT_DESC_IFACE:
 			raise exceptions.InvalidArgsException()
 
@@ -249,11 +335,19 @@ class Descriptor(dbus.service.Object):
 						in_signature='a{sv}',
 						out_signature='ay')
 	def ReadValue(self, options):
+		"""
+		Function which can be called by external connected 
+		devices to read a certain value from the device.
+		"""
 		print ('Default ReadValue called, returning error')
 		raise exceptions.NotSupportedException()
 
 	@dbus.service.method(GATT_DESC_IFACE, in_signature='aya{sv}')
 	def WriteValue(self, value, options):
+		"""
+		Function which can be used by external connected devices 
+		to send data to the server.
+		"""
 		print('Default WriteValue called, returning error')
 		raise exceptions.NotSupportedException()
 
@@ -292,6 +386,17 @@ class EmergencyCharacteristic(Characteristic):
 		self.db = Database('find.db')
 	
 	def WriteValue(self, value, options):
+		"""
+		Function to send data to the server. This is an implementation of 
+		the standard WriteValue function. In this, the MAC address of the 
+		connecting device is found and the received message is broken down 
+		into its sequence number and message. If that device has already 
+		written messages to the server and the message is the next expected 
+		message, then it is added to the message buffer associated with that 
+		connected device. If that is the last part of the message, connect the 
+		message parts and save it to the database. If it is the first fragment of 
+		the message, create a message buffer for the device. Otherwise, do nothing.
+		"""
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
@@ -321,6 +426,16 @@ class EmergencyCharacteristic(Characteristic):
 
 
 	def ReadValue(self, options):
+		"""
+		This function allows a connected device to read information 
+		from the server. If the connected device is the same as the 
+		last one, the server will check for the next message fragement
+		to send and will send it. Otherwise, the device is treated as a 
+		new device and the message is generated and the first fragment is 
+		sent to the connected device. If it reaches the end of the message 
+		to send, it will forget about the connected device and will treat it 
+		as a new device the next time it reads from the server.
+		"""
 		print('Sending Device Information')
 		# Create method to get device address from options['device']
 		global current_client
@@ -355,13 +470,24 @@ class EmergencyCharacteristic(Characteristic):
 		return bluezutils.to_byte_array(packet)
 
 def app_register_cb():
+	"""
+	Callback for when GATT application is registered
+	"""
 	print("GATT Application registered!")
 
 def app_register_error_cb(error):
+	"""
+	Callback for when GATT application fails to be registered
+	"""
 	print('GATT Application not registered: ' + str(error))
 	mainloop.quit()
 
 def GATTStart(bus):
+	"""
+	Function to register the GATT application with the GATT 
+	manager. Called when the program wants to utilise this 
+	functionality.
+	"""
 	adapter = bluezutils.find_adapter_path(bus, GATT_MANAGER_IFACE)
 	if not adapter:
 		print("No adapter with interface: "+GATT_MANAGER_IFACE)
