@@ -150,7 +150,7 @@ def start_client():
 					if dev.getValueText(uno).lower() == cli.SERVICE_UUID.lower():
 						have_service = True
 			if have_service:
-				db_data = self.db.select(50)
+				db_data = cli.db.select(50)
 				db_data[0].append(cli.location)
 				db_data[1].append(cli.device_address)
 				message = bluezutils.build_message(db_data[0], db_data[1], dev.addr)
