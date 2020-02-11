@@ -19,8 +19,12 @@ def break_down_message(message):
 
 def build_message(locations, addresses, filter_addr = None):
 	message=[]
+	if filter_addr:
+		print("Addresses to filter: {}".format(filter_addr))
+		
 	for i in range(0,len(locations)):
-		if filter_addr and filter_addr == addresses[i]:
+		if filter_addr and addresses[i] in filter_addr :
+			print("Filtering address: {}".format(addresses[i]))
 			continue
 		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
 
@@ -44,5 +48,5 @@ print(values)
 data = Database('find.db')
 data.insert(values)
 selected = data.select(50)
-print(build_message(selected[0], selected[1], "FA:KE:AD:DR:ES:SS"))
+print(build_message(selected[0], selected[1], ["B8:27:EB:E7:B4:70"]))
 

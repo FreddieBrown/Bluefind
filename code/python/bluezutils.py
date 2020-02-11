@@ -82,8 +82,12 @@ def get_mac_addr(bus):
 
 def build_message(locations, addresses, filter_addr = None):
 	message=[]
+	if filter_addr:
+		print("Addresses to filter: {}".format(filter_addr))
+		
 	for i in range(0,len(locations)):
-		if filter_addr and filter_addr == addresses[i]:
+		if filter_addr and addresses[i] in filter_addr :
+			print("Filtering address: {}".format(addresses[i]))
 			continue
 		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
 

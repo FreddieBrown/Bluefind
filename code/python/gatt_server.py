@@ -341,7 +341,7 @@ class EmergencyCharacteristic(Characteristic):
 			db_data = self.db.select(50)
 			db_data[0].append(self.location)
 			db_data[1].append(self.address)
-			message = bluezutils.build_message(db_data[0], db_data[1], dev)
+			message = bluezutils.build_message(db_data[0], db_data[1], [current_client])
 			message_packets = bluezutils.split_message(message)
 			dev_state = dict()
 			dev_state['message'] = message_packets
