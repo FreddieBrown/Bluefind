@@ -14,7 +14,7 @@ Furthermore, this project uses a SQLite databse to store any data is collects fr
 
 ## Libraries Needed
 
-All of these libraries are available on `apt` and `python` version `3.7.3`:
+All of these libraries are available on `apt` and with `python` version `3.7.3`:
 
 - `libboost-all-dev`
 - `libgtk2.0-dev`
