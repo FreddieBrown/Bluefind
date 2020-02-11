@@ -1,8 +1,8 @@
 import sqlite3
 
 class Database:
-	def __init__(self):
-		self.connection = sqlite3.connect('../../find.db')
+	def __init__(self, path):
+		self.connection = sqlite3.connect(path)
 		self.cursor = self.connection.cursor()
 	def insert(self, list_of_entries):
 		"""

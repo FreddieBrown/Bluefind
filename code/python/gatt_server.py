@@ -289,7 +289,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.location = '52.281807, -1.532221'
 		self.read_states = {}
 		self.write_states = {}
-		# self.db = Database()
+		self.db = Database('find.db')
 	
 	def WriteValue(self, value, options):
 		dev = bluezutils.dbus_to_MAC(options['device'])

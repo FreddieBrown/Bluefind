@@ -23,7 +23,7 @@ class Client():
 		self.target_address = None
 		self.scanner = Scanner()
 		self.message = None
-		self.db = Database()
+		self.db = Database('find.db')
 
 	def prepare_device(self, target_address):
 		self.peripheral = Peripheral(target_address)
