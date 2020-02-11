@@ -83,8 +83,8 @@ def get_mac_addr(bus):
 def build_message(locations, addresses, filter_addr = None):
 	message=[]
 	for i in range(0,len(locations)):
-        if filter_addr and filter_addr == addresses[i]:
-            continue
+		if filter_addr and filter_addr == addresses[i]:
+			continue
 		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
 
 	true_mess = ''.join(message)
@@ -154,11 +154,11 @@ def get_sequence_number(message):
 	return message_parts[0], message_parts[1]
 
 def add_to_db(db, broken_down_msg):
-    now = datetime.datetime.now()
-    coords = broken_down_msg['1']
-    addresses = broken_down_msg['2']
-    values = []
-    if len(coords) == len(addresses):
-        for i in range(0, len(coords)):
-            values.append((addresses[i], coords[i].strip('()'), now))
-    db.insert(values)
+	now = datetime.datetime.now()
+	coords = broken_down_msg['1']
+	addresses = broken_down_msg['2']
+	values = []
+	if len(coords) == len(addresses):
+		for i in range(0, len(coords)):
+			values.append((addresses[i], coords[i].strip('()'), now))
+	db.insert(values)
