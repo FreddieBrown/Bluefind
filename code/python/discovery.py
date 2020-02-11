@@ -16,8 +16,8 @@ def print_info(address, properties):
 	Passed a device address and the properties of the 
 	device. Contains information about connecting to 
 	devices and UUIDs as well as other data being 
-    transmitted, such as Manufacturer data and Service 
-    Data.
+	transmitted, such as Manufacturer data and Service 
+	Data.
 	"""
 	print("[ " + address + " ]")
 
@@ -50,7 +50,7 @@ def interfaces_added(path, interfaces):
 	to the org.bluez object on DBus. It will extract the relevant 
 	information and will try and connect to devices if it is a client.
 	It will also print any information about new interfaces that it 
-    discovers.
+	discovers.
 	"""
 	print("New Device!")
 	print(list(interfaces))
@@ -75,11 +75,11 @@ def interfaces_added(path, interfaces):
 	print_info(address, devices[path])
 
 def properties_changed(interface, changed, invalidated, path):
-    """
-    This function will monitor the interfaces which have changed. 
-    It will update the known information and will print it out 
-    if anything changes.
-    """
+	"""
+	This function will monitor the interfaces which have changed. 
+	It will update the known information and will print it out 
+	if anything changes.
+	"""
 	if interface != "org.bluez.Device1":
 		return
 
@@ -96,19 +96,19 @@ def properties_changed(interface, changed, invalidated, path):
 		print_info(address, devices[path])
 
 def disco_start(bus):
-    """
-    Function to start up discovery of devices. It 
-    will find an available adapter on the devices and 
-    will get its properties. 2 signal receivers will be 
-    used to monitor `InterfacesAdded` and `PropertiesChanged` 
-    to check for anything happening. Next, the discoverable 
-    property will be set to `on` so that the device can be seen 
-    by other devices. The method will then build a scan filter 
-    so that it will only look for devices which it: can't see 
-    what services they offer, or devices which offer certain 
-    services. The discovery filter is then set and the adapter 
-    will start to discover devices.
-    """
+	"""
+	Function to start up discovery of devices. It 
+	will find an available adapter on the devices and 
+	will get its properties. 2 signal receivers will be 
+	used to monitor `InterfacesAdded` and `PropertiesChanged` 
+	to check for anything happening. Next, the discoverable 
+	property will be set to `on` so that the device can be seen 
+	by other devices. The method will then build a scan filter 
+	so that it will only look for devices which it: can't see 
+	what services they offer, or devices which offer certain 
+	services. The discovery filter is then set and the adapter 
+	will start to discover devices.
+	"""
 
 	adapter = bluezutils.find_adapter()
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),

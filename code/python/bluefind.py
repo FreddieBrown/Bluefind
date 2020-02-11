@@ -26,12 +26,12 @@ bus = None
 mainloop = None
 
 def server(bus, ad):
-    """
-    This function is used to start up the server. It will define and register 
-    GATT functionality and advertisement, including any callbacks. This is 
-    functionality specific to a server device, so this function is only called 
-    when the device runs as one. 
-    """
+	"""
+	This function is used to start up the server. It will define and register 
+	GATT functionality and advertisement, including any callbacks. This is 
+	functionality specific to a server device, so this function is only called 
+	when the device runs as one. 
+	"""
 	print("Server mode started")
 	gatt_server.GATTStart(bus)
 	# Gets the LEAdvertisingManager interface on the adapter in use
@@ -45,17 +45,17 @@ def server(bus, ad):
 	return ad_manager
 
 def client():
-    """
-    Function starts up the clientside functionalty of the project.
-    """
+	"""
+	Function starts up the clientside functionalty of the project.
+	"""
 	print("Client mode started")
 
 def receiveSignal(signal_number, frame):
-    """
-    Signal handler for the project. This is to clean up the 
-    serverside functionality and to ensure the program will 
-    exit safely in the event of an untimely exit.
-    """
+	"""
+	Signal handler for the project. This is to clean up the 
+	serverside functionality and to ensure the program will 
+	exit safely in the event of an untimely exit.
+	"""
 	print('Received: '+str(signal_number))
 	print("Client: %s" % client_ty)
 	if client_ty is "n":
@@ -68,10 +68,10 @@ def receiveSignal(signal_number, frame):
 	return
 
 def decide_device_type():
-    """
-    Function to randomly decide if device should be a 
-    device or if it should be a server. 
-    """
+	"""
+	Function to randomly decide if device should be a 
+	device or if it should be a server. 
+	"""
 	global client_ty
 	random.seed()
 	if(random.randint(0, 10) < 5):
@@ -93,27 +93,27 @@ if __name__ == '__main__':
 	if client_ty is "y":
 		client()
 	else:
-        # Set parameters about Dbus main loop
+		# Set parameters about Dbus main loop
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-        # new instance of dbus system bus
+		# new instance of dbus system bus
 		bus = dbus.SystemBus()
 
-        # Startup main GLib loop which will allow program to run 
-        # indefinetly with dbus
+		# Startup main GLib loop which will allow program to run 
+		# indefinetly with dbus
 		mainloop = GLib.MainLoop()
 
-        # Register agent
+		# Register agent
 		agent_manager = agent.register_agent(bus)
 
-        # Start device discovery
+		# Start device discovery
 		discovery.disco_start(bus)
 
 		# Creates the Advertisement class for emergency advertising
 		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
 		ad_manager = server(bus, em_advertisement)
 
-        # run mainloop
+		# run mainloop
 		mainloop.run()
 
 		# Cleans up advert if it was registered
