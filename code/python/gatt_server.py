@@ -338,7 +338,10 @@ class EmergencyCharacteristic(Characteristic):
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))
-			message = bluezutils.build_message([self.location], [self.address])
+			db_data = self.db.select(50)
+			db_data[0].append(self.location)
+			db_data[1].append(self.address)
+			message = bluezutils.build_message(db_data[0], db_data[1], dev)
 			message_packets = bluezutils.split_message(message)
 			dev_state = dict()
 			dev_state['message'] = message_packets
