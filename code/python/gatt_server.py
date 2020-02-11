@@ -305,6 +305,7 @@ class EmergencyCharacteristic(Characteristic):
 				# break down message
 				message_parts = bluezutils.break_down_message(full_message)
 				# Go through message, build tuples with datetime and commit to db
+				bluezutils.add_to_db(self.db, message_parts)
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:

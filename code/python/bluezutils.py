@@ -149,3 +149,12 @@ def get_sequence_number(message):
 	message_parts = message.split("\x01")
 	print("Sequence Number: {}".format(message_parts[0]))
 	return message_parts[0], message_parts[1]
+
+def add_to_db(db, broken_down_msg):
+    coords = broken_down_msg['1']
+    addresses = broken_down_msg['2']
+    values = []
+    if len(coords) == len(addresses):
+        for i in range(0, len(coords)):
+            values.append((addresses[i], coords[i], now))
+    db.insert(values)
