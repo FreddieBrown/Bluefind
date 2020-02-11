@@ -1,4 +1,5 @@
 import dbus
+import datetime
 
 SERVICE_NAME = "org.bluez"
 ADAPTER_INTERFACE = SERVICE_NAME + ".Adapter1"
@@ -151,6 +152,7 @@ def get_sequence_number(message):
 	return message_parts[0], message_parts[1]
 
 def add_to_db(db, broken_down_msg):
+    now = datetime.datetime.now()
     coords = broken_down_msg['1']
     addresses = broken_down_msg['2']
     values = []
