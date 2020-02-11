@@ -158,5 +158,5 @@ def add_to_db(db, broken_down_msg):
     values = []
     if len(coords) == len(addresses):
         for i in range(0, len(coords)):
-            values.append((addresses[i], coords[i], now))
+            values.append((addresses[i], coords[i].strip('()'), now))
     db.insert(values)

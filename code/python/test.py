@@ -27,7 +27,7 @@ print(addresses)
 values = []
 if len(coords) == len(addresses):
 	for i in range(0, len(coords)):
-		values.append((addresses[i], coords[i], now))
+		values.append((addresses[i], coords[i].strip('()'), now))
 print(values)
 data = Database('find.db')
 data.insert(values)
