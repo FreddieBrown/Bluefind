@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
 		agent_manager = agent.register_agent(bus)
 
-		discovery.disco_start(bus, client_ty)
+		discovery.disco_start(bus)
 
 		# Creates the Advertisement class for emergency advertising
 		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
