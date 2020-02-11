@@ -11,6 +11,12 @@ import bluezutils, exceptions
 from db import Database
 
 class Client():
+	"""
+	This class has been created to make it easier to deal 
+	with all the clientside functionalith which is needed
+	for this project. It holds all the necessary objects 
+	and methods which can all be used with the object.
+	"""
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
 	RW_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
 
@@ -26,6 +32,13 @@ class Client():
 		self.db = Database('find.db')
 
 	def prepare_device(self, target_address):
+		"""
+		This function will start a connection with a 
+		device at `target_address` and will get the 
+		handle of the desired characteristic which it 
+		has. Its service and characteristics which are 
+		relavant are also stored in the object.
+		"""
 		self.peripheral = Peripheral(target_address)
 		self.service = self.peripheral.getServiceByUUID( self.SERVICE_UUID )
 		self.characteristic = self.service.getCharacteristics( self.RW_UUID )[0]
@@ -33,6 +46,10 @@ class Client():
 		self.target_address = target_address
 
 	def write_value(self, data, response=False):
+		"""
+		This method is used to write a value to a connected 
+		device. 
+		"""
 		if not self.peripheral:
 			print("Cannot write as no device to send to")
 		else:
@@ -42,6 +59,10 @@ class Client():
 			self.peripheral.writeCharacteristic(self.handle, data)
 
 	def read_value(self):
+		"""
+		This function is used to read a value from a connected 
+		device.
+		"""
 		if not self.peripheral:
 			print("Cannot write as no device to read from")
 			return None
@@ -50,6 +71,9 @@ class Client():
 			return self.characteristic.read()
 	
 	def disconnect(self):
+		"""
+		Function used to end connection with connected device
+		"""
 		if not self.peripheral:
 			print("No connected device so cannot disconnect")
 		else:
@@ -57,25 +81,44 @@ class Client():
 			self.peripheral.disconnect()
 
 	def discover(self, timeout):
+		"""
+		Function to start the discovery of devices while 
+		using over a specific time period.
+		"""
 		return self.scanner.scan(timeout)
 
 	def reconnect(self, chances):
+		"""
+		Function to make it easier for device to 
+		connect to a device at `target_address`.
+		"""
 		if self.peripheral is None:
 			print("No device to reconnect with")
 		else:
 			self.peripheral.connect(self.target_address)
-
-	def device_characteristics(self):
-		# This function should return a dict with information about the device
-		pass
 	
 	def update_location(self, location):
+		"""
+		Function to change the location data for the 
+		client device.
+		"""
 		self.location = location
 
 	def set_message(self, message):
+		"""
+		Function to set the message which will be sent to other 
+		devices.
+		"""
 		self.message = message
 	
 	def send_message(self):
+		"""
+		This function will take the message set in the object and 
+		will break it down. It will then convert the message into 
+		an array of bytes and write the array to the connected 
+		server. If it loses connection, it will try to reconnect 
+		and send it again.
+		"""
 		if not self.peripheral:
 			print("No connected device so cannot write message")
 			return None
@@ -101,6 +144,15 @@ class Client():
 			print("Written whole message to {}".format(self.target_address))
 	
 	def read_message(self):
+		"""
+		This function will keep reading from the server 
+		until it has messages in an array where their 
+		sequence numbers start with 0 and go up until 
+		a message is received which contains chr(5). 
+		This means it is the final part of the message. 
+		The message is then created from the stored 
+		message fragments and is stored in the database.
+		"""
 		if not self.peripheral:
 			print("No connected device so cannot read message")
 			return None
@@ -132,11 +184,25 @@ class Client():
 		bluezutils.add_to_db(self.db, message_parts)
 
 def sig_handler(signal_number, frame):
+	"""
+	This is the signal handler for the client side 
+	to ensure exiting the program happens in an orderly
+	way.
+	"""
 	print('Received: '+str(signal_number))
 	raise SystemExit('Exiting...')
 	return
 
 def start_client():
+	"""
+	This function will startup client functionality and will perform 
+	the actions needed for the client to function. This function could 
+	be re-written to perform different functions for the client. For example, 
+	an emergency service node wouldn't need to write data to the server. 
+	This method will discover nearby devices, find one which offers the 
+	correct service and will read and write to the server before disconnecting. 
+	This bhevaiour will continue until the program is ended.
+	"""
 	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
 	print("Starting")
 	while True:
