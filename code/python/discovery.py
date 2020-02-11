@@ -1,14 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
-import bluezutils
-import bluefind
-import agent
+import bluezutils, bluefind, agent
 
 devices = {}
 dev_path = None
@@ -98,6 +95,7 @@ def disco_start(bus, client_type):
 	adapter = bluezutils.find_adapter()
 	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
 					"org.freedesktop.DBus.Properties")
+	
 
 	# Adds a callback to listen for signals from InterfacesAdded.
 	# This will be activated when a new device is found

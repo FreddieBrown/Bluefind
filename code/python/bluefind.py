@@ -16,6 +16,7 @@ import bluezutils, discovery, advertising, gatt_server, agent
 BLUEZ_SERVICE_NAME = 'org.bluez'
 LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 LE_ADVERTISING_MANAGER_IFACE = 'org.bluez.LEAdvertisingManager1'
+ADAPTER_IFACE = 'org.bluez.Adapter1'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
 em_advertisement = None
 agent_manager = None
@@ -43,7 +44,6 @@ def server(bus, ad):
 
 def client():
 	print("Client mode started")
-
 
 def receiveSignal(signal_number, frame):
 	print('Received: '+str(signal_number))
@@ -74,15 +74,15 @@ if __name__ == '__main__':
 
 	decide_device_type()
 
+
+
 	if client_ty is "y":
 		client()
 	else:
 		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
 		bus = dbus.SystemBus()
-
 		mainloop = GLib.MainLoop()
-
 
 		agent_manager = agent.register_agent(bus)
 

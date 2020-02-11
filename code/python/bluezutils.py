@@ -1,4 +1,5 @@
 import dbus
+import datetime
 
 SERVICE_NAME = "org.bluez"
 ADAPTER_INTERFACE = SERVICE_NAME + ".Adapter1"
@@ -70,3 +71,98 @@ def properties(adapter_p, prop, onoff):
 		status = onoff
 	print("\t%s = %s" % (prop, onoff))
 	adapter_p.Set("org.bluez.Adapter1", prop, status)
+
+def get_mac_addr(bus):
+	adapter = find_adapter()
+	adapter_props = dbus.Interface(bus.get_object("org.bluez", adapter.object_path),
+					"org.freedesktop.DBus.Properties")
+	address = adapter_props.Get("org.bluez.Adapter1", "Address")
+	print("Address is : {}".format(address))
+	return address
+
+def build_message(locations, addresses, filter_addr = None):
+	message=[]
+	if filter_addr:
+		print("Addresses to filter: {}".format(filter_addr))
+		
+	for i in range(0,len(locations)):
+		if filter_addr and addresses[i] in filter_addr :
+			print("Filtering address: {}".format(addresses[i]))
+			continue
+		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
+
+	true_mess = ''.join(message)
+	print("Built Message: "+true_mess)
+
+	return true_mess
+
+def break_down_message(message):
+	ret_dict = {}
+	tvps = message.split("|")
+	for tvp in tvps:
+		tvp_no_equals = tvp.split("=")
+		# Check if entry for tag exists
+		if tvp_no_equals[0] in ret_dict:
+			# If it does, get list associated with it and add element to it
+			ret_dict[tvp_no_equals[0]].append(tvp_no_equals[1])
+		else:
+			# If it doesn't, create new list with element in it associated with tag
+			if len(tvp_no_equals) is 2:
+				ret_dict[tvp_no_equals[0]] = [tvp_no_equals[1]]
+	return ret_dict
+		
+
+def to_byte_array(value):
+	# Convert string into some sort of char array
+	char_arr = list(value)
+	ret_list = []
+	# For each member of the char array, get the ASCII code for each character
+	for char in char_arr:
+		ascii_v = ord(char)
+		# Take each ASCII code and create a dbus.Byte object with it and add it to another array
+		ret_list.append(dbus.Byte(ascii_v))
+	# Once byte array built, return
+	return ret_list
+
+def from_byte_array(val_arr):
+	med_arr = []
+	# Take byte array and work out character of each value
+	for value in val_arr:
+		med_arr.append(chr(value)) 
+	# With each character, add it to a string
+	ret_string = ''.join(med_arr)
+	# return string
+	return ret_string
+
+def split_message(message):
+	"""
+	Method splits message into 19byte chunks 
+	"""
+	mess_size = 16
+	byte_arr = []
+	message_len = len(message)
+	for i in range(0, int(message_len/mess_size)):
+		j = (i+1)*mess_size
+		byte_arr.append(message[i*mess_size:j])
+	if message_len%mess_size is not 0:
+		byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
+	byte_arr.append(chr(5))
+	return byte_arr
+
+def dbus_to_MAC(name):
+	return ":".join(name.lstrip("/org/bluez/hci0/dev_").split("_"))
+
+def get_sequence_number(message):
+	message_parts = message.split("\x01")
+	print("Sequence Number: {}".format(message_parts[0]))
+	return message_parts[0], message_parts[1]
+
+def add_to_db(db, broken_down_msg):
+	now = datetime.datetime.now()
+	coords = broken_down_msg['1']
+	addresses = broken_down_msg['2']
+	values = []
+	if len(coords) == len(addresses):
+		for i in range(0, len(coords)):
+			values.append((addresses[i], coords[i].strip('()'), now))
+	db.insert(values)

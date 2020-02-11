@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
@@ -11,8 +10,9 @@ import array
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 from random import randint
-
+import datetime
 import bluezutils, exceptions
+from db import Database
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
@@ -23,29 +23,9 @@ GATT_SERVICE_IFACE = 'org.bluez.GattService1'
 GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
 GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
 GATT_PATH_BASE = '/org/bluez/example/service'
-DEVICE_COORDINATES = '52.281807, -1.532221'
+current_client = ''
 
-def to_byte_array(value):
-	# Convert string into some sort of char array
-	char_arr = list(value)
-	ret_list = []
-	# For each member of the char array, get the ASCII code for each character
-	for char in char_arr:
-		ascii_v = ord(char)
-		# Take each ASCII code and create a dbus.Byte object with it and add it to another array
-		ret_list.append(dbus.Byte(ascii_v))
-	# Once byte array built, return
-	return ret_list
 
-def from_byte_array(val_arr):
-	med_arr = []
-	# Take byte array and work out character of each value
-	for value in val_arr:
-		med_arr.append(chr(value)) 
-	# With each character, add it to a string
-	ret_string = ''.join(med_arr)
-	# return string
-	return ret_string
 
 """
 Implements the org.bluez.GattApplication1 interface. This is 
@@ -304,16 +284,75 @@ class EmergencyCharacteristic(Characteristic):
 			self.EM_CHAR_UUID, 
 			['read', 'write'],
 			service)
-		self.battery_lvl = 100
 		self.value = None
+		self.address = bluezutils.get_mac_addr(bus)
+		self.location = '52.281807, -1.532221'
+		self.read_states = {}
+		self.write_states = {}
+		self.db = Database('find.db')
 	
 	def WriteValue(self, value, options):
-		print("Value being Written!: "+from_byte_array(value))
+		dev = bluezutils.dbus_to_MAC(options['device'])
+		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
+		print("Value being Written!: "+message)
+		print("Sequence Number: "+sequence_num)
+		if (dev in self.write_states) and  int(sequence_num) is len(self.write_states[dev]):
+			self.write_states[dev].append(message.strip(chr(5)))
+			if chr(5) in message:
+				# If it is in message, join up message
+				full_message = ''.join(self.write_states[dev])
+				print("Message Written To Server: {}".format(full_message))
+				# break down message
+				message_parts = bluezutils.break_down_message(full_message)
+				# Go through message, build tuples with datetime and commit to db
+				bluezutils.add_to_db(self.db, message_parts)
+				del self.write_states[dev] 
+			return sequence_num
+		elif int(sequence_num) is 0:
+			if chr(5) in message:
+				print(message.strip(chr(5)))
+			else:
+				self.write_states[dev] = [message.strip(chr(5))]
+			return sequence_num
+		# Take value are pass into method to split and store data
+		else:
+			return len(self.write_states[dev])-1
+		
 
 
 	def ReadValue(self, options):
-		print('Sending Cute Hello Message')
-		return to_byte_array(DEVICE_COORDINATES)
+		print('Sending Device Information')
+		# Create method to get device address from options['device']
+		global current_client
+		packet = ''
+		dev = bluezutils.dbus_to_MAC(options['device'])
+		if (current_client == dev) and (dev in self.read_states):
+			# Same device connected
+			dev_state = self.read_states[dev]
+			position = dev_state['position']
+			message_packets = dev_state['message']
+			packet = str(position)+"\x01"+message_packets[position]
+			dev_state['position']+=1
+			self.read_states[dev] = dev_state
+		else: 
+			# New device or device which has already received whole packet
+			current_client = dev
+			print("New client: {}".format(current_client))
+			db_data = self.db.select(50)
+			db_data[0].append(self.location)
+			db_data[1].append(self.address)
+			message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
+			message_packets = bluezutils.split_message(message)
+			dev_state = dict()
+			dev_state['message'] = message_packets
+			dev_state['position'] = 1
+			self.read_states[dev] = dev_state
+			packet = str(0)+"\x01"+message_packets[0]
+		
+		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
+			del self.read_states[dev]
+
+		return bluezutils.to_byte_array(packet)
 
 def app_register_cb():
 	print("GATT Application registered!")
