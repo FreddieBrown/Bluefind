@@ -6,7 +6,10 @@ import dbus.mainloop.glib
 import dbus.service
 
 """
-File which holds exceptions needed through the program
+File which holds exceptions needed through the program. 
+Each of these exceptions is needed for different things 
+within BlueZ. They are all kept in this module as they 
+all have very similar behaviour.
 """
 class InvalidArgsException(dbus.exceptions.DBusException):
 	_dbus_error_name = 'org.freedesktop.DBus.Error.InvalidArgs'
