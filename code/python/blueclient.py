@@ -193,7 +193,7 @@ def sig_handler(signal_number, frame):
 	raise SystemExit('Exiting...')
 	return
 
-def start_client():
+def start_client(func):
 	"""
 	This function will startup client functionality and will perform 
 	the actions needed for the client to function. This function could 
@@ -201,10 +201,10 @@ def start_client():
 	an emergency service node wouldn't need to write data to the server. 
 	This method will discover nearby devices, find one which offers the 
 	correct service and will read and write to the server before disconnecting. 
-	This bhevaiour will continue until the program is ended.
+	This behvaiour will continue until the program is ended.
 	"""
 	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
-	print("Starting")
+	print("Starting Client")
 	while True:
 		devices = cli.discover(5.0)
 		for dev in devices:
@@ -216,23 +216,37 @@ def start_client():
 					if dev.getValueText(uno).lower() == cli.SERVICE_UUID.lower():
 						have_service = True
 			if have_service:
-				db_data = cli.db.select(50)
-				db_data[0].append(cli.location)
-				db_data[1].append(cli.device_address)
-				message = bluezutils.build_message(db_data[0], db_data[1], [dev.addr.upper()])
-				cli.set_message(message)
-				try:
-					cli.prepare_device(dev.addr)
-					cli.read_message()
-					cli.send_message()
-					cli.disconnect()
-				except Exception as e:
-					print("Connection Error for {}: {}".format(dev.addr, e))
+				func(cli, dev.addr)
+				# db_data = cli.db.select(50)
+				# db_data[0].append(cli.location)
+				# db_data[1].append(cli.device_address)
+				# message = bluezutils.build_message(db_data[0], db_data[1], [dev.addr.upper()])
+				# cli.set_message(message)
+				# try:
+				# 	cli.prepare_device(dev.addr)
+				# 	cli.read_message()
+				# 	cli.send_message()
+				# 	cli.disconnect()
+				# except Exception as e:
+				# 	print("Connection Error for {}: {}".format(dev.addr, e))
+				
 
-
+def normal_client_actions(cli, address):
+	db_data = cli.db.select(50)
+	db_data[0].append(cli.location)
+	db_data[1].append(cli.device_address)
+	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
+	cli.set_message(message)
+	try:
+		cli.prepare_device(address)
+		cli.read_message()
+		cli.send_message()
+		cli.disconnect()
+	except Exception as e:
+		print("Connection Error for {}: {}".format(address, e))
 
 
 if __name__ == '__main__':
 	signal.signal(signal.SIGINT, sig_handler)
-	start_client()
+	start_client(normal_client_actions)
 	
