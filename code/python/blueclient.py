@@ -6,6 +6,7 @@ import bluepy
 from bluepy.btle import Scanner, UUID, Peripheral, DefaultDelegate
 import time
 import datetime
+import sys
 
 import bluezutils, exceptions
 from db import Database
@@ -232,6 +233,7 @@ def start_client(func):
 				
 
 def normal_client_actions(cli, address):
+	print("Normal Client Action")
 	db_data = cli.db.select(50)
 	db_data[0].append(cli.location)
 	db_data[1].append(cli.device_address)
@@ -245,8 +247,27 @@ def normal_client_actions(cli, address):
 	except Exception as e:
 		print("Connection Error for {}: {}".format(address, e))
 
+def emergency_service_actions(cli, address):
+	print("Emergency Service Action")
+	try:
+		cli.prepare_device(address)
+		cli.read_message()
+		cli.disconnect()
+	except Exception as e:
+		print("Connection Error for {}: {}".format(address, e))
+
+
 
 if __name__ == '__main__':
+	if len(sys.argv) > 1:
+		action = "normal"
+	else:
+		action = sys.argv[1]
+
+	client_actions = {
+		"emergency": emergency_service_actions,
+		"normal": normal_client_actions,
+	}
 	signal.signal(signal.SIGINT, sig_handler)
-	start_client(normal_client_actions)
+	start_client(client_actions[action])
 	
