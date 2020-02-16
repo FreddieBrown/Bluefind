@@ -268,6 +268,7 @@ def encrypted_client_actions(cli, address):
 			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
 			print("Built Confirmation Message")
 			cli.set_message(conf_message)
+			print("Set Message")
 			cli.send_message()
 			print("Encrypting Message")
 			cipher = bluezutils.encrypt_message(server_key['public'], message)
