@@ -457,7 +457,7 @@ class EmergencyCharacteristic(Characteristic):
 		global current_client
 		packet = ''
 		dev = bluezutils.dbus_to_MAC(options['device'])
-		if (current_client == dev) and (dev in self.read_states):
+		if (current_client == dev) and (dev in self.read_states.keys()):
 			# Same device connected
 			dev_state = self.read_states[dev]
 			position = dev_state['position']
