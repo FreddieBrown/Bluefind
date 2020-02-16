@@ -67,6 +67,26 @@ def decrypt_message(private_key, ciphertext):
 	cipher = PKCS1_OAEP.new(key)
 	return cipher.decrypt(ciphertext).decode()
 
+def split_message(message):
+	"""
+	Method splits message into 16byte chunks so they can be transmitted 
+	using Bluetooth. 
+	"""
+	print("Splitting message")
+	mess_size = 16
+	byte_arr = []
+	message_len = len(message)
+	if int(message_len/mess_size) == 0:
+		byte_arr.append(message)
+	else:
+		for i in range(0, int(message_len/mess_size)):
+			j = (i+1)*mess_size
+			byte_arr.append(message[i*mess_size:j])
+		if message_len%mess_size is not 0:
+			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
+	byte_arr.append(chr(5))
+	return byte_arr
+
 keypair = generate_RSA_keypair()
 print("{}".format(from_byte_array(keypair['public'])))
 print(build_generic_message({
@@ -78,3 +98,7 @@ other_message = "Hey there, I'm a string"
 cipher = encrypt_message(keypair['public'], other_message)
 print("Ciphertext: {}".format(cipher))
 print("Decrypted Message: {}".format(decrypt_message(keypair['private'], cipher)))
+
+small_message = "4="+chr(6)
+print(split_message(small_message))
+print(split_message(other_message))
