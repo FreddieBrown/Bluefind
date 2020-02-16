@@ -273,7 +273,7 @@ def encrypted_client_actions(cli, address):
 			print("Set Message")
 			cli.send_message()
 			print("Encrypting Message")
-			cipher = bluezutils.encrypt_message(server_key['public'], message)
+			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
 			cli.set_message(cipher)
 			found_message = cli.read_message()
 			print("Decrypting Message")
