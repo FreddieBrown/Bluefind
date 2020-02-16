@@ -405,7 +405,7 @@ class EmergencyCharacteristic(Characteristic):
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
-		if (dev in self.write_states) and  int(sequence_num) is len(self.write_states[dev]):
+		if (dev in self.write_states.keys()) and  int(sequence_num) is len(self.write_states[dev]):
 			self.write_states[dev].append(message.strip(chr(5)))
 			if chr(5) in message:
 				# If it is in message, join up message
@@ -416,6 +416,7 @@ class EmergencyCharacteristic(Characteristic):
 					print("Decrypting message")
 					full_message = bluezutils.decrypt(self.keypair['private'], full_message)
 				message_parts = bluezutils.break_down_message(full_message)
+				print("Keys in Message: {}".format(message_parts.keys()))
 				if "3" in message_parts.keys():
 					self.client_key = message_parts["3"][0]
 					print("Recevied Key: {}".format(self.client_key))
@@ -466,8 +467,6 @@ class EmergencyCharacteristic(Characteristic):
 			dev_state['position']+=1
 			self.read_states[dev] = dev_state
 		else: 
-			self.encrypt = False
-			self.send_key = False
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))
