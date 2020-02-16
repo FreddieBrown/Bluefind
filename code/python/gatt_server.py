@@ -413,12 +413,15 @@ class EmergencyCharacteristic(Characteristic):
 				print("Message Written To Server: {}".format(full_message))
 				# break down message
 				if self.encrypt:
+					print("Decrypting message")
 					full_message = bluezutils.decrypt(self.keypair['private'], full_message)
 				message_parts = bluezutils.break_down_message(full_message)
 				if "3" in message_parts.keys():
 					self.client_key = message_parts["3"][0]
+					print("Recevied Key: {}".format(self.client_key))
 					self.send_key = True
 				elif "4" in message_parts.keys():
+					print("Recevied ACK")
 					self.encrypt = True
 				else:
 					# Go through message, build tuples with datetime and commit to db
@@ -472,9 +475,11 @@ class EmergencyCharacteristic(Characteristic):
 				db_data[1].append(self.address)
 				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
 				if self.encrypt:
+					print("Encrypting message")
 					message = bluezutils.encrypt(self.client_key, message)
 			else:
 				# Need to send public key
+				print("Sending public key")
 				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
 				self.send_key = False
 			message_packets = bluezutils.split_message(message)

@@ -262,13 +262,16 @@ def encrypted_client_actions(cli, address):
 		# Read public key from server
 		server_key = cli.read_message()
 		if "3" in server_key.keys():
+			print("Received public key")
 			# When received full key, write back to server with confirmation (tag 4)
 			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
 			cli.set_message(conf_message)
 			cli.send_message()
+			print("Encrypting Message")
 			cipher = bluezutils.encrypt_message(server_key['public'], message)
 			cli.set_message(cipher)
 			found_message = cli.read_message()
+			print("Decrypting Message")
 			decrypted = bluezutils.decrypt_message(cli.keypair['private'], found_message)
 			bluezutils.add_to_db(cli.db, decrypted)
 			cli.send_message()
@@ -280,10 +283,6 @@ def encrypted_client_actions(cli, address):
 		cli.disconnect()
 	except Exception as e:
 		print("Connection Error for {}: {}".format(address, e))
-	
-
-
-
 
 if __name__ == '__main__':
 	if len(sys.argv) == 1:
