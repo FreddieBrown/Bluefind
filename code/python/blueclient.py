@@ -121,6 +121,7 @@ class Client():
 		server. If it loses connection, it will try to reconnect 
 		and send it again.
 		"""
+		print("Sending Message")
 		if not self.peripheral:
 			print("No connected device so cannot write message")
 			return None
@@ -128,6 +129,7 @@ class Client():
 			print("Need to provide a message to send")
 			return None
 		else:
+			print("Need to break down message")
 			message_buffer = bluezutils.split_message(self.message)
 			print("Message Buffer: {}".format(message_buffer))
 			seq = 0

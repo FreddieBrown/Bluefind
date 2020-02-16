@@ -195,14 +195,16 @@ def split_message(message):
 	Method splits message into 16byte chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
+	print("Splitting message")
 	mess_size = 16
 	byte_arr = []
 	message_len = len(message)
 	for i in range(0, int(message_len/mess_size)):
 		j = (i+1)*mess_size
-		byte_arr.append(message[i*mess_size:j])
-	if message_len%mess_size is not 0:
-		byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
+		if message_len%mess_size is not 0:
+			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
+		else:
+			byte_arr.append(message[i*mess_size:j])
 	byte_arr.append(chr(5))
 	return byte_arr
 
