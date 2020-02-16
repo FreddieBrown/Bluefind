@@ -1,5 +1,7 @@
 import dbus
 import datetime
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
 SERVICE_NAME = "org.bluez"
 ADAPTER_INTERFACE = SERVICE_NAME + ".Adapter1"
@@ -145,14 +147,16 @@ def break_down_message(message):
 	tvps = message.split("|")
 	for tvp in tvps:
 		tvp_no_equals = tvp.split("=")
+		if len(tvp_no_equals) is 2:
+			save = tvp_no_equals[1]
+		elif len(tvp_no_equals) > 2:
+			save = "=".join(tvp_no_equals[1:])
 		# Check if entry for tag exists
 		if tvp_no_equals[0] in ret_dict:
 			# If it does, get list associated with it and add element to it
-			ret_dict[tvp_no_equals[0]].append(tvp_no_equals[1])
+			ret_dict[tvp_no_equals[0]].append(save)
 		else:
-			# If it doesn't, create new list with element in it associated with tag
-			if len(tvp_no_equals) is 2:
-				ret_dict[tvp_no_equals[0]] = [tvp_no_equals[1]]
+			ret_dict[tvp_no_equals[0]] = [save]
 	return ret_dict
 		
 
@@ -232,3 +236,38 @@ def add_to_db(db, broken_down_msg):
 		for i in range(0, len(coords)):
 			values.append((addresses[i], coords[i].strip('()'), now))
 	db.insert(values)
+
+def generate_RSA_keypair():
+	key = RSA.generate(1024)
+	private = key.export_key()
+	public = key.publickey().export_key()
+	return {
+		"private" : from_byte_array(private),
+		"public" : from_byte_array(public),
+	}
+
+def build_generic_message(message_struct):
+	"""
+	Takes a dict where keys are tags, and each has a list with
+	values for that tag, e.g 
+	{
+		1 : [...],
+		2 : [...],
+		3 : [...],
+	}
+	"""
+	message = ""
+	for key, value in message_struct.items():
+		for item in value:
+			message+="{}={}|".format(key, item)
+	return message
+
+def encrypt_message(public_key, message):
+	key = RSA.importKey(public_key)
+	cipher_rsa = PKCS1_OAEP.new(key)
+	return cipher_rsa.encrypt(str.encode(message))
+
+def decrypt_message(private_key, ciphertext):
+	key = RSA.importKey(private_key)
+	cipher = PKCS1_OAEP.new(key)
+	return cipher.decrypt(ciphertext).decode()

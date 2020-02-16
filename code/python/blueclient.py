@@ -31,6 +31,7 @@ class Client():
 		self.scanner = Scanner()
 		self.message = None
 		self.db = Database('find.db')
+		self.keypair = bluezutils.generate_RSA_keypair()
 
 	def prepare_device(self, target_address):
 		"""
@@ -181,8 +182,7 @@ class Client():
 		print("Read Message: {}".format(full_message))
 		# break down whole message
 		message_parts = bluezutils.break_down_message(full_message)
-		# Commit found data to database
-		bluezutils.add_to_db(self.db, message_parts)
+		return message_parts
 
 def sig_handler(signal_number, frame):
 	"""
@@ -218,18 +218,6 @@ def start_client(func):
 						have_service = True
 			if have_service:
 				func(cli, dev.addr)
-				# db_data = cli.db.select(50)
-				# db_data[0].append(cli.location)
-				# db_data[1].append(cli.device_address)
-				# message = bluezutils.build_message(db_data[0], db_data[1], [dev.addr.upper()])
-				# cli.set_message(message)
-				# try:
-				# 	cli.prepare_device(dev.addr)
-				# 	cli.read_message()
-				# 	cli.send_message()
-				# 	cli.disconnect()
-				# except Exception as e:
-				# 	print("Connection Error for {}: {}".format(dev.addr, e))
 				
 
 def normal_client_actions(cli, address):
@@ -241,7 +229,8 @@ def normal_client_actions(cli, address):
 	cli.set_message(message)
 	try:
 		cli.prepare_device(address)
-		cli.read_message()
+		found_message = cli.read_message()
+		bluezutils.add_to_db(cli.db, found_message)
 		cli.send_message()
 		cli.disconnect()
 	except Exception as e:
@@ -251,10 +240,48 @@ def emergency_service_actions(cli, address):
 	print("Emergency Service Action")
 	try:
 		cli.prepare_device(address)
-		cli.read_message()
+		found_message = cli.read_message()
+		bluezutils.add_to_db(cli.db, found_message)
 		cli.disconnect()
 	except Exception as e:
 		print("Connection Error for {}: {}".format(address, e))
+
+def encrypted_client_actions(cli, address):
+	print("Encrypted Client Action")
+	db_data = cli.db.select(50)
+	db_data[0].append(cli.location)
+	db_data[1].append(cli.device_address)
+	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
+	# Build message which contains clients public key (tag 3)
+	key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
+	try:
+		cli.prepare_device(address)
+		# Write it to server
+		cli.set_message(key_message)
+		cli.send_message()
+		# Read public key from server
+		server_key = cli.read_message()
+		if "3" in server_key.keys():
+			# When received full key, write back to server with confirmation (tag 4)
+			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
+			cli.set_message(conf_message)
+			cli.send_message()
+			cipher = bluezutils.encrypt_message(server_key['public'], message)
+			cli.set_message(cipher)
+			found_message = cli.read_message()
+			decrypted = bluezutils.decrypt_message(cli.keypair['private'], found_message)
+			bluezutils.add_to_db(cli.db, decrypted)
+			cli.send_message()
+		else:
+			found_message = cli.read_message()
+			bluezutils.add_to_db(cli.db, found_message)
+			cli.set_message(message)
+			cli.send_message()
+		cli.disconnect()
+	except Exception as e:
+		print("Connection Error for {}: {}".format(address, e))
+	
+
 
 
 
@@ -267,6 +294,7 @@ if __name__ == '__main__':
 	client_actions = {
 		"emergency": emergency_service_actions,
 		"normal": normal_client_actions,
+		"secure": encrypted_client_actions
 	}
 	signal.signal(signal.SIGINT, sig_handler)
 	start_client(client_actions[action])

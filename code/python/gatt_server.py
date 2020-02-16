@@ -384,6 +384,10 @@ class EmergencyCharacteristic(Characteristic):
 		self.read_states = {}
 		self.write_states = {}
 		self.db = Database('find.db')
+		self.keypair = bluezutils.generate_RSA_keypair()
+		self.send_key = False
+		self.encrypt = False
+		self.client_key = None
 	
 	def WriteValue(self, value, options):
 		"""
@@ -408,9 +412,18 @@ class EmergencyCharacteristic(Characteristic):
 				full_message = ''.join(self.write_states[dev])
 				print("Message Written To Server: {}".format(full_message))
 				# break down message
+				if self.encrypt:
+					full_message = bluezutils.decrypt(self.keypair['private'], full_message)
 				message_parts = bluezutils.break_down_message(full_message)
-				# Go through message, build tuples with datetime and commit to db
-				bluezutils.add_to_db(self.db, message_parts)
+				if "3" in message_parts.keys():
+					self.client_key = message_parts["3"][0]
+					self.send_key = True
+				elif "4" in message_parts.keys():
+					self.encrypt = True
+				else:
+					# Go through message, build tuples with datetime and commit to db
+					bluezutils.add_to_db(self.db, message_parts)
+					self.encrypt = False
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:
@@ -453,10 +466,17 @@ class EmergencyCharacteristic(Characteristic):
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))
-			db_data = self.db.select(50)
-			db_data[0].append(self.location)
-			db_data[1].append(self.address)
-			message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
+			if not self.send_key:
+				db_data = self.db.select(50)
+				db_data[0].append(self.location)
+				db_data[1].append(self.address)
+				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
+				if self.encrypt:
+					message = bluezutils.encrypt(self.client_key, message)
+			else:
+				# Need to send public key
+				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
+				self.send_key = False
 			message_packets = bluezutils.split_message(message)
 			dev_state = dict()
 			dev_state['message'] = message_packets

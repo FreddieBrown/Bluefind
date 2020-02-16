@@ -1,52 +1,80 @@
-from db import Database
-import datetime
-now = datetime.datetime.now()
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
-def break_down_message(message):
-	ret_dict = {}
-	tvps = message.split("|")
-	for tvp in tvps:
-		tvp_no_equals = tvp.split("=")
-		# Check if entry for tag exists
-		if tvp_no_equals[0] in ret_dict:
-			# If it does, get list associated with it and add element to it
-			ret_dict[tvp_no_equals[0]].append(tvp_no_equals[1])
-		else:
-			# If it doesn't, create new list with element in it associated with tag
-			if len(tvp_no_equals) is 2:
-				ret_dict[tvp_no_equals[0]] = [tvp_no_equals[1]]
-	return ret_dict
+def generate_RSA_keypair():
+	key = RSA.generate(1024)
+	private = key.export_key()
+	public = key.publickey().export_key()
+	return {
+		"private" : private,
+		"public" : public,
+	}
 
-def build_message(locations, addresses, filter_addr = None):
-	message=[]
-	if filter_addr:
-		print("Addresses to filter: {}".format(filter_addr))
-		
-	for i in range(0,len(locations)):
-		if filter_addr and addresses[i] in filter_addr :
-			print("Filtering address: {}".format(addresses[i]))
-			continue
-		message.append("1=({})|2={}|".format(locations[i], addresses[i]))
+def build_generic_message(message_struct):
+	"""
+	Takes a dict where keys are tags, and each has a list with
+	values for that tag, e.g 
+	{
+		1 : [...],
+		2 : [...],
+		3 : [...],
+	}
+	"""
+	message = ""
+	for key, value in message_struct.items():
+		for item in value:
+			message+="{}={}|".format(key, item)
+	return message
 
-	true_mess = ''.join(message)
-	print("Built Message: "+true_mess)
 
-	return true_mess
+def from_byte_array(val_arr):
+	"""
+	When provided with a list of bytes, the function will convert 
+	it into an ASCII string and will return it.
+	"""
+	med_arr = []
+	# Take byte array and work out character of each value
+	for value in val_arr:
+		med_arr.append(chr(value)) 
+	# With each character, add it to a string
+	ret_string = ''.join(med_arr)
+	# return string
+	return ret_string
 
-message = '1=(52.281799, -1.532315)|2=B8:27:EB:E7:B4:70|1=(52.281807, -1.532221)|2=DC:A6:32:26:CE:70|'
+def to_byte_array(value):
+	"""
+	This function will take a string and will split it 
+	down into an array of bytes. This will then be returned.
+	"""
+	# Convert string into some sort of char array
+	char_arr = list(value)
+	ret_list = []
+	# For each member of the char array, get the ASCII code for each character
+	for char in char_arr:
+		ascii_v = ord(char)
+		# Take each ASCII code and create a dbus.Byte object with it and add it to another array
+		ret_list.append(bytes(ascii_v))
+	# Once byte array built, return
+	return ret_list
 
-breakdown = break_down_message(message)
-coords = breakdown['1']
-addresses = breakdown['2']
-print(coords)
-print(addresses)
-values = []
-if len(coords) == len(addresses):
-	for i in range(0, len(coords)):
-		values.append((addresses[i], coords[i].strip('()'), now))
-print(values)
-data = Database('find.db')
-data.insert(values)
-selected = data.select(50)
-print(build_message(selected[0], selected[1], ["B8:27:EB:E7:B4:70"]))
+def encrypt_message(public_key, message):
+	key = RSA.importKey(public_key)
+	cipher_rsa = PKCS1_OAEP.new(key)
+	return cipher_rsa.encrypt(str.encode(message))
 
+def decrypt_message(private_key, ciphertext):
+	key = RSA.importKey(private_key)
+	cipher = PKCS1_OAEP.new(key)
+	return cipher.decrypt(ciphertext).decode()
+
+keypair = generate_RSA_keypair()
+print("{}".format(from_byte_array(keypair['public'])))
+print(build_generic_message({
+	3 : [keypair['public'], "hello"]
+}))
+
+fun_message = b'You can attack now!'
+other_message = "Hey there, I'm a string"
+cipher = encrypt_message(keypair['public'], other_message)
+print("Ciphertext: {}".format(cipher))
+print("Decrypted Message: {}".format(decrypt_message(keypair['private'], cipher)))
