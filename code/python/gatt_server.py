@@ -466,6 +466,8 @@ class EmergencyCharacteristic(Characteristic):
 			dev_state['position']+=1
 			self.read_states[dev] = dev_state
 		else: 
+			self.encrypt = False
+			self.send_key = False
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))

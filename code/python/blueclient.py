@@ -129,6 +129,7 @@ class Client():
 			return None
 		else:
 			message_buffer = bluezutils.split_message(self.message)
+			print("Message Buffer: {}".format(message_buffer))
 			seq = 0
 			for i in message_buffer:
 				# Uses a sequence number to let server know which packet in sequence it is
@@ -265,6 +266,7 @@ def encrypted_client_actions(cli, address):
 			print("Received public key")
 			# When received full key, write back to server with confirmation (tag 4)
 			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
+			print("Built Confirmation Message")
 			cli.set_message(conf_message)
 			cli.send_message()
 			print("Encrypting Message")
