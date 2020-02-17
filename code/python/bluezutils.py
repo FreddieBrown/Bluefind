@@ -189,6 +189,7 @@ def from_byte_array(val_arr):
 	# With each character, add it to a string
 	ret_string = ''.join(med_arr)
 	# return string
+	print("Ret string: {}".format(ret_string))
 	return ret_string
 
 def split_message(message):
