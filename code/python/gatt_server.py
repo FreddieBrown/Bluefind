@@ -487,9 +487,13 @@ class EmergencyCharacteristic(Characteristic):
 			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
+			print("1")
 			dev_state['message'] = message_packets
+			print("2")
 			dev_state['position'] = 1
+			print("3")
 			self.read_states[dev] = dev_state
+			print("4")
 			packet = str(0)+"\x01"+message_packets[0]
 			print("Packet: {}".format(packet))
 		
