@@ -417,6 +417,9 @@ class EmergencyCharacteristic(Characteristic):
 				if self.encrypt:
 					print("Decrypting message")
 					try:
+						byte_msg = bluezutils.utf_to_byte_string(full_message)
+						print("Message: {}".format(list(byte_msg)))
+						print("Cipher Length: {}".format(len(list(byte_msg))))
 						full_message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(full_message))
 					except Exception as e:
 						print("Exception: {}".format(e))
