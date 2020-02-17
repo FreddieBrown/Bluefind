@@ -55,7 +55,6 @@ class Client():
 		if not self.peripheral:
 			print("Cannot write as no device to send to")
 		else:
-			print("Writing data")
 			if response:
 				return self.peripheral.writeCharacteristic(self.handle, data, True) 
 			self.peripheral.writeCharacteristic(self.handle, data)
@@ -69,7 +68,6 @@ class Client():
 			print("Cannot write as no device to read from")
 			return None
 		else:
-			print("Reading data")
 			return self.characteristic.read()
 	
 	def disconnect(self):
@@ -272,9 +270,7 @@ def encrypted_client_actions(cli, address):
 			print("Received public key")
 			# When received full key, write back to server with confirmation (tag 4)
 			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
-			print("Built Confirmation Message")
 			cli.set_message(conf_message)
-			print("Set Message")
 			cli.send_message()
 			print("Encrypting Message")
 			# cipher = bluezutils.encrypt_message(server_key["3"][0], message)

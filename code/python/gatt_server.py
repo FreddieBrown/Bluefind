@@ -460,7 +460,6 @@ class EmergencyCharacteristic(Characteristic):
 		to send, it will forget about the connected device and will treat it 
 		as a new device the next time it reads from the server.
 		"""
-		print('Sending Device Information')
 		# Create method to get device address from options['device']
 		global current_client
 		dev = bluezutils.dbus_to_MAC(options['device'])
@@ -502,6 +501,7 @@ class EmergencyCharacteristic(Characteristic):
 					print("Encrypting message")
 					message = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, message))
 					print("Message: {}".format(bluezutils.utf_to_value_list(message)))
+					print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(message))))
 			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
@@ -515,7 +515,7 @@ class EmergencyCharacteristic(Characteristic):
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
 			del self.read_states[dev]
-		print("Sending data")
+		print("Packet being sent: {}".format(packet))
 		return bluezutils.to_byte_array(packet)
 
 def app_register_cb():
