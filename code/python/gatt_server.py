@@ -500,7 +500,7 @@ class EmergencyCharacteristic(Characteristic):
 				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
 				if self.encrypt:
 					print("Encrypting message")
-					message = bluezutils.encrypt_message(self.client_key, message)
+					message = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, message))
 			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
