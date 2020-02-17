@@ -240,23 +240,23 @@ class Client():
 		message = []
 		first_mess = False
 		print("Decrypting Message")
-		while True:
-			print("Getting value from server")
-			recvd = bluezutils.from_byte_array(self.read_value())
-			print("Got value from server")
-			byte_msg = bluezutils.utf_to_byte_string(recvd)
-			print("Message Fragment: {}".format(list(byte_msg)))
-			print("Cipher Length: {}".format(len(list(byte_msg))))
-			recvd = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
-			seq_num, data = bluezutils.get_sequence_number(recvd)
-			if not first_mess:
-				first_mess = (int(seq_num) == 0)
-			if first_mess:
-				if str(chr(5)) != data:	
-					message.append(data)
-				else:
-					print("End of message")
-					break
+		# while True:
+		print("Getting value from server")
+		recvd = bluezutils.from_byte_array(self.read_value())
+		print("Got value from server")
+		byte_msg = bluezutils.utf_to_byte_string(recvd)
+		print("Message Fragment: {}".format(list(byte_msg)))
+		print("Cipher Length: {}".format(len(list(byte_msg))))
+		recvd = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
+		seq_num, data = bluezutils.get_sequence_number(recvd)
+		if not first_mess:
+			first_mess = (int(seq_num) == 0)
+		if first_mess:
+			if str(chr(5)) != data:	
+				message.append(data)
+			else:
+				print("End of message")
+				# break
 		
 		print("Read whole message from {}".format(self.target_address))	
 		# join up whole message
