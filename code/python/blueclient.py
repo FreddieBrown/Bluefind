@@ -278,6 +278,7 @@ def encrypted_client_actions(cli, address):
 			print("Set Message")
 			cli.send_message()
 			print("Encrypting Message")
+			print("KEY: {}".format(server_key["3"][0]))
 			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
 			print("Cipher: {}".format(cipher))
 			print("Cipher as string: {}".format(bluezutils.bytestring_to_uf8(cipher)))
