@@ -88,7 +88,7 @@ def split_message(message):
 	using Bluetooth. 
 	"""
 	print("Splitting message")
-	mess_size = 16
+	mess_size = 15
 	byte_arr = []
 	message_len = len(message)
 	if int(message_len/mess_size) == 0:
@@ -101,17 +101,6 @@ def split_message(message):
 			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
 	byte_arr.append(chr(5))
 	return byte_arr
-
-def remove_bytes(buffer, blacklist):
-	b = list()
-	for i in list(buffer):
-		if i == 194 or i == 195:
-			# print('FOUND: {}'.format(i)) # 3 way split
-			continue
-		else:
-			b.append(i)
-	print("Recon Len: {}".format(len(bytes(b))))
-	return bytes(b)
 
 def bytestring_to_uf8(buffer):
 	"""
@@ -142,28 +131,19 @@ keypair = generate_RSA_keypair()
 
 fun_message = b'You can attack now!'
 other_message = "Hey there, I'm a string"
-public_key = '''-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuUP114TfwUu2Pata5v3c17B0K
-n9pjSjogFDBdQszv0no3jtrRgBc6Gup716iyBYyPz7nTU0gS8zwyxlsZoLZmSrvF
-8cXXLCkQxHyBZLzmEsdfb0CDhZTdsueW3fXp6aJ9zfpccI4902hbSVXjV06LXOvL
-1sPcw47hW0l2CMCEnQIDAQAB
------END PUBLIC KEY-----'''
-# cipher = encrypt_message(keypair['public'], other_message)
-cipher = encrypt_message(public_key, other_message)
-print("Before: {}".format(list(cipher)))
-print("Cipher Length: {}".format(len(cipher)))
+cipher = encrypt_message(keypair['public'], other_message)
 cipherstr = bytestring_to_uf8(cipher)
-print("str value: {}".format(cipherstr))
-# print("Ciphertext: {}".format(str.encode(cipherstr)))
-cipher_list = utf_to_value_list(cipherstr)
-print("Ciphertext: {}".format(cipher_list))
+print("Cipher List: {}".format(list(cipher)))
+print("Cipher List: {}".format(utf_to_value_list(cipherstr)))
+message_parts = split_message(cipherstr)
+second_part = "".join(message_parts).strip(chr(5))
+print("Ciphertext: {}".format(utf_to_byte_string(second_part)))
 # cipherstr_bytes = str.encode(cipherstr, errors="strict")
 # print("Cipherstr: {}".format(list(str.encode(cipherstr))))
-recon = array.array('B',cipher_list).tostring()
+recon = utf_to_byte_string(second_part)
 print("Same?: {}".format(recon == cipher))
 print("Reconstruction: {}".format(list(recon)))
 # print("Decrypted Message: {}".format(decrypt_message(keypair['private'], recon)))
-# print("Decrypted Message: {}".format(decrypt_message(keypair['private'], cipher)))
 
 # small_message = "4="+chr(6)
 # print(split_message(small_message))

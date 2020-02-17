@@ -184,8 +184,7 @@ class Client():
 		full_message = ''.join(message)
 		print("Read Message: {}".format(full_message))
 		# break down whole message
-		message_parts = bluezutils.break_down_message(full_message)
-		return message_parts
+		return full_message
 
 def sig_handler(signal_number, frame):
 	"""
@@ -232,7 +231,7 @@ def normal_client_actions(cli, address):
 	cli.set_message(message)
 	try:
 		cli.prepare_device(address)
-		found_message = cli.read_message()
+		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db(cli.db, found_message)
 		cli.send_message()
 		cli.disconnect()
@@ -246,9 +245,9 @@ def emergency_service_actions(cli, address):
 	try:
 		cli.prepare_device(address)
 		cli.send_message()
-		found_message = cli.read_message()
+		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db_em(cli.db, found_message)
-		found_message = cli.read_message()
+		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db(cli.db, found_message)
 		cli.disconnect()
 	except Exception as e:
@@ -268,7 +267,7 @@ def encrypted_client_actions(cli, address):
 		cli.set_message(key_message)
 		cli.send_message()
 		# Read public key from server
-		server_key = cli.read_message()
+		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
 			# When received full key, write back to server with confirmation (tag 4)
@@ -287,10 +286,10 @@ def encrypted_client_actions(cli, address):
 			byte_msg = bluezutils.utf_to_byte_string(found_message)
 			print("Message: {}".format(list(byte_msg)))
 			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
-			bluezutils.add_to_db(cli.db, decrypted)
+			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
 			# cli.send_message()
 		else:
-			found_message = cli.read_message()
+			found_message = bluezutils.break_down_message(cli.read_message())
 			bluezutils.add_to_db(cli.db, found_message)
 			cli.set_message(message)
 			cli.send_message()
