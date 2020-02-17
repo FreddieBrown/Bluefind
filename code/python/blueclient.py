@@ -165,6 +165,7 @@ class Client():
 			print("Need to break down message")
 			message_buffer = bluezutils.split_message(self.message)
 			print("Message Buffer: {}".format(message_buffer))
+			print("Message Buffer Size: {}".format(len(message_buffer)))
 			seq = 0
 			for i in message_buffer:
 				# Uses a sequence number to let server know which packet in sequence it is

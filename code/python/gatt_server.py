@@ -410,7 +410,10 @@ class EmergencyCharacteristic(Characteristic):
 			if self.encrypt:
 				print("Decrypting Part")
 				try:
-					message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(message))
+					byte_msg = bluezutils.utf_to_byte_string(message)
+					print("Message Fragment: {}".format(list(byte_msg)))
+					print("Cipher Length: {}".format(len(list(byte_msg))))
+					message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(byte_msg))
 				except Exception as e:
 					print("Exception: {}".format(e))
 			self.write_states[dev].append(message)
@@ -441,7 +444,10 @@ class EmergencyCharacteristic(Characteristic):
 			if self.encrypt:
 				print("Decrypting Part")
 				try:
-					message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(message))
+					byte_msg = bluezutils.utf_to_byte_string(message)
+					print("Message Fragment: {}".format(list(byte_msg)))
+					print("Cipher Length: {}".format(len(list(byte_msg))))
+					message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(byte_msg))
 				except Exception as e:
 					print("Exception: {}".format(e))
 			self.write_states[dev] = [message]
