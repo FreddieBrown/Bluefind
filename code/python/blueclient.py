@@ -245,15 +245,16 @@ class Client():
 			try:
 				print("Getting value from server")
 				recvd = bluezutils.from_byte_array(self.read_value())
+				print("Got value from server")
+				byte_msg = bluezutils.utf_to_byte_string(recvd)
+				print("Message Fragment: {}".format(list(byte_msg)))
+				print("Cipher Length: {}".format(len(list(byte_msg))))
+				recvd = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
 			except:
 				print("Reconnecting")
 				self.reconnect(5)
 				recvd = bluezutils.from_byte_array(self.read_value())
-			print("Got value from server")
-			byte_msg = bluezutils.utf_to_byte_string(recvd)
-			print("Message Fragment: {}".format(list(byte_msg)))
-			print("Cipher Length: {}".format(len(list(byte_msg))))
-			recvd = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
+			
 
 			seq_num, data = bluezutils.get_sequence_number(recvd)
 			if not first_mess:
