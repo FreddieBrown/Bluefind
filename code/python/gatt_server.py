@@ -456,7 +456,6 @@ class EmergencyCharacteristic(Characteristic):
 		print('Sending Device Information')
 		# Create method to get device address from options['device']
 		global current_client
-		packet = ''
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		if (current_client == dev) and (dev in self.read_states.keys()):
 			# Same device connected
@@ -493,9 +492,10 @@ class EmergencyCharacteristic(Characteristic):
 			dev_state['position'] = 1
 			print("3")
 			self.read_states[dev] = dev_state
-			f_half = str(0)+"\x01"
-			print("{} + {}".format(f_half,message_packets[0]))
-			packet = f_half+message_packets[0]
+			print("{}".format(message_packets[0]))
+			# Gets to this point then just stops working when working with 
+			# encrypted message
+			packet = str(0)+"\x01"+message_packets[0]
 			print("4")
 			print("Packet: {}".format(packet))
 		
@@ -515,7 +515,6 @@ def app_register_error_cb(error):
 	Callback for when GATT application fails to be registered
 	"""
 	print('GATT Application not registered: ' + str(error))
-	mainloop.quit()
 
 def GATTStart(bus):
 	"""

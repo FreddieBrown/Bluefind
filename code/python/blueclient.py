@@ -281,8 +281,8 @@ def encrypted_client_actions(cli, address):
 			bluezutils.add_to_db(cli.db, decrypted)
 			cli.send_message()
 		else:
-			found_message = cli.read_message()
-			bluezutils.add_to_db(cli.db, found_message)
+			# found_message = cli.read_message()
+			# bluezutils.add_to_db(cli.db, found_message)
 			cli.set_message(message)
 			cli.send_message()
 		cli.disconnect()
