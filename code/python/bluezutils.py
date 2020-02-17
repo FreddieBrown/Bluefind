@@ -181,7 +181,6 @@ def from_byte_array(val_arr):
 	When provided with a list of bytes, the function will convert 
 	it into an ASCII string and will return it.
 	"""
-	print("converting from byte array")
 	med_arr = []
 	# Take byte array and work out character of each value
 	for value in val_arr:
@@ -189,7 +188,6 @@ def from_byte_array(val_arr):
 	# With each character, add it to a string
 	ret_string = ''.join(med_arr)
 	# return string
-	print("Ret string: {}".format(ret_string))
 	return ret_string
 
 def split_message(message):

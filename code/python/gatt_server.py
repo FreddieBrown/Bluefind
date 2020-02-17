@@ -480,7 +480,7 @@ class EmergencyCharacteristic(Characteristic):
 				self.send_key = False
 			elif self.emer_services:
 				print("Doing emergency services stuff")
-				db_data = self.db.select_em(100)
+				db_data = self.db.select_em(50)
 				db_data[0].append(self.location)
 				db_data[1].append(self.address)
 				db_data[2].append(datetime.datetime.now())
