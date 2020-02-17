@@ -439,10 +439,10 @@ class EmergencyCharacteristic(Characteristic):
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:
-			if chr(5) in message:
-				print(message.strip(chr(5)))
+			if str(chr(5)) == message:
+				print(message)
 			else:
-				self.write_states[dev] = [message.strip(chr(5))]
+				self.write_states[dev] = [message]
 			return sequence_num
 		# Take value are pass into method to split and store data
 		else:

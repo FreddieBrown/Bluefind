@@ -234,8 +234,8 @@ def get_sequence_number(message):
 	"""
 	message_parts = message.split("\x01")
 	print("Sequence Number: {}".format(message_parts[0]))
-	print("Message: {}".format(message_parts[1]))
-	return message_parts[0], message_parts[1]
+	print("Message: {}".format("\x01".join(message_parts[1:])))
+	return message_parts[0], "\x01".join(message_parts[1:])
 
 def add_to_db(db, broken_down_msg):
 	"""
