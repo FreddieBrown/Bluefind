@@ -181,6 +181,7 @@ def from_byte_array(val_arr):
 	When provided with a list of bytes, the function will convert 
 	it into an ASCII string and will return it.
 	"""
+	print("converting from byte array")
 	med_arr = []
 	# Take byte array and work out character of each value
 	for value in val_arr:
