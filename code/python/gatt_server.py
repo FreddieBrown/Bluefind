@@ -484,13 +484,11 @@ class EmergencyCharacteristic(Characteristic):
 				db_data[0].append(self.location)
 				db_data[1].append(self.address)
 				db_data[2].append(datetime.datetime.now())
-				print("built data")
 				message = bluezutils.build_generic_message({
 					1: db_data[0],
 					2: db_data[1],
 					6: db_data[2],
 				})
-				print("built message")
 				self.emer_services = False
 			else:
 				db_data = self.db.select(50)
@@ -500,11 +498,7 @@ class EmergencyCharacteristic(Characteristic):
 				if self.encrypt:
 					print("Encrypting message")
 					message = bluezutils.encrypt_message(self.client_key, message)
-			print("message packets")
-			try:
-				message_packets = bluezutils.split_message(bluezutils.from_byte_array(message))
-			except Exception as e:
-				print("Error: {}".format(e))
+			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			dev_state['message'] = message_packets
