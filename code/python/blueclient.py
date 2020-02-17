@@ -145,45 +145,6 @@ class Client():
 					print("Returned Value: {}".format(ret))
 				seq += 1
 			print("Written whole message to {}".format(self.target_address))
-
-	def send_encrypted_message(self,key):
-		"""
-		This function will take the message set in the object and 
-		will break it down. It will then convert the message into 
-		an array of bytes and write the array to the connected 
-		server. If it loses connection, it will try to reconnect 
-		and send it again.
-		"""
-		print("Sending Message")
-		if not self.peripheral:
-			print("No connected device so cannot write message")
-			return None
-		elif not self.message:
-			print("Need to provide a message to send")
-			return None
-		else:
-			print("Need to break down message")
-			message_buffer = bluezutils.split_message(self.message)
-			print("Message Buffer: {}".format(message_buffer))
-			print("Message Buffer Size: {}".format(len(message_buffer)))
-			seq = 0
-			for i in message_buffer:
-				# Uses a sequence number to let server know which packet in sequence it is
-				# Can do up to a max of 999 packets in sequence
-				print("Encrypting Message")
-				cipher = bluezutils.encrypt_message(key, i)
-				print("Cipher: {}".format(cipher))
-				mess_with_seq = str(seq)+"\x01"+bluezutils.bytestring_to_uf8(cipher)
-				print("Writing: {}".format(mess_with_seq))
-				try: 
-					ret = self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)), True)
-					print("Returned Value: {}".format(ret))
-				except:
-					self.reconnect(5)
-					ret = self.write_value(bytearray(bluezutils.to_byte_array(mess_with_seq)), True)
-					print("Returned Value: {}".format(ret))
-				seq += 1
-			print("Written whole message to {}".format(self.target_address))
 	
 	def read_message(self):
 		"""
@@ -217,47 +178,6 @@ class Client():
 					print("End of message")
 					message.append(data)
 					break
-		print("Read whole message from {}".format(self.target_address))	
-		# join up whole message
-		full_message = ''.join(message)
-		print("Read Message: {}".format(full_message))
-		# break down whole message
-		return full_message
-
-	def read_encrypted_message(self):
-		"""
-		This function will keep reading from the server 
-		until it has messages in an array where their 
-		sequence numbers start with 0 and go up until 
-		a message is received which contains chr(5). 
-		This means it is the final part of the message. 
-		The message is then created from the stored 
-		message fragments and is stored in the database.
-		"""
-		if not self.peripheral:
-			print("No connected device so cannot read message")
-			return None
-		message = []
-		first_mess = False
-		print("Decrypting Message")
-		# while True:
-		print("Getting value from server")
-		recvd = bluezutils.from_byte_array(self.read_value())
-		print("Got value from server")
-		byte_msg = bluezutils.utf_to_byte_string(recvd)
-		print("Message Fragment: {}".format(list(byte_msg)))
-		print("Cipher Length: {}".format(len(list(byte_msg))))
-		recvd = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
-		seq_num, data = bluezutils.get_sequence_number(recvd)
-		if not first_mess:
-			first_mess = (int(seq_num) == 0)
-		if first_mess:
-			if str(chr(5)) != data:	
-				message.append(data)
-			else:
-				print("End of message")
-				# break
-		
 		print("Read whole message from {}".format(self.target_address))	
 		# join up whole message
 		full_message = ''.join(message)
@@ -334,7 +254,7 @@ def emergency_service_actions(cli, address):
 
 def encrypted_client_actions(cli, address):
 	print("Encrypted Client Action")
-	db_data = cli.db.select(50)
+	db_data = cli.db.select(3)
 	db_data[0].append(cli.location)
 	db_data[1].append(cli.device_address)
 	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
@@ -353,10 +273,18 @@ def encrypted_client_actions(cli, address):
 			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
 			cli.set_message(conf_message)
 			cli.send_message()
-			cli.set_message(message)
-			cli.send_encrypted_message(server_key["3"][0])
-			# found_message = cli.read_encrypted_message()
-			# bluezutils.add_to_db(cli.db, bluezutils.break_down_message(found_message))
+			print("Encrypting Message")
+			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
+			cli.set_message(bluezutils.bytestring_to_uf8(cipher))
+			print("Cipher: {}".format(cipher))
+			print("Cipher as string: {}".format(bluezutils.bytestring_to_uf8(cipher)))
+			found_message = cli.read_message()
+			print("Decrypting Message")
+			byte_msg = bluezutils.utf_to_byte_string(found_message)[:len(found_message)-1]
+			print("Message: {}".format(list(byte_msg)))
+			print("Cipher Length: {}".format(len(list(byte_msg))))
+			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
+			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
 			# cli.send_message()
 		else:
 			found_message = bluezutils.break_down_message(cli.read_message())
@@ -380,4 +308,3 @@ if __name__ == '__main__':
 	}
 	signal.signal(signal.SIGINT, sig_handler)
 	start_client(client_actions[action])
-	

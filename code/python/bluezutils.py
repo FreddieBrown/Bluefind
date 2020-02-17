@@ -268,7 +268,7 @@ def add_to_db_em(db, broken_down_msg):
 	db.insert(values)
 
 def generate_RSA_keypair():
-	key = RSA.generate(1024)
+	key = RSA.generate(2048)
 	private = key.export_key()
 	public = key.publickey().export_key()
 	return {
