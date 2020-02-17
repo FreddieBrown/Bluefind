@@ -410,6 +410,7 @@ class EmergencyCharacteristic(Characteristic):
 			self.write_states[dev].append(message)
 			if str(chr(5)) == message:
 				# If it is in message, join up message
+				print("End of message")
 				full_message = ''.join(self.write_states[dev])
 				print("Message Written To Server: {}".format(full_message))
 				# break down message
