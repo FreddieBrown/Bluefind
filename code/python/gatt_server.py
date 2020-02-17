@@ -519,6 +519,7 @@ class EmergencyCharacteristic(Characteristic):
 			print("Packet: {}".format(packet))
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
+			print("Sent whole message to {}".format(dev))
 			del self.read_states[dev]
 		print("Packet being sent: {}".format(packet))
 		return bluezutils.to_byte_array(packet)
