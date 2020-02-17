@@ -354,8 +354,8 @@ def encrypted_client_actions(cli, address):
 			cli.set_message(conf_message)
 			cli.send_message()
 			cli.set_message(message)
-			# cli.send_encrypted_message(server_key["3"][0])
-			found_message = cli.read_encrypted_message()
+			cli.send_encrypted_message(server_key["3"][0])
+			# found_message = cli.read_encrypted_message()
 			# bluezutils.add_to_db(cli.db, bluezutils.break_down_message(found_message))
 			# cli.send_message()
 		else:
