@@ -407,8 +407,8 @@ class EmergencyCharacteristic(Characteristic):
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
 		if (dev in self.write_states.keys()) and  int(sequence_num) is len(self.write_states[dev]):
-			self.write_states[dev].append(message.strip(chr(5)))
-			if chr(5) in message:
+			self.write_states[dev].append(message)
+			if str(chr(5)) == message:
 				# If it is in message, join up message
 				full_message = ''.join(self.write_states[dev])
 				print("Message Written To Server: {}".format(full_message))

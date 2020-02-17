@@ -172,10 +172,10 @@ class Client():
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
 			if first_mess:
-				if str(chr(5)) not in data:
+				if str(chr(5)) == data:
 					message.append(data)
 				else:
-					message.append(data.strip(str(chr(5))))
+					message.append(data)
 					break
 		print("Read whole message from {}".format(self.target_address))	
 		# join up whole message
