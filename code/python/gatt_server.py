@@ -479,6 +479,7 @@ class EmergencyCharacteristic(Characteristic):
 				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
 				self.send_key = False
 			elif self.emer_services:
+				print("Doing emergency services stuff")
 				db_data = self.db.select_em(100)
 				db_data[0].append(self.location)
 				db_data[1].append(self.address)
