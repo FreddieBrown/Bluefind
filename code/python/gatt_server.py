@@ -483,7 +483,7 @@ class EmergencyCharacteristic(Characteristic):
 				print("Sending public key")
 				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
 				self.send_key = False
-			message_packets = bluezutils.split_message(message)
+			message_packets = bluezutils.split_message(str(message))
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			print("1")
