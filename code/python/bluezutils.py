@@ -2,6 +2,7 @@ import dbus
 import datetime
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+import array
 
 SERVICE_NAME = "org.bluez"
 ADAPTER_INTERFACE = SERVICE_NAME + ".Adapter1"
@@ -296,3 +297,28 @@ def decrypt_message(private_key, ciphertext):
 	key = RSA.importKey(private_key)
 	cipher = PKCS1_OAEP.new(key)
 	return cipher.decrypt(ciphertext).decode()
+
+def bytestring_to_uf8(buffer):
+    """
+    Converts a bytestring string.
+    """
+    list_of_vals = list(buffer)
+    utf_str = ""
+    for i in list_of_vals:
+        utf_str += chr(i)
+    return utf_str
+
+def utf_to_value_list(buffer):
+    """
+    Converts a string to a list of ASCII character 
+    values.
+    """
+    list_of_vals = list(buffer)
+    value_list = []
+    for i in list_of_vals:
+        value_list.append(ord(i))
+    return value_list
+
+def utf_to_byte_string(buffer):
+    value_list = utf_to_value_list(buffer)
+    return array.array('B', value_list).tostring()

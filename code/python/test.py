@@ -1,6 +1,6 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-import struct
+import array
 
 def generate_RSA_keypair():
 	key = RSA.generate(1024)
@@ -113,12 +113,30 @@ def remove_bytes(buffer, blacklist):
     print("Recon Len: {}".format(len(bytes(b))))
     return bytes(b)
 
-def test_to_string(buffer):
+def bytestring_to_uf8(buffer):
+    """
+    Converts a bytestring string.
+    """
     list_of_vals = list(buffer)
-    empty_str = ""
+    utf_str = ""
     for i in list_of_vals:
-        empty_str += chr(i)
-    return empty_str
+        utf_str += chr(i)
+    return utf_str
+
+def utf_to_value_list(buffer):
+    """
+    Converts a string to a list of ASCII character 
+    values.
+    """
+    list_of_vals = list(buffer)
+    value_list = []
+    for i in list_of_vals:
+        value_list.append(ord(i))
+    return value_list
+
+def utf_to_byte_string(buffer):
+    value_list = utf_to_value_list(buffer)
+    return array.array('B', value_list).tostring()
 
 keypair = generate_RSA_keypair()
 print("{}".format(from_byte_array(keypair['public'])))
@@ -131,16 +149,19 @@ other_message = "Hey there, I'm a string"
 cipher = encrypt_message(keypair['public'], other_message)
 print("Before: {}".format(list(cipher)))
 print("Cipher Length: {}".format(len(cipher)))
-cipherstr = test_to_string(cipher)
-# print("str value: {}".format(cipherstr))
+cipherstr = bytestring_to_uf8(cipher)
+print("str value: {}".format(cipherstr))
 # print("Ciphertext: {}".format(str.encode(cipherstr)))
-print("Cipherstr: {}".format(list(str.encode(cipherstr))))
-recon = remove_bytes(str.encode(cipherstr), [194, 195])
+cipher_list = utf_to_value_list(cipherstr)
+print("Ciphertext: {}".format(cipher_list))
+# cipherstr_bytes = str.encode(cipherstr, errors="strict")
+# print("Cipherstr: {}".format(list(str.encode(cipherstr))))
+recon = array.array('B',cipher_list).tostring()
 print("Same?: {}".format(recon == cipher))
 print("Reconstruction: {}".format(list(recon)))
-print("Decrypted Message: {}".format(decrypt_message(keypair['private'], recon)))
+# print("Decrypted Message: {}".format(decrypt_message(keypair['private'], recon)))
 # print("Decrypted Message: {}".format(decrypt_message(keypair['private'], cipher)))
 
-small_message = "4="+chr(6)
-print(split_message(small_message))
-print(split_message(other_message))
+# small_message = "4="+chr(6)
+# print(split_message(small_message))
+# print(split_message(other_message))

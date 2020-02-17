@@ -415,7 +415,10 @@ class EmergencyCharacteristic(Characteristic):
 				# break down message
 				if self.encrypt:
 					print("Decrypting message")
-					full_message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.to_byte_array(full_message))
+					try:
+						full_message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(full_message))
+					except Exception as e:
+						print("Exception: {}".format(e))
 				message_parts = bluezutils.break_down_message(full_message)
 				print("Keys in Message: {}".format(message_parts.keys()))
 				if "3" in message_parts.keys():
