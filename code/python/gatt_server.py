@@ -479,10 +479,7 @@ class EmergencyCharacteristic(Characteristic):
 			if self.send_key:
 				# Need to send public key
 				print("Sending public key")
-				try:
-					message = bluezutils.build_generic_message({3:[self.keypair['public']]})
-				except Exception as e:
-					print("Exception: {}".format(e))
+				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
 				self.send_key = False
 			elif self.emer_services:
 				print("Doing emergency services stuff")
@@ -504,7 +501,7 @@ class EmergencyCharacteristic(Characteristic):
 				if self.encrypt:
 					print("Encrypting message")
 					message = bluezutils.encrypt_message(self.client_key, message)
-			message_packets = bluezutils.split_message(bluezutils.bytestring_to_uf8(message))
+			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			dev_state['message'] = message_packets
