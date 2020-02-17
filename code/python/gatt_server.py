@@ -493,7 +493,7 @@ class EmergencyCharacteristic(Characteristic):
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
 			del self.read_states[dev]
-
+		print("Sending data")
 		return bluezutils.to_byte_array(packet)
 
 def app_register_cb():
