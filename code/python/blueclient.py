@@ -356,14 +356,9 @@ def encrypted_client_actions(cli, address):
 			cli.set_message(conf_message)
 			cli.send_message()
 			cli.set_message(message)
-			cli.send_encrypted_message(server_key["3"][0])
-			found_message = cli.read_message()
+			# cli.send_encrypted_message(server_key["3"][0])
 			found_message = cli.read_encrypted_message()
-			# byte_msg = bluezutils.utf_to_byte_string(found_message)[:len(found_message)-1]
-			# print("Message: {}".format(list(byte_msg)))
-			# print("Cipher Length: {}".format(len(list(byte_msg))))
-			# decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
-			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(found_message))
+			# bluezutils.add_to_db(cli.db, bluezutils.break_down_message(found_message))
 			# cli.send_message()
 		else:
 			found_message = bluezutils.break_down_message(cli.read_message())
