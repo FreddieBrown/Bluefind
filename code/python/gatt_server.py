@@ -479,7 +479,10 @@ class EmergencyCharacteristic(Characteristic):
 			if self.send_key:
 				# Need to send public key
 				print("Sending public key")
-				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
+				try:
+					message = bluezutils.build_generic_message({3:[self.keypair['public']]})
+				except Exception as e:
+					print("Exception: {}".format(e))
 				self.send_key = False
 			elif self.emer_services:
 				print("Doing emergency services stuff")
