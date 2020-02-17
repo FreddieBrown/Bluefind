@@ -196,7 +196,7 @@ def split_message(message):
 	using Bluetooth. 
 	"""
 	print("Splitting message")
-	mess_size = 16
+	mess_size = 15
 	byte_arr = []
 	message_len = len(message)
 	if int(message_len/mess_size) == 0:

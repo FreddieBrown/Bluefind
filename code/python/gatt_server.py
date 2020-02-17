@@ -414,7 +414,7 @@ class EmergencyCharacteristic(Characteristic):
 				# break down message
 				if self.encrypt:
 					print("Decrypting message")
-					full_message = bluezutils.decrypt(self.keypair['private'], full_message)
+					full_message = bluezutils.decrypt_message(self.keypair['private'], full_message)
 				message_parts = bluezutils.break_down_message(full_message)
 				print("Keys in Message: {}".format(message_parts.keys()))
 				if "3" in message_parts.keys():
@@ -477,7 +477,8 @@ class EmergencyCharacteristic(Characteristic):
 				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
 				if self.encrypt:
 					print("Encrypting message")
-					message = bluezutils.encrypt(self.client_key, message)
+					message = bluezutils.encrypt_message(self.client_key, message)
+					self.encrypt = False
 			else:
 				# Need to send public key
 				print("Sending public key")
