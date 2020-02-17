@@ -407,19 +407,18 @@ class EmergencyCharacteristic(Characteristic):
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
 		if (dev in self.write_states.keys()) and  int(sequence_num) is len(self.write_states[dev]):
+			if self.encrypt:
+				print("Decrypting Part")
+				try:
+					message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(message))
+				except Exception as e:
+					print("Exception: {}".format(e))
 			self.write_states[dev].append(message)
 			if str(chr(5)) == message:
 				# If it is in message, join up message
 				print("End of message")
 				full_message = ''.join(self.write_states[dev])
 				print("Message Written To Server: {}".format(full_message))
-				# break down message
-				if self.encrypt:
-					print("Decrypting message")
-					try:
-						full_message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(full_message))
-					except Exception as e:
-						print("Exception: {}".format(e))
 				message_parts = bluezutils.break_down_message(full_message)
 				print("Keys in Message: {}".format(message_parts.keys()))
 				if "3" in message_parts.keys():
@@ -439,12 +438,14 @@ class EmergencyCharacteristic(Characteristic):
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:
-			if chr(5) in message:
-				print(message.strip(chr(5)))
-			else:
-				self.write_states[dev] = [message.strip(chr(5))]
+			if self.encrypt:
+				print("Decrypting Part")
+				try:
+					message = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(message))
+				except Exception as e:
+					print("Exception: {}".format(e))
+			self.write_states[dev] = [message]
 			return sequence_num
-		# Take value are pass into method to split and store data
 		else:
 			return len(self.write_states[dev])-1
 		
@@ -469,7 +470,13 @@ class EmergencyCharacteristic(Characteristic):
 			dev_state = self.read_states[dev]
 			position = dev_state['position']
 			message_packets = dev_state['message']
-			packet = str(position)+"\x01"+message_packets[position]
+			data = message_packets[position]
+			if self.encrypt:
+				print("Encrypting message")
+				data = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, data))
+				print("Message: {}".format(bluezutils.utf_to_value_list(data)))
+				print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(data))))
+			packet = str(position)+"\x01"+data
 			dev_state['position']+=1
 			self.read_states[dev] = dev_state
 		else: 
@@ -498,20 +505,21 @@ class EmergencyCharacteristic(Characteristic):
 				db_data[0].append(self.location)
 				db_data[1].append(self.address)
 				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
-				if self.encrypt:
-					print("Encrypting message")
-					message = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, message))
-					print("Message: {}".format(bluezutils.utf_to_value_list(message)))
-					print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(message))))
 			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			dev_state['message'] = message_packets
 			dev_state['position'] = 1
 			self.read_states[dev] = dev_state
+			data = message_packets[0]
+			if self.encrypt:
+				print("Encrypting message")
+				data = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, data))
+				print("Message: {}".format(bluezutils.utf_to_value_list(data)))
+				print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(data))))
 			# Gets to this point then just stops working when working with 
 			# encrypted message
-			packet = str(0)+"\x01"+message_packets[0]
+			packet = str(0)+"\x01"+data
 			print("Packet: {}".format(packet))
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
