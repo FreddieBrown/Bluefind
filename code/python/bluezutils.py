@@ -144,6 +144,7 @@ def break_down_message(message):
 	it up and will store the values in a dictionary, which will then 
 	be returned.
 	"""
+	print("Breaking down: {}".format(message))
 	ret_dict = {}
 	save = ''
 	tvps = message.split("|")
@@ -249,6 +250,7 @@ def add_to_db(db, broken_down_msg):
 		for i in range(0, len(coords)):
 			values.append((addresses[i], coords[i].strip('()'), now))
 	db.insert(values)
+	print("Added values to DB")
 
 def add_to_db_em(db, broken_down_msg):
 	"""
