@@ -251,12 +251,13 @@ class Client():
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
 			if first_mess:
-				if str(chr(5)) != data:
-					byte_msg = bluezutils.utf_to_byte_string(data)
-					print("Message Fragment: {}".format(list(byte_msg)))
-					print("Cipher Length: {}".format(len(list(byte_msg))))
-					decrypted = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
-					message.append(decrypted)
+				byte_msg = bluezutils.utf_to_byte_string(data)
+				print("Message Fragment: {}".format(list(byte_msg)))
+				print("Cipher Length: {}".format(len(list(byte_msg))))
+				data = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
+				
+				if str(chr(5)) != data:	
+					message.append(data)
 				else:
 					print("End of message")
 					break

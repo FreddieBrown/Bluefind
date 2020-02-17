@@ -293,12 +293,8 @@ def build_generic_message(message_struct):
 	return message
 
 def encrypt_message(public_key, message):
-	print("Key: {}".format(public_key))
-	print("Message: {}".format(message))
 	key = RSA.importKey(public_key)
-	print("Key imported")
 	cipher_rsa = PKCS1_OAEP.new(key)
-	print("New PKCS1 cipher")
 	return cipher_rsa.encrypt(str.encode(message))
 
 def decrypt_message(private_key, ciphertext):
