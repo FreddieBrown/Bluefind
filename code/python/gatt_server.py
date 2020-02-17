@@ -439,6 +439,7 @@ class EmergencyCharacteristic(Characteristic):
 					# Go through message, build tuples with datetime and commit to db
 					bluezutils.add_to_db(self.db, message_parts)
 					self.encrypt = False
+				print("Processed whole message from {}".format(dev))
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:
