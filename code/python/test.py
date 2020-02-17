@@ -103,50 +103,53 @@ def split_message(message):
 	return byte_arr
 
 def remove_bytes(buffer, blacklist):
-    b = list()
-    for i in list(buffer):
-        if i == 194 or i == 195:
-            # print('FOUND: {}'.format(i)) # 3 way split
-            continue
-        else:
-            b.append(i)
-    print("Recon Len: {}".format(len(bytes(b))))
-    return bytes(b)
+	b = list()
+	for i in list(buffer):
+		if i == 194 or i == 195:
+			# print('FOUND: {}'.format(i)) # 3 way split
+			continue
+		else:
+			b.append(i)
+	print("Recon Len: {}".format(len(bytes(b))))
+	return bytes(b)
 
 def bytestring_to_uf8(buffer):
-    """
-    Converts a bytestring string.
-    """
-    list_of_vals = list(buffer)
-    utf_str = ""
-    for i in list_of_vals:
-        utf_str += chr(i)
-    return utf_str
+	"""
+	Converts a bytestring string.
+	"""
+	list_of_vals = list(buffer)
+	utf_str = ""
+	for i in list_of_vals:
+		utf_str += chr(i)
+	return utf_str
 
 def utf_to_value_list(buffer):
-    """
-    Converts a string to a list of ASCII character 
-    values.
-    """
-    list_of_vals = list(buffer)
-    value_list = []
-    for i in list_of_vals:
-        value_list.append(ord(i))
-    return value_list
+	"""
+	Converts a string to a list of ASCII character 
+	values.
+	"""
+	list_of_vals = list(buffer)
+	value_list = []
+	for i in list_of_vals:
+		value_list.append(ord(i))
+	return value_list
 
 def utf_to_byte_string(buffer):
-    value_list = utf_to_value_list(buffer)
-    return array.array('B', value_list).tostring()
+	value_list = utf_to_value_list(buffer)
+	return array.array('B', value_list).tostring()
 
 keypair = generate_RSA_keypair()
-print("{}".format(from_byte_array(keypair['public'])))
-print(build_generic_message({
-	3 : [keypair['public'], "hello"]
-}))
 
 fun_message = b'You can attack now!'
 other_message = "Hey there, I'm a string"
-cipher = encrypt_message(keypair['public'], other_message)
+public_key = '''-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuUP114TfwUu2Pata5v3c17B0K
+n9pjSjogFDBdQszv0no3jtrRgBc6Gup716iyBYyPz7nTU0gS8zwyxlsZoLZmSrvF
+8cXXLCkQxHyBZLzmEsdfb0CDhZTdsueW3fXp6aJ9zfpccI4902hbSVXjV06LXOvL
+1sPcw47hW0l2CMCEnQIDAQAB
+-----END PUBLIC KEY-----'''
+# cipher = encrypt_message(keypair['public'], other_message)
+cipher = encrypt_message(public_key, other_message)
 print("Before: {}".format(list(cipher)))
 print("Cipher Length: {}".format(len(cipher)))
 cipherstr = bytestring_to_uf8(cipher)
