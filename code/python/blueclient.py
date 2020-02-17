@@ -241,8 +241,13 @@ def normal_client_actions(cli, address):
 
 def emergency_service_actions(cli, address):
 	print("Emergency Service Action")
+	request_message = bluezutils.build_generic_message({5:[chr(6)]})
+	cli.set_message(request_message)
 	try:
 		cli.prepare_device(address)
+		cli.send_message()
+		found_message = cli.read_message()
+		bluezutils.add_to_db_em(cli.db, found_message)
 		found_message = cli.read_message()
 		bluezutils.add_to_db(cli.db, found_message)
 		cli.disconnect()

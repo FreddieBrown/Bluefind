@@ -1,5 +1,6 @@
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+import struct
 
 def generate_RSA_keypair():
 	key = RSA.generate(1024)
@@ -57,6 +58,20 @@ def to_byte_array(value):
 	# Once byte array built, return
 	return ret_list
 
+def from_byte_array(val_arr):
+	"""
+	When provided with a list of bytes, the function will convert 
+	it into an ASCII string and will return it.
+	"""
+	med_arr = []
+	# Take byte array and work out character of each value
+	for value in val_arr:
+		med_arr.append(chr(value)) 
+	# With each character, add it to a string
+	ret_string = ''.join(med_arr)
+	# return string
+	return ret_string
+
 def encrypt_message(public_key, message):
 	key = RSA.importKey(public_key)
 	cipher_rsa = PKCS1_OAEP.new(key)
@@ -87,6 +102,24 @@ def split_message(message):
 	byte_arr.append(chr(5))
 	return byte_arr
 
+def remove_bytes(buffer, blacklist):
+    b = list()
+    for i in list(buffer):
+        if i == 194 or i == 195:
+            # print('FOUND: {}'.format(i)) # 3 way split
+            continue
+        else:
+            b.append(i)
+    print("Recon Len: {}".format(len(bytes(b))))
+    return bytes(b)
+
+def test_to_string(buffer):
+    list_of_vals = list(buffer)
+    empty_str = ""
+    for i in list_of_vals:
+        empty_str += chr(i)
+    return empty_str
+
 keypair = generate_RSA_keypair()
 print("{}".format(from_byte_array(keypair['public'])))
 print(build_generic_message({
@@ -96,8 +129,17 @@ print(build_generic_message({
 fun_message = b'You can attack now!'
 other_message = "Hey there, I'm a string"
 cipher = encrypt_message(keypair['public'], other_message)
-print("Ciphertext: {}".format(cipher))
-print("Decrypted Message: {}".format(decrypt_message(keypair['private'], cipher)))
+print("Before: {}".format(list(cipher)))
+print("Cipher Length: {}".format(len(cipher)))
+cipherstr = test_to_string(cipher)
+# print("str value: {}".format(cipherstr))
+# print("Ciphertext: {}".format(str.encode(cipherstr)))
+print("Cipherstr: {}".format(list(str.encode(cipherstr))))
+recon = remove_bytes(str.encode(cipherstr), [194, 195])
+print("Same?: {}".format(recon == cipher))
+print("Reconstruction: {}".format(list(recon)))
+print("Decrypted Message: {}".format(decrypt_message(keypair['private'], recon)))
+# print("Decrypted Message: {}".format(decrypt_message(keypair['private'], cipher)))
 
 small_message = "4="+chr(6)
 print(split_message(small_message))

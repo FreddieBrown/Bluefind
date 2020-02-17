@@ -39,3 +39,10 @@ class Database:
 		addresses = []
 		coords = []
 		dates = []
+		stmt = '''SELECT mac, coord, recvd FROM find ORDER 
+				BY recvd DESC LIMIT {}'''.format(num)
+		for row in self.cursor.execute(stmt):
+			addresses.append(row[0])
+			coords.append(row[1])
+			dates.append(row[2])
+		return [coords, addresses, dates]

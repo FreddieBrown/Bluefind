@@ -388,6 +388,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.send_key = False
 		self.encrypt = False
 		self.client_key = None
+		self.emer_services = False
 	
 	def WriteValue(self, value, options):
 		"""
@@ -424,6 +425,9 @@ class EmergencyCharacteristic(Characteristic):
 				elif "4" in message_parts.keys():
 					print("Recevied ACK")
 					self.encrypt = True
+				elif "5" in message_parts.keys():
+					# This part should set a flag to say it is talking to emergency node
+					self.emer_services = True
 				else:
 					# Go through message, build tuples with datetime and commit to db
 					bluezutils.add_to_db(self.db, message_parts)
@@ -469,7 +473,23 @@ class EmergencyCharacteristic(Characteristic):
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))
-			if not self.send_key:
+			if self.send_key:
+				# Need to send public key
+				print("Sending public key")
+				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
+				self.send_key = False
+			elif self.emer_services:
+				db_data = self.db.select_em(100)
+				db_data[0].append(self.location)
+				db_data[1].append(self.address)
+				db_data[2].append(datetime.datetime.now())
+				message = bluezutils.build_generic_message({
+					1: db_data[0],
+					2: db_data[1],
+					6: db_data[2],
+				})
+				self.emer_services = False
+			else:
 				db_data = self.db.select(50)
 				db_data[0].append(self.location)
 				db_data[1].append(self.address)
@@ -477,25 +497,15 @@ class EmergencyCharacteristic(Characteristic):
 				if self.encrypt:
 					print("Encrypting message")
 					message = bluezutils.encrypt_message(self.client_key, message)
-			else:
-				# Need to send public key
-				print("Sending public key")
-				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
-				self.send_key = False
-			message_packets = bluezutils.split_message(str(message))
+			message_packets = bluezutils.split_message(bluezutils.from_byte_array(message))
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
-			print("1")
 			dev_state['message'] = message_packets
-			print("2")
 			dev_state['position'] = 1
-			print("3")
 			self.read_states[dev] = dev_state
-			print("{}".format(message_packets[0]))
 			# Gets to this point then just stops working when working with 
 			# encrypted message
 			packet = str(0)+"\x01"+message_packets[0]
-			print("4")
 			print("Packet: {}".format(packet))
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):

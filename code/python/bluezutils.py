@@ -247,6 +247,21 @@ def add_to_db(db, broken_down_msg):
 			values.append((addresses[i], coords[i].strip('()'), now))
 	db.insert(values)
 
+def add_to_db_em(db, broken_down_msg):
+	"""
+	When provided with a broken down message and a db connection, the function will 
+	form tuples of data to add to the db and will insert it.
+	"""
+
+	coords = broken_down_msg['1']
+	addresses = broken_down_msg['2']
+	dates = broken_down_msg['6']
+	values = []
+	if len(coords) == len(addresses):
+		for i in range(0, len(coords)):
+			values.append((addresses[i], coords[i].strip('()'), dates[i]))
+	db.insert(values)
+
 def generate_RSA_keypair():
 	key = RSA.generate(1024)
 	private = key.export_key()
