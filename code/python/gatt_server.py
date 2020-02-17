@@ -485,11 +485,13 @@ class EmergencyCharacteristic(Characteristic):
 				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
 				self.send_key = False
 			message_packets = bluezutils.split_message(message)
+			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			dev_state['message'] = message_packets
 			dev_state['position'] = 1
 			self.read_states[dev] = dev_state
 			packet = str(0)+"\x01"+message_packets[0]
+			print("Packet: {}".format(packet))
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
 			del self.read_states[dev]
