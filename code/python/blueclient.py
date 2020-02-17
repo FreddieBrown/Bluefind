@@ -281,6 +281,7 @@ def encrypted_client_actions(cli, address):
 			print("Decrypting Message")
 			byte_msg = bluezutils.utf_to_byte_string(found_message)
 			print("Message: {}".format(list(byte_msg)))
+			print("Cipher Length: {}".format(len(list(byte_msg))))
 			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
 			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
 			# cli.send_message()
