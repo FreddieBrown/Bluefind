@@ -501,7 +501,10 @@ class EmergencyCharacteristic(Characteristic):
 					print("Encrypting message")
 					message = bluezutils.encrypt_message(self.client_key, message)
 			print("message packets")
-			message_packets = bluezutils.split_message(bluezutils.from_byte_array(message))
+			try:
+				message_packets = bluezutils.split_message(bluezutils.from_byte_array(message))
+			except Exception as e:
+				print("Error: {}".format(e))
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			dev_state['message'] = message_packets
