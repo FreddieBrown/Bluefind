@@ -247,15 +247,16 @@ class Client():
 			except:
 				self.reconnect(5)
 				recvd = bluezutils.from_byte_array(self.read_value())
+
+			byte_msg = bluezutils.utf_to_byte_string(recvd)
+			print("Message Fragment: {}".format(list(byte_msg)))
+			print("Cipher Length: {}".format(len(list(byte_msg))))
+			recvd = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
+
 			seq_num, data = bluezutils.get_sequence_number(recvd)
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
 			if first_mess:
-				byte_msg = bluezutils.utf_to_byte_string(data)
-				print("Message Fragment: {}".format(list(byte_msg)))
-				print("Cipher Length: {}".format(len(list(byte_msg))))
-				data = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
-				
 				if str(chr(5)) != data:	
 					message.append(data)
 				else:
