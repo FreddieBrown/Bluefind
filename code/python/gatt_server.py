@@ -493,8 +493,10 @@ class EmergencyCharacteristic(Characteristic):
 			dev_state['position'] = 1
 			print("3")
 			self.read_states[dev] = dev_state
-			print("first part: {}".format(message_packets[0]))
-			packet = str(0)+"\x01"+message_packets[0]
+			f_half = str(0)+"\x01"
+			print("{} + {}".format(f_half,message_packets[0]))
+			packet = f_half+message_packets[0]
+			print("4")
 			print("Packet: {}".format(packet))
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
