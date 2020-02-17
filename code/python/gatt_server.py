@@ -484,11 +484,13 @@ class EmergencyCharacteristic(Characteristic):
 				db_data[0].append(self.location)
 				db_data[1].append(self.address)
 				db_data[2].append(datetime.datetime.now())
+				print("built data")
 				message = bluezutils.build_generic_message({
 					1: db_data[0],
 					2: db_data[1],
 					6: db_data[2],
 				})
+				print("built message")
 				self.emer_services = False
 			else:
 				db_data = self.db.select(50)
