@@ -463,7 +463,11 @@ class EmergencyCharacteristic(Characteristic):
 		new device and the message is generated and the first fragment is 
 		sent to the connected device. If it reaches the end of the message 
 		to send, it will forget about the connected device and will treat it 
-		as a new device the next time it reads from the server.
+		as a new device the next time it reads from the server. This function 
+		also contains the necessary behaviour for when it receives different 
+		tags from certain devices. This will engage specific behaviours for 
+		the server, depending on the type of client it knows to be connected 
+		to it.
 		"""
 		# Create method to get device address from options['device']
 		global current_client
@@ -517,8 +521,6 @@ class EmergencyCharacteristic(Characteristic):
 			dev_state['message'] = message_packets
 			dev_state['position'] = 1
 			self.read_states[dev] = dev_state
-			# Gets to this point then just stops working when working with 
-			# encrypted message
 			packet = str(0)+"\x01"+message_packets[0]
 			print("Packet: {}".format(packet))
 		

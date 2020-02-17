@@ -222,6 +222,14 @@ def start_client(func):
 				
 
 def normal_client_actions(cli, address):
+	"""
+	Function to perform normal client behaviour with a 
+	server, whose address is passed to the function. This 
+	will get relevant information to send, created a message
+	and sets it. It then read a messafe from the server and 
+	saves that information to the database, before sending 
+	its own message.
+	"""
 	print("Normal Client Action")
 	db_data = cli.db.select(50)
 	db_data[0].append(cli.location)
@@ -238,6 +246,14 @@ def normal_client_actions(cli, address):
 		print("Connection Error for {}: {}".format(address, e))
 
 def emergency_service_actions(cli, address):
+	"""
+	Function to perform emergency services client behaviour with a 
+	server, whose address is passed to the function. This will connect 
+	to a device and inform it of its status. After this, it will read 
+	special extra information from the server, as well as a normal 
+	message read. It will giet all of this information and will store 
+	it in its database.
+	"""
 	print("Emergency Service Action")
 	request_message = bluezutils.build_generic_message({5:[chr(6)]})
 	cli.set_message(request_message)
@@ -253,6 +269,18 @@ def emergency_service_actions(cli, address):
 		print("Connection Error for {}: {}".format(address, e))
 
 def encrypted_client_actions(cli, address):
+	"""
+	Function to perform secure client behaviours using 
+	asymmetric encryption to provide message secrecy to 
+	users. First, it does a key exchange with the server 
+	and they will give each other their public RSA keys. 
+	After this, it will use the servers public key to 
+	encrypt the message that it is to send. It will then 
+	read an encrypted message from the server. It will decrypt
+	this message and store the information it contains.
+
+	If the key exchange fails, normal behaviour is used. 
+	"""
 	print("Encrypted Client Action")
 	db_data = cli.db.select(3)
 	db_data[0].append(cli.location)
