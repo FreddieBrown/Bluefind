@@ -384,6 +384,11 @@ class EmergencyCharacteristic(Characteristic):
 		self.read_states = {}
 		self.write_states = {}
 		self.db = Database('find.db')
+		self.keypair = bluezutils.generate_RSA_keypair()
+		self.send_key = False
+		self.encrypt = False
+		self.client_key = None
+		self.emer_services = False
 	
 	def WriteValue(self, value, options):
 		"""
@@ -401,23 +406,47 @@ class EmergencyCharacteristic(Characteristic):
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
-		if (dev in self.write_states) and  int(sequence_num) is len(self.write_states[dev]):
-			self.write_states[dev].append(message.strip(chr(5)))
-			if chr(5) in message:
+		if (dev in self.write_states.keys()) and  int(sequence_num) is len(self.write_states[dev]):
+			self.write_states[dev].append(message)
+			if str(chr(5)) == message:
 				# If it is in message, join up message
+				print("End of message")
 				full_message = ''.join(self.write_states[dev])
 				print("Message Written To Server: {}".format(full_message))
 				# break down message
+				if self.encrypt:
+					print("Decrypting message")
+					try:
+						byte_msg = bluezutils.utf_to_byte_string(full_message)[:len(full_message)-1]
+						print("Message: {}".format(list(byte_msg)))
+						print("Cipher Length: {}".format(len(list(byte_msg))))
+						full_message = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
+					except Exception as e:
+						print("Exception: {}".format(e))
 				message_parts = bluezutils.break_down_message(full_message)
-				# Go through message, build tuples with datetime and commit to db
-				bluezutils.add_to_db(self.db, message_parts)
+				print("Keys in Message: {}".format(message_parts.keys()))
+				if "3" in message_parts.keys():
+					self.client_key = message_parts["3"][0]
+					print("Recevied Key: {}".format(self.client_key))
+					self.send_key = True
+				elif "4" in message_parts.keys():
+					print("Recevied ACK")
+					self.encrypt = True
+				elif "5" in message_parts.keys():
+					# This part should set a flag to say it is talking to emergency node
+					self.emer_services = True
+				else:
+					# Go through message, build tuples with datetime and commit to db
+					bluezutils.add_to_db(self.db, message_parts)
+					self.encrypt = False
+				print("Processed whole message from {}".format(dev))
 				del self.write_states[dev] 
 			return sequence_num
 		elif int(sequence_num) is 0:
-			if chr(5) in message:
-				print(message.strip(chr(5)))
+			if str(chr(5)) == message:
+				print(message)
 			else:
-				self.write_states[dev] = [message.strip(chr(5))]
+				self.write_states[dev] = [message]
 			return sequence_num
 		# Take value are pass into method to split and store data
 		else:
@@ -434,14 +463,16 @@ class EmergencyCharacteristic(Characteristic):
 		new device and the message is generated and the first fragment is 
 		sent to the connected device. If it reaches the end of the message 
 		to send, it will forget about the connected device and will treat it 
-		as a new device the next time it reads from the server.
+		as a new device the next time it reads from the server. This function 
+		also contains the necessary behaviour for when it receives different 
+		tags from certain devices. This will engage specific behaviours for 
+		the server, depending on the type of client it knows to be connected 
+		to it.
 		"""
-		print('Sending Device Information')
 		# Create method to get device address from options['device']
 		global current_client
-		packet = ''
 		dev = bluezutils.dbus_to_MAC(options['device'])
-		if (current_client == dev) and (dev in self.read_states):
+		if (current_client == dev) and (dev in self.read_states.keys()):
 			# Same device connected
 			dev_state = self.read_states[dev]
 			position = dev_state['position']
@@ -453,20 +484,50 @@ class EmergencyCharacteristic(Characteristic):
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))
-			db_data = self.db.select(50)
-			db_data[0].append(self.location)
-			db_data[1].append(self.address)
-			message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
+			if self.send_key:
+				# Need to send public key
+				print("Sending public key")
+				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
+				self.send_key = False
+			elif self.emer_services:
+				print("Doing emergency services stuff")
+				db_data = self.db.select_em(50)
+				db_data[0].append(self.location)
+				db_data[1].append(self.address)
+				db_data[2].append(datetime.datetime.now())
+				message = bluezutils.build_generic_message({
+					1: db_data[0],
+					2: db_data[1],
+					6: db_data[2],
+				})
+				self.emer_services = False
+			else:
+				if self.encrypt:
+					select_amount = 3
+				else:
+					select_amount = 50
+				db_data = self.db.select(select_amount)
+				db_data[0].append(self.location)
+				db_data[1].append(self.address)
+				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
+				if self.encrypt:
+					print("Encrypting message")
+					message = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, message))
+					print("Message: {}".format(bluezutils.utf_to_value_list(message)))
+					print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(message))))
 			message_packets = bluezutils.split_message(message)
+			print("Split message: {}".format(message_packets))
 			dev_state = dict()
 			dev_state['message'] = message_packets
 			dev_state['position'] = 1
 			self.read_states[dev] = dev_state
 			packet = str(0)+"\x01"+message_packets[0]
+			print("Packet: {}".format(packet))
 		
 		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
+			print("Sent whole message to {}".format(dev))
 			del self.read_states[dev]
-
+		print("Packet being sent: {}".format(packet))
 		return bluezutils.to_byte_array(packet)
 
 def app_register_cb():
@@ -480,7 +541,6 @@ def app_register_error_cb(error):
 	Callback for when GATT application fails to be registered
 	"""
 	print('GATT Application not registered: ' + str(error))
-	mainloop.quit()
 
 def GATTStart(bus):
 	"""
@@ -503,4 +563,3 @@ def GATTStart(bus):
 	service_manager.RegisterApplication(app.get_path(), {},
 									reply_handler=app_register_cb,
 									error_handler=app_register_error_cb)
-	
