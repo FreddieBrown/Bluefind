@@ -22,7 +22,6 @@ When running the client side, the user has a choice of actions. Each of these ac
 
 All of these libraries are available on `apt` and with `python` version `3.7.3`:
 
-- `libboost-all-dev`
 - `libgtk2.0-dev`
 - `libdbus-1-dev`
 - `sqlite3`
