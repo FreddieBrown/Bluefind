@@ -203,19 +203,14 @@ def split_message(message):
 	byte_arr = []
 	message_len = len(message)
 	if int(message_len/mess_size) == 0:
-		print("Tiny Message")
 		byte_arr.append(message)
 	else:
-		print("Big message")
 		for i in range(0, int(message_len/mess_size)):
 			print("{}/{}".format(i, int(message_len/mess_size)))
 			j = (i+1)*mess_size
-			print("J: {}".format(j))
 			byte_arr.append(message[i*mess_size:j])
 		if message_len%mess_size is not 0:
-			print("Final part")
 			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
-	print("Adding final byte")
 	byte_arr.append(chr(5))
 	return byte_arr
 

@@ -127,7 +127,6 @@ class Client():
 			print("Need to provide a message to send")
 			return None
 		else:
-			print("Need to break down message")
 			message_buffer = bluezutils.split_message(self.message)
 			print("Message Buffer: {}".format(message_buffer))
 			seq = 0
@@ -304,13 +303,10 @@ def encrypted_client_actions(cli, address):
 			print("Encrypting Message")
 			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
 			cli.set_message(bluezutils.bytestring_to_uf8(cipher))
-			print("Cipher: {}".format(cipher))
-			print("Cipher as string: {}".format(bluezutils.bytestring_to_uf8(cipher)))
 			found_message = cli.read_message()
 			print("Decrypting Message")
 			byte_msg = bluezutils.utf_to_byte_string(found_message)[:len(found_message)-1]
 			print("Message: {}".format(list(byte_msg)))
-			print("Cipher Length: {}".format(len(list(byte_msg))))
 			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
 			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
 			cli.send_message()
