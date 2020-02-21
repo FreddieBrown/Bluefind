@@ -6,6 +6,7 @@ import bluepy
 from bluepy.btle import Scanner, UUID, Peripheral, DefaultDelegate
 import time
 import datetime
+import sys
 
 import bluezutils, exceptions
 from db import Database
@@ -30,6 +31,7 @@ class Client():
 		self.scanner = Scanner()
 		self.message = None
 		self.db = Database('find.db')
+		self.keypair = bluezutils.generate_RSA_keypair()
 
 	def prepare_device(self, target_address):
 		"""
@@ -53,7 +55,6 @@ class Client():
 		if not self.peripheral:
 			print("Cannot write as no device to send to")
 		else:
-			print("Writing data")
 			if response:
 				return self.peripheral.writeCharacteristic(self.handle, data, True) 
 			self.peripheral.writeCharacteristic(self.handle, data)
@@ -67,7 +68,6 @@ class Client():
 			print("Cannot write as no device to read from")
 			return None
 		else:
-			print("Reading data")
 			return self.characteristic.read()
 	
 	def disconnect(self):
@@ -119,6 +119,7 @@ class Client():
 		server. If it loses connection, it will try to reconnect 
 		and send it again.
 		"""
+		print("Sending Message")
 		if not self.peripheral:
 			print("No connected device so cannot write message")
 			return None
@@ -127,6 +128,7 @@ class Client():
 			return None
 		else:
 			message_buffer = bluezutils.split_message(self.message)
+			print("Message Buffer: {}".format(message_buffer))
 			seq = 0
 			for i in message_buffer:
 				# Uses a sequence number to let server know which packet in sequence it is
@@ -169,19 +171,18 @@ class Client():
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
 			if first_mess:
-				if str(chr(5)) not in data:
+				if str(chr(5)) != data:
 					message.append(data)
 				else:
-					message.append(data.strip(str(chr(5))))
+					print("End of message")
+					message.append(data)
 					break
 		print("Read whole message from {}".format(self.target_address))	
 		# join up whole message
 		full_message = ''.join(message)
 		print("Read Message: {}".format(full_message))
 		# break down whole message
-		message_parts = bluezutils.break_down_message(full_message)
-		# Commit found data to database
-		bluezutils.add_to_db(self.db, message_parts)
+		return full_message
 
 def sig_handler(signal_number, frame):
 	"""
@@ -193,7 +194,7 @@ def sig_handler(signal_number, frame):
 	raise SystemExit('Exiting...')
 	return
 
-def start_client():
+def start_client(func):
 	"""
 	This function will startup client functionality and will perform 
 	the actions needed for the client to function. This function could 
@@ -201,10 +202,10 @@ def start_client():
 	an emergency service node wouldn't need to write data to the server. 
 	This method will discover nearby devices, find one which offers the 
 	correct service and will read and write to the server before disconnecting. 
-	This bhevaiour will continue until the program is ended.
+	This behvaiour will continue until the program is ended.
 	"""
 	cli = Client("52.281799, -1.532315", bluezutils.get_mac_addr(dbus.SystemBus()))
-	print("Starting")
+	print("Starting Client")
 	while True:
 		devices = cli.discover(5.0)
 		for dev in devices:
@@ -216,23 +217,118 @@ def start_client():
 					if dev.getValueText(uno).lower() == cli.SERVICE_UUID.lower():
 						have_service = True
 			if have_service:
-				db_data = cli.db.select(50)
-				db_data[0].append(cli.location)
-				db_data[1].append(cli.device_address)
-				message = bluezutils.build_message(db_data[0], db_data[1], [dev.addr.upper()])
-				cli.set_message(message)
-				try:
-					cli.prepare_device(dev.addr)
-					cli.read_message()
-					cli.send_message()
-					cli.disconnect()
-				except Exception as e:
-					print("Connection Error for {}: {}".format(dev.addr, e))
+				func(cli, dev.addr)
+				
 
+def normal_client_actions(cli, address):
+	"""
+	Function to perform normal client behaviour with a 
+	server, whose address is passed to the function. This 
+	will get relevant information to send, created a message
+	and sets it. It then read a messafe from the server and 
+	saves that information to the database, before sending 
+	its own message.
+	"""
+	print("Normal Client Action")
+	db_data = cli.db.select(50)
+	db_data[0].append(cli.location)
+	db_data[1].append(cli.device_address)
+	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
+	cli.set_message(message)
+	try:
+		cli.prepare_device(address)
+		found_message = bluezutils.break_down_message(cli.read_message())
+		bluezutils.add_to_db(cli.db, found_message)
+		cli.send_message()
+		cli.disconnect()
+	except Exception as e:
+		print("Connection Error for {}: {}".format(address, e))
 
+def emergency_service_actions(cli, address):
+	"""
+	Function to perform emergency services client behaviour with a 
+	server, whose address is passed to the function. This will connect 
+	to a device and inform it of its status. After this, it will read 
+	special extra information from the server, as well as a normal 
+	message read. It will giet all of this information and will store 
+	it in its database.
+	"""
+	print("Emergency Service Action")
+	request_message = bluezutils.build_generic_message({5:[chr(6)]})
+	cli.set_message(request_message)
+	try:
+		cli.prepare_device(address)
+		cli.send_message()
+		found_message = bluezutils.break_down_message(cli.read_message())
+		bluezutils.add_to_db_em(cli.db, found_message)
+		found_message = bluezutils.break_down_message(cli.read_message())
+		bluezutils.add_to_db(cli.db, found_message)
+		cli.disconnect()
+	except Exception as e:
+		print("Connection Error for {}: {}".format(address, e))
 
+def encrypted_client_actions(cli, address):
+	"""
+	Function to perform secure client behaviours using 
+	asymmetric encryption to provide message secrecy to 
+	users. First, it does a key exchange with the server 
+	and they will give each other their public RSA keys. 
+	After this, it will use the servers public key to 
+	encrypt the message that it is to send. It will then 
+	read an encrypted message from the server. It will decrypt
+	this message and store the information it contains.
+
+	If the key exchange fails, normal behaviour is used. 
+	"""
+	print("Encrypted Client Action")
+	db_data = cli.db.select(3)
+	db_data[0].append(cli.location)
+	db_data[1].append(cli.device_address)
+	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
+	# Build message which contains clients public key (tag 3)
+	key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
+	try:
+		cli.prepare_device(address)
+		# Write it to server
+		cli.set_message(key_message)
+		cli.send_message()
+		# Read public key from server
+		server_key = bluezutils.break_down_message(cli.read_message())
+		if "3" in server_key.keys():
+			print("Received public key")
+			# When received full key, write back to server with confirmation (tag 4)
+			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
+			cli.set_message(conf_message)
+			cli.send_message()
+			print("Encrypting Message")
+			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
+			cli.set_message(bluezutils.bytestring_to_uf8(cipher))
+			found_message = cli.read_message()
+			print("Decrypting Message")
+			byte_msg = bluezutils.utf_to_byte_string(found_message)[:len(found_message)-1]
+			print("Message: {}".format(list(byte_msg)))
+			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
+			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
+			cli.send_message()
+		else:
+			found_message = bluezutils.break_down_message(cli.read_message())
+			bluezutils.add_to_db(cli.db, found_message)
+			cli.set_message(message)
+			cli.send_message()
+		cli.disconnect()
+	except Exception as e:
+		print("Connection Error for {}: {}".format(address, e))
 
 if __name__ == '__main__':
+	if len(sys.argv) == 1:
+		action = "normal"
+	else:
+		action = sys.argv[1]
+
+	client_actions = {
+		"emergency": emergency_service_actions,
+		"normal": normal_client_actions,
+		"secure": encrypted_client_actions
+	}
 	signal.signal(signal.SIGINT, sig_handler)
-	start_client()
-	
+	start_client(client_actions[action])

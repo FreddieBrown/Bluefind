@@ -17,6 +17,7 @@ class Database:
 		"""
 		self.cursor.executemany('INSERT INTO find(mac, coord, recvd) VALUES (?,?,?)', list_of_entries)
 		self.connection.commit()
+
 	def select(self, num):
 		"""
 		This function will select data from the database from the 'find' table.
@@ -33,3 +34,15 @@ class Database:
 			addresses.append(row[0])
 			coords.append(row[1])
 		return [coords, addresses]
+	
+	def select_em(self, num):
+		addresses = []
+		coords = []
+		dates = []
+		stmt = '''SELECT mac, coord, recvd FROM find ORDER 
+				BY recvd DESC LIMIT {}'''.format(num)
+		for row in self.cursor.execute(stmt):
+			addresses.append(row[0])
+			coords.append(row[1])
+			dates.append(row[2])
+		return [coords, addresses, dates]

@@ -1,5 +1,8 @@
 import dbus
 import datetime
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import array
 
 SERVICE_NAME = "org.bluez"
 ADAPTER_INTERFACE = SERVICE_NAME + ".Adapter1"
@@ -141,18 +144,22 @@ def break_down_message(message):
 	it up and will store the values in a dictionary, which will then 
 	be returned.
 	"""
+	print("Breaking down: {}".format(message))
 	ret_dict = {}
+	save = ''
 	tvps = message.split("|")
 	for tvp in tvps:
 		tvp_no_equals = tvp.split("=")
+		if len(tvp_no_equals) is 2:
+			save = tvp_no_equals[1]
+		elif len(tvp_no_equals) > 2:
+			save = "=".join(tvp_no_equals[1:])
 		# Check if entry for tag exists
 		if tvp_no_equals[0] in ret_dict:
 			# If it does, get list associated with it and add element to it
-			ret_dict[tvp_no_equals[0]].append(tvp_no_equals[1])
+			ret_dict[tvp_no_equals[0]].append(save)
 		else:
-			# If it doesn't, create new list with element in it associated with tag
-			if len(tvp_no_equals) is 2:
-				ret_dict[tvp_no_equals[0]] = [tvp_no_equals[1]]
+			ret_dict[tvp_no_equals[0]] = [save]
 	return ret_dict
 		
 
@@ -191,14 +198,19 @@ def split_message(message):
 	Method splits message into 16byte chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
-	mess_size = 16
+	print("Splitting message: {}".format(message))
+	mess_size = 15
 	byte_arr = []
 	message_len = len(message)
-	for i in range(0, int(message_len/mess_size)):
-		j = (i+1)*mess_size
-		byte_arr.append(message[i*mess_size:j])
-	if message_len%mess_size is not 0:
-		byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
+	if int(message_len/mess_size) == 0:
+		byte_arr.append(message)
+	else:
+		for i in range(0, int(message_len/mess_size)):
+			print("{}/{}".format(i, int(message_len/mess_size)))
+			j = (i+1)*mess_size
+			byte_arr.append(message[i*mess_size:j])
+		if message_len%mess_size is not 0:
+			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
 	byte_arr.append(chr(5))
 	return byte_arr
 
@@ -217,7 +229,8 @@ def get_sequence_number(message):
 	"""
 	message_parts = message.split("\x01")
 	print("Sequence Number: {}".format(message_parts[0]))
-	return message_parts[0], message_parts[1]
+	print("Message: {}".format("\x01".join(message_parts[1:])))
+	return message_parts[0], "\x01".join(message_parts[1:])
 
 def add_to_db(db, broken_down_msg):
 	"""
@@ -232,3 +245,79 @@ def add_to_db(db, broken_down_msg):
 		for i in range(0, len(coords)):
 			values.append((addresses[i], coords[i].strip('()'), now))
 	db.insert(values)
+	print("Added values to DB")
+
+def add_to_db_em(db, broken_down_msg):
+	"""
+	When provided with a broken down message and a db connection, the function will 
+	form tuples of data to add to the db and will insert it.
+	"""
+
+	coords = broken_down_msg['1']
+	addresses = broken_down_msg['2']
+	dates = broken_down_msg['6']
+	values = []
+	if len(coords) == len(addresses):
+		for i in range(0, len(coords)):
+			values.append((addresses[i], coords[i].strip('()'), dates[i]))
+	db.insert(values)
+
+def generate_RSA_keypair():
+	key = RSA.generate(2048)
+	private = key.export_key()
+	public = key.publickey().export_key()
+	return {
+		"private" : from_byte_array(private),
+		"public" : from_byte_array(public),
+	}
+
+def build_generic_message(message_struct):
+	"""
+	Takes a dict where keys are tags, and each has a list with
+	values for that tag, e.g 
+	{
+		1 : [...],
+		2 : [...],
+		3 : [...],
+	}
+	"""
+	message = ""
+	for key, value in message_struct.items():
+		for item in value:
+			message+="{}={}|".format(key, item)
+	return message
+
+def encrypt_message(public_key, message):
+	key = RSA.importKey(public_key)
+	cipher_rsa = PKCS1_OAEP.new(key)
+	return cipher_rsa.encrypt(str.encode(message))
+
+def decrypt_message(private_key, ciphertext):
+	key = RSA.importKey(private_key)
+	cipher = PKCS1_OAEP.new(key)
+	return cipher.decrypt(ciphertext).decode()
+
+def bytestring_to_uf8(buffer):
+	"""
+	Converts a bytestring string.
+	"""
+	list_of_vals = list(buffer)
+	utf_str = ""
+	for i in list_of_vals:
+		utf_str += chr(i)
+	return utf_str
+
+def utf_to_value_list(buffer):
+	"""
+	Converts a string to a list of ASCII character 
+	values.
+	"""
+	list_of_vals = list(buffer)
+	value_list = []
+	for i in list_of_vals:
+		value_list.append(ord(i))
+	return value_list
+
+def utf_to_byte_string(buffer):
+	value_list = utf_to_value_list(buffer)
+	return array.array('B', value_list).tostring()

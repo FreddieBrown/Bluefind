@@ -12,11 +12,16 @@ Included in this repository are 3 solutions, 2 of which are redudant. They are k
 
 Furthermore, this project uses a SQLite databse to store any data is collects from communicating with other devices. For this to work, a file called `find.db` needs to be created in the highest level of the project. After this is created, a file called `code/setup.sql` needs to be executed in the database to define the table needed. To do this in one, just run `setup.sh`.
 
+When running the client side, the user has a choice of actions. Each of these actions will cause the client node to perform different actions when interacting with a server. These are spceified as a command line argument. Currently, there are 2 different modes:
+
+- `normal`: Normal behaviour of the client. Will read and write information to/from the server
+- `emergency`: Node acts as an emergency services node. For this, it will only read information from a server node.
+- `secure`: Normal behaviour except there is a key exchange that occurs between client and server first, then all communication after that is encrypted.
+
 ## Libraries Needed
 
 All of these libraries are available on `apt` and with `python` version `3.7.3`:
 
-- `libboost-all-dev`
 - `libgtk2.0-dev`
 - `libdbus-1-dev`
 - `sqlite3`
