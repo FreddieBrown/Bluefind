@@ -8,7 +8,7 @@ This project is investigating how a system could be developed to be used in an e
 
 ## Project
 
-Included in this repository are 3 solutions, 2 of which are redudant. They are kept to show progress of the project. The working solution is under the folder `code/python`. To run the project, use the command `sudo python3 code/python/bluefind.py` to use it as a server, or use the command `sudo python3 code/python/blueclient.py` to run the device as a client, which will search for server devices. This project should be run from the root directory of the project.
+Included in this repository are 3 solutions, 2 of which are redudant. They are kept to show progress of the project. The working solution is under the folder `code/python`. To run the project, use the command `sudo python3 code/bluefind/bluefind.py` to use it as a server, or use the command `sudo python3 code/bluefind/blueclient.py` to run the device as a client, which will search for server devices. This project should be run from the root directory of the project.
 
 Furthermore, this project uses a SQLite databse to store any data is collects from communicating with other devices. For this to work, a file called `find.db` needs to be created in the highest level of the project. After this is created, a file called `code/setup.sql` needs to be executed in the database to define the table needed. To do this in one, just run `setup.sh`.
 
@@ -26,3 +26,7 @@ All of these libraries are available on `apt` and with `python` version `3.7.3`:
 - `libdbus-1-dev`
 - `sqlite3`
 - Python packages used are included in `requirements.txt`
+
+## Tests
+
+To run the tests of the project, navigate to `code/` and then run `pytest` which will run all tests. This will perform them on parts of the module which don't do any BLE specific stuff, as those tests will be more complex.
