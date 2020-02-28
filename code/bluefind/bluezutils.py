@@ -1,4 +1,8 @@
-import dbus
+try:
+    import dbus
+except:
+    print("No DBUS")
+
 import datetime
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -195,7 +199,7 @@ def from_byte_array(val_arr):
 
 def split_message(message):
 	"""
-	Method splits message into 16byte chunks so they can be transmitted 
+	Method splits message into 15byte chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
 	print("Splitting message: {}".format(message))
@@ -320,4 +324,4 @@ def utf_to_value_list(buffer):
 
 def utf_to_byte_string(buffer):
 	value_list = utf_to_value_list(buffer)
-	return array.array('B', value_list).tostring()
+	return array.array('B', value_list).tobytes()
