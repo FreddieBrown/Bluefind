@@ -380,7 +380,6 @@ class NormalCharacteristic(Characteristic):
 			self.EM_CHAR_UUID, 
 			['read', 'write'],
 			service)
-		self.value = None
 		self.address = bluezutils.get_mac_addr(bus)
 		self.location = '52.281807, -1.532221'
 		self.read_states = {}
@@ -535,7 +534,8 @@ class NormalCharacteristic(Characteristic):
 """
 This characteristic belongs to the EmergencyService. It has its own 
 unique UUID. It provides both reading and writing functions to send values 
-to connected devices and receive them too. 
+to connected devices and receive them too. This is specific to the secure 
+mode for clientside interactions.
 """
 class SecureCharacteristic(Characteristic):
 	EM_CHAR_UUID = '0000FFF2-0000-1000-8000-00805f9b34fb'
@@ -545,7 +545,6 @@ class SecureCharacteristic(Characteristic):
 			self.EM_CHAR_UUID, 
 			['read', 'write'],
 			service)
-		self.value = None
 		self.address = bluezutils.get_mac_addr(bus)
 		self.location = '55.323607, -2.162523'
 		self.read_states = {}
@@ -555,7 +554,6 @@ class SecureCharacteristic(Characteristic):
 		self.send_key = False
 		self.encrypt = False
 		self.client_key = None
-		self.emer_services = False
 	
 	def WriteValue(self, value, options):
 		return
@@ -568,7 +566,8 @@ class SecureCharacteristic(Characteristic):
 	"""
 This characteristic belongs to the EmergencyService. It has its own 
 unique UUID. It provides both reading and writing functions to send values 
-to connected devices and receive them too. 
+to connected devices and receive them too. This is specific to the emergency 
+services clientside interactions.
 """
 class EmergencyCharacteristic(Characteristic):
 	EM_CHAR_UUID = '0000FFF3-0000-1000-8000-00805f9b34fb'
@@ -578,17 +577,11 @@ class EmergencyCharacteristic(Characteristic):
 			self.EM_CHAR_UUID, 
 			['read', 'write'],
 			service)
-		self.value = None
 		self.address = bluezutils.get_mac_addr(bus)
 		self.location = '51.223507, -3.542523'
 		self.read_states = {}
 		self.write_states = {}
 		self.db = Database('find.db')
-		self.keypair = bluezutils.generate_RSA_keypair()
-		self.send_key = False
-		self.encrypt = False
-		self.client_key = None
-		self.emer_services = False
 	
 	def WriteValue(self, value, options):
 		return
