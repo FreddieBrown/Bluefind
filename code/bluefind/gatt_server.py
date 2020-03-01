@@ -363,14 +363,16 @@ class EmergencyService(Service):
 	service_UUID = '0000FFF0-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index):
 		Service.__init__(self, bus, index, self.service_UUID, True)
-		self.add_characteristic(EmergencyCharacteristic(bus, 0, self))
+		self.add_characteristic(NormalCharacteristic(bus, 0, self),
+								SecureCharacteristic(bus, 1, self),
+								EmergencyCharacteristic(bus, 2, self))
 
 """
 This characteristic belongs to the EmergencyService. It has its own 
 unique UUID. It provides both reading and writing functions to send values 
 to connected devices and receive them too. 
 """
-class EmergencyCharacteristic(Characteristic):
+class NormalCharacteristic(Characteristic):
 	EM_CHAR_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index, service):
 		Characteristic.__init__(
@@ -529,6 +531,73 @@ class EmergencyCharacteristic(Characteristic):
 			del self.read_states[dev]
 		print("Packet being sent: {}".format(packet))
 		return bluezutils.to_byte_array(packet)
+
+"""
+This characteristic belongs to the EmergencyService. It has its own 
+unique UUID. It provides both reading and writing functions to send values 
+to connected devices and receive them too. 
+"""
+class SecureCharacteristic(Characteristic):
+	EM_CHAR_UUID = '0000FFF2-0000-1000-8000-00805f9b34fb'
+	def __init__(self, bus, index, service):
+		Characteristic.__init__(
+			self, bus, index, 
+			self.EM_CHAR_UUID, 
+			['read', 'write'],
+			service)
+		self.value = None
+		self.address = bluezutils.get_mac_addr(bus)
+		self.location = '55.323607, -2.162523'
+		self.read_states = {}
+		self.write_states = {}
+		self.db = Database('find.db')
+		self.keypair = bluezutils.generate_RSA_keypair()
+		self.send_key = False
+		self.encrypt = False
+		self.client_key = None
+		self.emer_services = False
+	
+	def WriteValue(self, value, options):
+		return
+		
+
+
+	def ReadValue(self, options):
+		return
+
+	"""
+This characteristic belongs to the EmergencyService. It has its own 
+unique UUID. It provides both reading and writing functions to send values 
+to connected devices and receive them too. 
+"""
+class EmergencyCharacteristic(Characteristic):
+	EM_CHAR_UUID = '0000FFF3-0000-1000-8000-00805f9b34fb'
+	def __init__(self, bus, index, service):
+		Characteristic.__init__(
+			self, bus, index, 
+			self.EM_CHAR_UUID, 
+			['read', 'write'],
+			service)
+		self.value = None
+		self.address = bluezutils.get_mac_addr(bus)
+		self.location = '51.223507, -3.542523'
+		self.read_states = {}
+		self.write_states = {}
+		self.db = Database('find.db')
+		self.keypair = bluezutils.generate_RSA_keypair()
+		self.send_key = False
+		self.encrypt = False
+		self.client_key = None
+		self.emer_services = False
+	
+	def WriteValue(self, value, options):
+		return
+		
+
+
+	def ReadValue(self, options):
+		return
+
 
 def app_register_cb():
 	"""
