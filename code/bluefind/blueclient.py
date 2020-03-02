@@ -155,7 +155,7 @@ class Client():
 		print("Message to send: {}".format(self.message))
 		for i in range(0, len(msg_parts)):
 			print("Encrypt Message")
-			enc_seg = bluezutils.encrypt_message(key, msg_parts[i])
+			enc_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(key, msg_parts[i]))
 			broken_enc_seg = bluezutils.split_message(enc_seg, delim=None, size=15)
 			for j in range(0, len(broken_enc_seg)):
 				sequence = str(i)+""+str(j)+"\x01"
@@ -358,7 +358,6 @@ def encrypted_client_actions(cli, address):
 		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
-			print("Key Size: {}".format(len(cli.keypair["public"])))
 			cli.set_message(message)
 			print("Get message")
 			msg = cli.read_secure_message()
