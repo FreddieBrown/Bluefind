@@ -635,8 +635,11 @@ class SecureCharacteristic(Characteristic):
 		elif self.read_states == 9:
 			print("Global Read Position: {}".format(self.read_states[dev]['global']))
 			print("Local Read Position: {}".format(self.read_states[dev]['local']))
-			sequence = str(self.read_states[dev]['global'])+"9"+"\x01"
-			send_message = sequence+""+self.local_read_states[dev][9]
+			try:
+				sequence = str(self.read_states[dev]['global'])+"9"+"\x01"
+				send_message = sequence+""+self.local_read_states[dev][9]
+			except Exception as e:
+				print("Error: {}".format(e))
 			print("Built message to send")
 			self.read_states[dev]['global'] += 1
 			self.read_states[dev]['local'] = 0
