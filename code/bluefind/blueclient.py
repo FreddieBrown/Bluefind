@@ -192,6 +192,7 @@ class Client():
 				self.reconnect(5)
 				recvd = bluezutils.from_byte_array(self.read_value())
 			seq_num, data = bluezutils.get_sequence_number(recvd)
+			print("Message Len: {}".format(len(data)))
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
 			if first_mess:

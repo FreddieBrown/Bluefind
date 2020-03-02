@@ -401,7 +401,7 @@ class NormalCharacteristic(Characteristic):
 		print("Normal Write")
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
-		print("Value being Written!: "+message)
+		print("Value being Written!: {} Length: {}".format(message, len(message)))
 		print("Sequence Number: "+sequence_num)
 		if (dev in self.write_states.keys()) and  int(sequence_num) is len(self.write_states[dev]):
 			self.write_states[dev].append(message)
@@ -533,7 +533,7 @@ class SecureCharacteristic(Characteristic):
 		print("Secure Write")
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
-		print("Value being Written!: "+message)
+		print("Value being Written!: {} Length: {}".format(message, len(message)))
 		print("Sequence Number: "+sequence_num)
 		if self.encrypt:
 			global_place = sequence_num[:len(sequence_num)-1]
@@ -625,7 +625,6 @@ class SecureCharacteristic(Characteristic):
 				broken_down = bluezutils.split_message(message, delim=None, size=62)
 				self.global_read_states[dev] = broken_down
 				sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
-				print("Client Key: \n{}\nLength: {}".format(self.client_key, len(self.client_key)))
 				first_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, broken_down[0]))
 				print("Local Frag: {}".format(len(first_seg)))
 				self.local_read_states[dev] = bluezutils.split_message(first_seg, delim=None, size=15)
