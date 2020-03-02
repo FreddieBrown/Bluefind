@@ -17,4 +17,7 @@ code/dbus/bluefind*
 code/old_code/obj/
 code/old_code/main*
 code/bluefind/__pycache__
+code/tests/__pycache__
+__pycache__
+.pytest_cache
 *.db
