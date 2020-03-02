@@ -606,6 +606,7 @@ class SecureCharacteristic(Characteristic):
 				if not self.k2s:
 					print(bluezutils.build_generic_message({3:[self.keypair['public']]}))
 					self.k2s = bluezutils.split_message(bluezutils.build_generic_message({3:[self.keypair['public']]}))
+					print("Split message: {}".format(self.k2s))
 			except Exception as e:
 				print("Error: {}".format(e))
 			send_message = self.kindex+"\x01"+self.k2s[self.kindex]
