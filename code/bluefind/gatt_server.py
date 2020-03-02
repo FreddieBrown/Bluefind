@@ -496,8 +496,9 @@ class SecureCharacteristic(Characteristic):
 			service)
 		self.address = bluezutils.get_mac_addr(bus)
 		self.location = '55.323607, -2.162523'
+		self.global_read_states = {}
+		self.local_read_states = {}
 		self.read_states = {}
-		self.write_states = {}
 		self.global_states = {}
 		self.local_states = {}
 		self.db = Database('find.db')
@@ -505,6 +506,8 @@ class SecureCharacteristic(Characteristic):
 		self.send_key = False
 		self.encrypt = False
 		self.client_key = None
+		self.k2s = None
+		self.kindex = 0
 	
 	def WriteValue(self, value, options):
 		"""
@@ -517,105 +520,139 @@ class SecureCharacteristic(Characteristic):
 		connected device. If that is the last part of the message, connect the 
 		message parts and save it to the database. If it is the first fragment of 
 		the message, create a message buffer for the device. Otherwise, do nothing.
+
+		- Check if there is a key
+			- If there isn't collect the key
+		- Get message and split into message and sequence number
+		- Check if in encryption mode
+		- Build local list for messages 
+		- Add each local segment to list
+		- When the global segment ends, concat local segment pieces and decrypt and add to global message list
+		- When chr(5) has been received, get global list and concat it to get full message then move on
 		"""
 		print("Secure Write")
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
 		print("Sequence Number: "+sequence_num)
-		if (dev in self.write_states.keys()) and  int(sequence_num) is len(self.write_states[dev]):
-			self.write_states[dev].append(message)
-			if str(chr(5)) == message:
-				# If it is in message, join up message
-				print("End of message")
-				full_message = ''.join(self.write_states[dev])
-				print("Message Written To Server: {}".format(full_message))
-				# break down message
-				if self.encrypt:
-					print("Decrypting message")
-					try:
-						byte_msg = bluezutils.utf_to_byte_string(full_message)[:len(full_message)-1]
-						print("Message: {}".format(list(byte_msg)))
-						print("Cipher Length: {}".format(len(list(byte_msg))))
-						full_message = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
-					except Exception as e:
-						print("Exception: {}".format(e))
-				message_parts = bluezutils.break_down_message(full_message)
-				print("Keys in Message: {}".format(message_parts.keys()))
-				if "3" in message_parts.keys():
-					self.client_key = message_parts["3"][0]
-					print("Recevied Key: {}".format(self.client_key))
-					self.send_key = True
-				elif "4" in message_parts.keys():
-					print("Recevied ACK")
-					self.encrypt = True
-				else:
-					# Go through message, build tuples with datetime and commit to db
-					bluezutils.add_to_db(self.db, message_parts)
-					self.encrypt = False
-				print("Processed whole message from {}".format(dev))
-				del self.write_states[dev] 
-			return sequence_num
-		elif int(sequence_num) is 0:
-			if str(chr(5)) == message:
-				print(message)
+		if self.encrypt:
+			global_place = sequence_num[:len(sequence_num)-1]
+			local_place = sequence_num[len(sequence_num)-1:len(sequence_num)]
+			
+		if message == chr(5) and self.encrypt:
+			"""
+			This is the end of the whole message
+			This should concat the global_list, get the keys of the message and add to db, 
+			then del from global_list 
+			"""
+			full_message = "".join(self.global_states[dev])
+			message_parts = bluezutils.break_down_message(full_message)
+			bluezutils.add_to_db(self.db, message_parts)
+			self.encrypt = False
+			del self.global_states[dev]
+			del self.local_states[dev]
+		elif self.encrypt:
+			if int(local_place) == 0 and int(global_place) == 0:
+				"""
+				create place in lists for this device
+				"""
+				self.global_states[dev] = []
+				self.local_states[dev] = []
+			elif int(local_place) == 0:
+				"""
+				Create entry in local list
+				"""
+				self.local_states[dev] = []
+			elif int(local_place) == 9:
+				"""
+				This should take the local_list, concat it, decrypt it and add it to global list
+				"""
+				joined = "".join(self.local_states[dev])
+				self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], joined)) 
 			else:
-				self.write_states[dev] = [message]
-			return sequence_num
-		# Take value are pass into method to split and store data
+				"""
+				Add message to local list
+				"""
+				self.local_states[dev].append(message)
+		else: 
+			if not self.global_states[dev]:
+				self.global_states[dev] = [message]
+			elif message == chr(5):
+				self.client_key = "".join(self.global_states[dev])
+				self.send_key = True
+				del self.global_states[dev]
+			else:
+				self.global_states[dev].append(message)
+
+
 		
 
 	def ReadValue(self, options):
+		"""
+		- Build message
+		- Break down into segments which can be encrypted and give each one a seq number
+		- Encrypt each segment of the message
+		- Try and send each segment. For each one, break down into 15 byte segments and 
+		send each one with large segment seq number + local seq and delim plus the message segment
+		"""
 		print("Secure Read")
-		# Create method to get device address from options['device']
-		global current_client
 		dev = bluezutils.dbus_to_MAC(options['device'])
-		if (current_client == dev) and (dev in self.read_states.keys()):
-			# Same device connected
-			dev_state = self.read_states[dev]
-			position = dev_state['position']
-			message_packets = dev_state['message']
-			packet = str(position)+"\x01"+message_packets[position]
-			dev_state['position']+=1
-			self.read_states[dev] = dev_state
-		else: 
-			# New device or device which has already received whole packet
-			current_client = dev
-			print("New client: {}".format(current_client))
-			if self.send_key:
-				# Need to send public key
-				print("Sending public key")
-				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
+		if self.send_key:
+			print("Sending key")
+			if not self.k2s:
+				self.k2s = bluezutils.split_message(bluezutils.build_generic_message({3:[self.keypair['public']]}))
+			send_message = self.kindex+"\x01"+self.k2s[self.kindex]
+			self.kindex += 1
+			if self.kindex == len(self.k2s):
 				self.send_key = False
-			else:
-				if self.encrypt:
-					print("Encryption on")
-					select_amount = 3
-				else:
-					select_amount = 50
-				db_data = self.db.select(select_amount)
-				db_data[0].append(self.location)
-				db_data[1].append(self.address)
-				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
-				if self.encrypt:
-					print("Encrypting message")
-					message = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, message))
-					print("Message: {}".format(bluezutils.utf_to_value_list(message)))
-					print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(message))))
-			message_packets = bluezutils.split_message(message)
-			print("Split message: {}".format(message_packets))
-			dev_state = dict()
-			dev_state['message'] = message_packets
-			dev_state['position'] = 1
-			self.read_states[dev] = dev_state
-			packet = str(0)+"\x01"+message_packets[0]
-			print("Packet: {}".format(packet))
-		
-		if self.read_states[dev]['position'] == len(self.read_states[dev]['message']):
-			print("Sent whole message to {}".format(dev))
+				self.encrypt = True
+			
+		# If a message has already been generated, get the next message to send
+		elif not self.global_read_states[dev]:
+			print("Generate new message")
+			select_amount = 3
+			db_data = self.db.select(select_amount)
+			db_data[0].append(self.location)
+			db_data[1].append(self.address)
+			message = bluezutils.build_message(db_data[0], db_data[1], [dev.upper()])
+			self.read_states[dev] = {"global": 0, "local": 1}
+			broken_down = bluezutils.split_message(message, delim=None, size=62)
+			self.global_read_states[dev] = broken_down
+			sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
+			first_seg = bluezutils.encrypt_message(self.client_key, broken_down[0])
+			self.local_read_states[dev] = bluezutils.split_message(first_seg, delim=None, size=15)
+			send_message = sequence+""+self.local_read_states[dev][0]
+
+		elif self.read_states == 9:
+			print("Global Read Position: {}".format(self.read_states[dev]['global']))
+			print("Local Read Position: {}".format(self.read_states[dev]['local']))
+			sequence = str(self.read_states[dev]['global'])+"9"+"\x01"
+			send_message = sequence+""+self.local_read_states[dev][9]
+			self.read_states[dev]['global'] += 1
+			self.read_states[dev]['local'] = 0
+			next_seg = self.global_read_states[dev][self.read_states[dev]['global']]
+			enc_next_seg = bluezutils.encrypt_message(self.client_key, next_seg)
+			self.local_read_states[dev] = bluezutils.split_message(enc_next_seg, delim=None, size=15)
+			
+		elif self.read_states == len(self.global_read_states[dev]):
+			print("Global Read Position: {}".format(self.read_states[dev]['global']))
+			print("Local Read Position: {}".format(self.read_states[dev]['local']))
+			send_message = sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
+			send_message = sequence+""+chr(5)
 			del self.read_states[dev]
-		print("Packet being sent: {}".format(packet))
-		return bluezutils.to_byte_array(packet)
+			del self.local_read_states[dev]
+			del self.global_read_states[dev]
+
+		else:
+			print("Global Read Position: {}".format(self.read_states[dev]['global']))
+			print("Local Read Position: {}".format(self.read_states[dev]['local']))
+			sequence = str(self.read_states[dev]['global'])+str(self.read_states[dev]['local'])+"\x01"
+			send_message = sequence+""+self.local_read_states[dev][self.read_states[dev]['local']]
+			self.read_states[dev]['global'] += 1
+			self.read_states[dev]['local'] += 1
+
+		print("Message being sent: {}".format(send_message))
+		return send_message
 
 	"""
 This characteristic belongs to the EmergencyService. It has its own 

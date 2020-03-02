@@ -55,16 +55,7 @@ def WriteValue(self, value, options):
 			then del from global_list 
 			"""
 
-def ReadValue(self, options):
-	"""
-		- Build message
-		- Check length
-		- Break down into segments which can be encrypted and give each one a seq number
-		- Encrypt each segment of the message
-		- Try and send each segment. For each one, break down into 15 byte segments and 
-		send each one with large segment seq number + local seq and denim plus the message segment
-	"""
-	pass
+
 		
 
 def encrypted_client_actions(cli, address):

@@ -275,53 +275,48 @@ def emergency_service_actions(cli, address):
 
 def encrypted_client_actions(cli, address):
 	"""
-	Function to perform secure client behaviours using 
-	asymmetric encryption to provide message secrecy to 
-	users. First, it does a key exchange with the server 
-	and they will give each other their public RSA keys. 
-	After this, it will use the servers public key to 
-	encrypt the message that it is to send. It will then 
-	read an encrypted message from the server. It will decrypt
-	this message and store the information it contains.
+		- Key Exchange
 
-	If the key exchange fails, normal behaviour is used. 
+			WRITE:
+			- Build message
+			- Check length
+			- Break down into segments which can be encrypted and give each one a seq number
+			- Encrypt each segment of the message
+			- Try and send each segment. For each one, break down into 15 byte segments and send 
+			each one with large segment seq number + local seq and denim plus the message segment
+
+			READ:
+
+			- Get message and split into message and sequence number
+			- Check if in encryption mode
+			- Build local list for messages 
+			- Add each local segment to list
+			- When the global segment ends, concat local segment pieces and decrypt and add to global message list
+			- When chr(5) has been received, get global list and concat it to get full message then move on
+
 	"""
 	print("Encrypted Client Action")
 	db_data = cli.db.select(3)
 	db_data[0].append(cli.location)
 	db_data[1].append(cli.device_address)
 	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
-	# Build message which contains clients public key (tag 3)
-	key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 	try:
+		# Key exchange
 		cli.prepare_device(address)
 		cli.set_characteristic(cli.SECURE_UUID)
-		# Write it to server
+		key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 		cli.set_message(key_message)
 		cli.send_message()
-		# Read public key from server
 		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
-			# When received full key, write back to server with confirmation (tag 4)
-			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
-			cli.set_message(conf_message)
-			cli.send_message()
-			print("Encrypting Message")
 			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
 			cli.set_message(bluezutils.bytestring_to_uf8(cipher))
-			found_message = cli.read_message()
-			print("Decrypting Message")
-			byte_msg = bluezutils.utf_to_byte_string(found_message)[:len(found_message)-1]
-			print("Message: {}".format(list(byte_msg)))
-			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
-			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
-			cli.send_message()
-		else:
-			found_message = bluezutils.break_down_message(cli.read_message())
-			bluezutils.add_to_db(cli.db, found_message)
-			cli.set_message(message)
-			cli.send_message()
+			print("Get message")
+			print("Decrypt Message")
+			print("Encrypt Message")
+			print("Send Message")
+			print("Work here")
 		cli.disconnect()
 	except Exception as e:
 		print("Connection Error for {}: {}".format(address, e))
