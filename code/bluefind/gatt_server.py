@@ -619,7 +619,10 @@ class SecureCharacteristic(Characteristic):
 			db_data[1].append(self.address)
 			message = bluezutils.build_message(db_data[0], db_data[1], [dev.upper()])
 			self.read_states[dev] = {"global": 0, "local": 1}
-			broken_down = bluezutils.split_message(message, delim=None, size=62)
+			try:
+				broken_down = bluezutils.split_message(message, delim=None, size=62)
+			except Exception as e:
+				print("Error: {}".format(e))
 			self.global_read_states[dev] = broken_down
 			sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
 			first_seg = bluezutils.encrypt_message(self.client_key, broken_down[0])
