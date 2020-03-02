@@ -575,14 +575,18 @@ class SecureCharacteristic(Characteristic):
 				"""
 				self.local_states[dev].append(message)
 		else: 
-			if not self.global_states[dev]:
-				self.global_states[dev] = [message]
-			elif message == chr(5):
-				self.client_key = "".join(self.global_states[dev])
-				self.send_key = True
-				del self.global_states[dev]
-			else:
-				self.global_states[dev].append(message)
+			try:
+				print("Key Excahnge")
+				if not self.global_states[dev]:
+					self.global_states[dev] = [message]
+				elif message == chr(5):
+					self.client_key = "".join(self.global_states[dev])
+					self.send_key = True
+					del self.global_states[dev]
+				else:
+					self.global_states[dev].append(message)
+			except Exception as e:
+				print("Error: {}".format(e))
 
 
 		
