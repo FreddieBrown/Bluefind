@@ -576,7 +576,7 @@ class SecureCharacteristic(Characteristic):
 				self.local_states[dev].append(message)
 		else: 
 			try:
-				if not self.global_states[dev]:
+				if dev not in self.global_states:
 					print("Start of key")
 					self.global_states[dev] = [message]
 				elif message == chr(5):
