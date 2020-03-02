@@ -609,6 +609,7 @@ class SecureCharacteristic(Characteristic):
 			if self.kindex == len(self.k2s):
 				self.send_key = False
 				self.encrypt = True
+			print("Message to send: {}".format(send_message))
 			
 		# If a message has already been generated, get the next message to send
 		elif not self.global_read_states[dev]:
