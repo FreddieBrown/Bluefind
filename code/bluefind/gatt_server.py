@@ -403,6 +403,7 @@ class NormalCharacteristic(Characteristic):
 		message parts and save it to the database. If it is the first fragment of 
 		the message, create a message buffer for the device. Otherwise, do nothing.
 		"""
+		print("Normal Write")
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
@@ -471,6 +472,7 @@ class NormalCharacteristic(Characteristic):
 		to it.
 		"""
 		# Create method to get device address from options['device']
+		print("Normal Read")
 		global current_client
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		if (current_client == dev) and (dev in self.read_states.keys()):
@@ -567,6 +569,7 @@ class SecureCharacteristic(Characteristic):
 		message parts and save it to the database. If it is the first fragment of 
 		the message, create a message buffer for the device. Otherwise, do nothing.
 		"""
+		print("Secure Write")
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
@@ -614,6 +617,7 @@ class SecureCharacteristic(Characteristic):
 		
 
 	def ReadValue(self, options):
+		print("Secure Read")
 		# Create method to get device address from options['device']
 		global current_client
 		dev = bluezutils.dbus_to_MAC(options['device'])
@@ -685,7 +689,7 @@ class EmergencyCharacteristic(Characteristic):
 		self.db = Database('find.db')
 	
 	def WriteValue(self, value, options):
-		print("Emergency Service")
+		print("Emergency Write")
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		sequence_num, message = bluezutils.get_sequence_number(bluezutils.from_byte_array(value))
 		print("Value being Written!: "+message)
@@ -717,6 +721,7 @@ class EmergencyCharacteristic(Characteristic):
 			return sequence_num
 		
 	def ReadValue(self, options):
+		print("Emergency Read")
 		global current_client
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		if (current_client == dev) and (dev in self.read_states.keys()):
