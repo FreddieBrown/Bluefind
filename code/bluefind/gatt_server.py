@@ -660,7 +660,7 @@ class SecureCharacteristic(Characteristic):
 			self.read_states[dev]['local'] += 1
 
 		print("Message being sent: {}".format(send_message))
-		return send_message
+		return bluezutils.to_byte_array(send_message)
 
 	"""
 This characteristic belongs to the EmergencyService. It has its own 
