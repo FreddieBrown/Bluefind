@@ -33,7 +33,7 @@ class Client():
 		self.scanner = Scanner()
 		self.message = None
 		self.db = Database('find.db')
-		self.keypair = bluezutils.generate_RSA_keypair()
+		self.keypair = bluezutils.generate_RSA_keypair(key_size=1024)
 
 	def prepare_device(self, target_address):
 		"""

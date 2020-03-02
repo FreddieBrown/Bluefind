@@ -502,7 +502,7 @@ class SecureCharacteristic(Characteristic):
 		self.global_states = {}
 		self.local_states = {}
 		self.db = Database('find.db')
-		self.keypair = bluezutils.generate_RSA_keypair()
+		self.keypair = bluezutils.generate_RSA_keypair(key_size=1024)
 		self.send_key = False
 		self.encrypt = False
 		self.client_key = None
