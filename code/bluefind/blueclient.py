@@ -364,6 +364,7 @@ def encrypted_client_actions(cli, address):
 			cli.set_message(message)
 			print("Get message")
 			msg = cli.read_secure_message()
+			print("Message: {}".format(msg))
 			message_parts = bluezutils.break_down_message(msg)
 			bluezutils.add_to_db(cli.db, message_parts)
 			print("Message recevied: {}".format(msg))
