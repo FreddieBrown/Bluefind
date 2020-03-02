@@ -307,6 +307,7 @@ def encrypted_client_actions(cli, address):
 		key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 		cli.set_message(key_message)
 		cli.send_message()
+		print("Get Server Key")
 		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
@@ -317,6 +318,7 @@ def encrypted_client_actions(cli, address):
 			print("Encrypt Message")
 			print("Send Message")
 			print("Work here")
+		print("Disconnect")
 		cli.disconnect()
 	except Exception as e:
 		print("Connection Error for {}: {}".format(address, e))
