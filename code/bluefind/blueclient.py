@@ -358,6 +358,7 @@ def encrypted_client_actions(cli, address):
 		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
+			print("Key Size: {}".format(len(self.keypair["public"])))
 			cli.set_message(message)
 			print("Get message")
 			msg = cli.read_secure_message()
