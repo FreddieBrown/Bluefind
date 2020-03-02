@@ -1,7 +1,7 @@
 try:
-    import dbus
+	import dbus
 except:
-    print("No DBUS")
+	print("No DBUS")
 
 import datetime
 from Crypto.PublicKey import RSA
@@ -210,7 +210,7 @@ def split_message(message):
 		byte_arr.append(message)
 	else:
 		for i in range(0, int(message_len/mess_size)):
-			print("{}/{}".format(i, int(message_len/mess_size)))
+			# print("{}/{}".format(i, int(message_len/mess_size)))
 			j = (i+1)*mess_size
 			byte_arr.append(message[i*mess_size:j])
 		if message_len%mess_size is not 0:

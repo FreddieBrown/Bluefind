@@ -19,7 +19,9 @@ class Client():
 	and methods which can all be used with the object.
 	"""
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
-	RW_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
+	NORMAL_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
+	SECURE_UUID = '0000FFF2-0000-1000-8000-00805f9b34fb'
+	EM_UUID = '0000FFF3-0000-1000-8000-00805f9b34fb'
 
 	def __init__(self, location, device_address):
 		self.device_address = device_address
@@ -43,8 +45,6 @@ class Client():
 		"""
 		self.peripheral = Peripheral(target_address)
 		self.service = self.peripheral.getServiceByUUID( self.SERVICE_UUID )
-		self.characteristic = self.service.getCharacteristics( self.RW_UUID )[0]
-		self.handle = self.characteristic.getHandle()
 		self.target_address = target_address
 
 	def write_value(self, data, response=False):
@@ -103,6 +103,10 @@ class Client():
 		client device.
 		"""
 		self.location = location
+	
+	def set_characteristic(self, uuid):
+		self.characteristic = self.service.getCharacteristics( uuid )[0]
+		self.handle = self.characteristic.getHandle()
 
 	def set_message(self, message):
 		"""
@@ -237,6 +241,7 @@ def normal_client_actions(cli, address):
 	cli.set_message(message)
 	try:
 		cli.prepare_device(address)
+		cli.set_characteristic(cli.NORMAL_UUID)
 		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db(cli.db, found_message)
 		cli.send_message()
@@ -258,6 +263,7 @@ def emergency_service_actions(cli, address):
 	cli.set_message(request_message)
 	try:
 		cli.prepare_device(address)
+		cli.set_characteristic(cli.EM_UUID)
 		cli.send_message()
 		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db_em(cli.db, found_message)
@@ -289,6 +295,7 @@ def encrypted_client_actions(cli, address):
 	key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 	try:
 		cli.prepare_device(address)
+		cli.set_characteristic(cli.SECURE_UUID)
 		# Write it to server
 		cli.set_message(key_message)
 		cli.send_message()
