@@ -626,30 +626,22 @@ class SecureCharacteristic(Characteristic):
 				self.global_read_states[dev] = broken_down
 				sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
 				first_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, broken_down[0]))
-				print("Local Frag: {}".format(len(first_seg)))
 				self.local_read_states[dev] = bluezutils.split_message(first_seg, delim=None, size=15)
 				send_message = sequence+""+self.local_read_states[dev][0]
 			except Exception as e:
 				print("Error: {}".format(e))
 
 		elif self.read_states[dev]['local'] == 8:
-			print("Global Read Position: {}/{}".format(self.read_states[dev]['global'], len(self.global_read_states[dev])-1))
-			print("Local Read Position: {}/8".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+"8"+"\x01"
 			send_message = sequence+""+self.local_read_states[dev][8]
-			print("Built message to send")
 			self.read_states[dev]['global'] += 1
 			self.read_states[dev]['local'] = 0
-			print("Incremented global and local vals")
 			if self.read_states[dev]['global'] != len(self.global_read_states[dev]):
 				next_seg = self.global_read_states[dev][self.read_states[dev]['global']]
-				print("Get next segment")
 				enc_next_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, next_seg))
-				print("Local Frag: {}".format(len(enc_next_seg)))
 				self.local_read_states[dev] = bluezutils.split_message(enc_next_seg, delim=None, size=15)
 			
 		elif self.read_states[dev]['global'] == len(self.global_read_states[dev]):
-			print("Last part to send. Sending final delim")
 			send_message = sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
 			send_message = sequence+""+chr(5)
 			del self.read_states[dev]
@@ -657,8 +649,6 @@ class SecureCharacteristic(Characteristic):
 			del self.global_read_states[dev]
 
 		else:
-			print("Global Read Position: {}/{}".format(self.read_states[dev]['global'], len(self.global_read_states[dev])-1))
-			print("Local Read Position: {}/8".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+str(self.read_states[dev]['local'])+"\x01"
 			send_message = sequence+""+self.local_read_states[dev][self.read_states[dev]['local']]
 			self.read_states[dev]['local'] += 1
