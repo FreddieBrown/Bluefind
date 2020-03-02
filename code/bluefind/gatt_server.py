@@ -627,7 +627,7 @@ class SecureCharacteristic(Characteristic):
 				sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
 				print("Client Key: \n{}\nLength: {}".format(self.client_key, len(self.client_key)))
 				first_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, broken_down[0]))
-				print("Local Frag: {}".format(first_seg))
+				print("Local Frag: {}".format(len(first_seg)))
 				self.local_read_states[dev] = bluezutils.split_message(first_seg, delim=None, size=15)
 				send_message = sequence+""+self.local_read_states[dev][0]
 			except Exception as e:
@@ -642,7 +642,7 @@ class SecureCharacteristic(Characteristic):
 			self.read_states[dev]['local'] = 0
 			next_seg = self.global_read_states[dev][self.read_states[dev]['global']]
 			enc_next_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, next_seg))
-			print("Local Frag: {}".format(enc_next_seg))
+			print("Local Frag: {}".format(len(enc_next_seg)))
 			self.local_read_states[dev] = bluezutils.split_message(enc_next_seg, delim=None, size=15)
 			
 		elif self.read_states == len(self.global_read_states[dev]):

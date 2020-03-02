@@ -230,7 +230,7 @@ class Client():
 			elif local_place == 9:
 				local_frag = "".join(local_message)
 				print("Decrypt Message")
-				print("Local Frag: {}".format(local_frag))
+				print("Local Frag: {}".format(len(local_frag)))
 				decrypted = bluezutils.decrypt_message(self.keypair['private'], local_frag)
 				global_message.append(decrypted)
 			else:
