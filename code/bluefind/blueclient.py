@@ -192,7 +192,6 @@ class Client():
 				self.reconnect(5)
 				recvd = bluezutils.from_byte_array(self.read_value())
 			seq_num, data = bluezutils.get_sequence_number(recvd)
-			print("Message Len: {}".format(len(data)))
 			if not first_mess:
 				first_mess = (int(seq_num) == 0)
 			if first_mess:
@@ -223,6 +222,7 @@ class Client():
 				self.reconnect(5)
 				recvd = bluezutils.from_byte_array(self.read_value())
 			seq_num, data = bluezutils.get_sequence_number(recvd)
+			print("Message Len: {}".format(len(data)))
 			global_place = int(seq_num[:len(seq_num)-1])
 			local_place = int(seq_num[len(seq_num)-1:len(seq_num)])
 			if data == chr(5):
