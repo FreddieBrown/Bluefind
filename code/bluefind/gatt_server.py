@@ -363,9 +363,9 @@ class EmergencyService(Service):
 	service_UUID = '0000FFF0-0000-1000-8000-00805f9b34fb'
 	def __init__(self, bus, index):
 		Service.__init__(self, bus, index, self.service_UUID, True)
-		self.add_characteristic(NormalCharacteristic(bus, 0, self),
-								SecureCharacteristic(bus, 1, self),
-								EmergencyCharacteristic(bus, 2, self))
+		self.add_characteristic(NormalCharacteristic(bus, 0, self))
+		self.add_characteristic(SecureCharacteristic(bus, 1, self))
+		self.add_characteristic(EmergencyCharacteristic(bus, 2, self))
 
 """
 This characteristic belongs to the EmergencyService. It has its own 
