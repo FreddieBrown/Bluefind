@@ -632,25 +632,22 @@ class SecureCharacteristic(Characteristic):
 			except Exception as e:
 				print("Error: {}".format(e))
 
-		elif self.read_states == 9:
+		elif self.read_states[dev]['global'] == 8:
 			print("Global Read Position: {}".format(self.read_states[dev]['global']))
 			print("Local Read Position: {}".format(self.read_states[dev]['local']))
-			try:
-				sequence = str(self.read_states[dev]['global'])+"9"+"\x01"
-				send_message = sequence+""+self.local_read_states[dev][9]
-			except Exception as e:
-				print("Error: {}".format(e))
+			sequence = str(self.read_states[dev]['global'])+"8"+"\x01"
+			send_message = sequence+""+self.local_read_states[dev][8]
 			print("Built message to send")
 			self.read_states[dev]['global'] += 1
 			self.read_states[dev]['local'] = 0
-			print("Incremented global and loca vals")
+			print("Incremented global and local vals")
 			next_seg = self.global_read_states[dev][self.read_states[dev]['global']]
 			print("Get next segment")
 			enc_next_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, next_seg))
 			print("Local Frag: {}".format(len(enc_next_seg)))
 			self.local_read_states[dev] = bluezutils.split_message(enc_next_seg, delim=None, size=15)
 			
-		elif self.read_states == len(self.global_read_states[dev]):
+		elif self.read_states[dev]['global'] == len(self.global_read_states[dev]):
 			print("Global Read Position: {}".format(self.read_states[dev]['global']))
 			print("Local Read Position: {}".format(self.read_states[dev]['local']))
 			send_message = sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
