@@ -225,10 +225,12 @@ class Client():
 			global_place = int(seq_num[:len(seq_num)-1])
 			local_place = int(seq_num[len(seq_num)-1:len(seq_num)])
 			if data == chr(5):
+				print("End of message")
 				return "".join(global_message)
 			elif local_place == 9:
 				local_frag = "".join(local_message)
 				print("Decrypt Message")
+				print("Local Frag: {}".format(local_frag))
 				decrypted = bluezutils.decrypt_message(self.keypair['private'], local_frag)
 				global_message.append(decrypted)
 			else:
