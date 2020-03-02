@@ -82,24 +82,32 @@ def decrypt_message(private_key, ciphertext):
 	cipher = PKCS1_OAEP.new(key)
 	return cipher.decrypt(ciphertext).decode()
 
-def split_message(message):
+def split_message(message, delim=chr(5), size=15, frags=None):
 	"""
 	Method splits message into 16byte chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
 	print("Splitting message")
-	mess_size = 15
 	byte_arr = []
 	message_len = len(message)
-	if int(message_len/mess_size) == 0:
+	if int(message_len/size) == 0:
 		byte_arr.append(message)
+	elif frags:
+		size = round(message_len/frags)
+		print(size)
+		for i in range(0, int(message_len/size)):
+			j = (i+1)*size
+			byte_arr.append(message[i*size:j])
+		if message_len%size is not 0:
+			byte_arr.append(message[(i+1)*size:(i+1)*size+message_len%size])
 	else:
-		for i in range(0, int(message_len/mess_size)):
-			j = (i+1)*mess_size
-			byte_arr.append(message[i*mess_size:j])
-		if message_len%mess_size is not 0:
-			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
-	byte_arr.append(chr(5))
+		for i in range(0, int(message_len/size)):
+			j = (i+1)*size
+			byte_arr.append(message[i*size:j])
+		if message_len%size is not 0:
+			byte_arr.append(message[(i+1)*size:(i+1)*size+message_len%size])
+	if delim:
+		byte_arr.append(delim)
 	return byte_arr
 
 def bytestring_to_uf8(buffer):
@@ -125,26 +133,24 @@ def utf_to_value_list(buffer):
 
 def utf_to_byte_string(buffer):
 	value_list = utf_to_value_list(buffer)
-	return array.array('B', value_list).tostring()
+	return array.array('B', value_list).tobytes()
 
 keypair = generate_RSA_keypair()
 
 fun_message = b'You can attack now!'
-other_message = "Hey there, I'm a string"
-cipher = encrypt_message(keypair['public'], other_message)
-cipherstr = bytestring_to_uf8(cipher)
-print("Cipher List: {}".format(list(cipher)))
-print("Cipher List: {}".format(utf_to_value_list(cipherstr)))
-message_parts = split_message(cipherstr)
-second_part = "".join(message_parts).strip(chr(5))
-print("Ciphertext: {}".format(utf_to_byte_string(second_part)))
-# cipherstr_bytes = str.encode(cipherstr, errors="strict")
-# print("Cipherstr: {}".format(list(str.encode(cipherstr))))
-recon = utf_to_byte_string(second_part)
-print("Same?: {}".format(recon == cipher))
-print("Reconstruction: {}".format(list(recon)))
-# print("Decrypted Message: {}".format(decrypt_message(keypair['private'], recon)))
+other_message = "Hey there, I'm a string blah blah blah blahfdskbdsfbkjfdbfdbhsdsfhjrebuycjkasdb  xhfhhjdfshbfdjkhnfbsdhfgdnbhfgyehuijnsfbdhdgyehuijdskncvbhgdfuisjknxcbvhfgduisokmlcnvbgfhjuiodsklmcxnvbjhfg"
+splitup = split_message(other_message, delim=None, size=62)
+print(splitup)
+global_list = []
+for mess in splitup:
+	cipher = encrypt_message(keypair['public'], mess)
+	cipherstr = bytestring_to_uf8(cipher)
+	print("Cipher: {}, Len: {}".format(cipherstr, len(cipherstr)))
+	print("Broken Cipher: {}".format(len(split_message(cipherstr, delim=None, size=15))))
+	message_parts = split_message(cipherstr)
+	second_part = "".join(message_parts).strip(chr(5))
+	recon = utf_to_byte_string(second_part)
+	global_list.append(decrypt_message(keypair['private'], recon))
+	print("Decrypted Message: {}".format(decrypt_message(keypair['private'], recon)))
 
-# small_message = "4="+chr(6)
-# print(split_message(small_message))
-# print(split_message(other_message))
+print("Final Message: {}".format("".join(global_list)))

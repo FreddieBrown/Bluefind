@@ -498,6 +498,8 @@ class SecureCharacteristic(Characteristic):
 		self.location = '55.323607, -2.162523'
 		self.read_states = {}
 		self.write_states = {}
+		self.global_states = {}
+		self.local_states = {}
 		self.db = Database('find.db')
 		self.keypair = bluezutils.generate_RSA_keypair()
 		self.send_key = False
