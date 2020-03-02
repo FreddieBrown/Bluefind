@@ -623,6 +623,7 @@ class SecureCharacteristic(Characteristic):
 				broken_down = bluezutils.split_message(message, delim=None, size=62)
 				self.global_read_states[dev] = broken_down
 				sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
+				print("Client Key: \n{}\nLength: {}".format(self.client_key, len(self.client_key)))
 				first_seg = bluezutils.encrypt_message(self.client_key, broken_down[0])
 				self.local_read_states[dev] = bluezutils.split_message(first_seg, delim=None, size=15)
 				send_message = sequence+""+self.local_read_states[dev][0]
