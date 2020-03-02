@@ -632,7 +632,7 @@ class SecureCharacteristic(Characteristic):
 			except Exception as e:
 				print("Error: {}".format(e))
 
-		elif self.read_states[dev]['global'] == 8:
+		elif self.read_states[dev]['local'] == 8:
 			print("Global Read Position: {}".format(self.read_states[dev]['global']))
 			print("Local Read Position: {}".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+"8"+"\x01"
