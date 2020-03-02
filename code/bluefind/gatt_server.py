@@ -385,11 +385,6 @@ class NormalCharacteristic(Characteristic):
 		self.read_states = {}
 		self.write_states = {}
 		self.db = Database('find.db')
-		self.keypair = bluezutils.generate_RSA_keypair()
-		self.send_key = False
-		self.encrypt = False
-		self.client_key = None
-		self.emer_services = False
 	
 	def WriteValue(self, value, options):
 		"""
@@ -416,31 +411,9 @@ class NormalCharacteristic(Characteristic):
 				full_message = ''.join(self.write_states[dev])
 				print("Message Written To Server: {}".format(full_message))
 				# break down message
-				if self.encrypt:
-					print("Decrypting message")
-					try:
-						byte_msg = bluezutils.utf_to_byte_string(full_message)[:len(full_message)-1]
-						print("Message: {}".format(list(byte_msg)))
-						print("Cipher Length: {}".format(len(list(byte_msg))))
-						full_message = bluezutils.decrypt_message(self.keypair['private'], byte_msg)
-					except Exception as e:
-						print("Exception: {}".format(e))
 				message_parts = bluezutils.break_down_message(full_message)
 				print("Keys in Message: {}".format(message_parts.keys()))
-				if "3" in message_parts.keys():
-					self.client_key = message_parts["3"][0]
-					print("Recevied Key: {}".format(self.client_key))
-					self.send_key = True
-				elif "4" in message_parts.keys():
-					print("Recevied ACK")
-					self.encrypt = True
-				elif "5" in message_parts.keys():
-					# This part should set a flag to say it is talking to emergency node
-					self.emer_services = True
-				else:
-					# Go through message, build tuples with datetime and commit to db
-					bluezutils.add_to_db(self.db, message_parts)
-					self.encrypt = False
+				bluezutils.add_to_db(self.db, message_parts)
 				print("Processed whole message from {}".format(dev))
 				del self.write_states[dev] 
 			return sequence_num
@@ -487,37 +460,11 @@ class NormalCharacteristic(Characteristic):
 			# New device or device which has already received whole packet
 			current_client = dev
 			print("New client: {}".format(current_client))
-			if self.send_key:
-				# Need to send public key
-				print("Sending public key")
-				message = bluezutils.build_generic_message({3:[self.keypair['public']]})
-				self.send_key = False
-			elif self.emer_services:
-				print("Doing emergency services stuff")
-				db_data = self.db.select_em(50)
-				db_data[0].append(self.location)
-				db_data[1].append(self.address)
-				db_data[2].append(datetime.datetime.now())
-				message = bluezutils.build_generic_message({
-					1: db_data[0],
-					2: db_data[1],
-					6: db_data[2],
-				})
-				self.emer_services = False
-			else:
-				if self.encrypt:
-					select_amount = 3
-				else:
-					select_amount = 50
-				db_data = self.db.select(select_amount)
-				db_data[0].append(self.location)
-				db_data[1].append(self.address)
-				message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
-				if self.encrypt:
-					print("Encrypting message")
-					message = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, message))
-					print("Message: {}".format(bluezutils.utf_to_value_list(message)))
-					print("Size of enc message: {}".format(len(bluezutils.utf_to_value_list(message))))
+			select_amount = 50
+			db_data = self.db.select(select_amount)
+			db_data[0].append(self.location)
+			db_data[1].append(self.address)
+			message = bluezutils.build_message(db_data[0], db_data[1], [current_client.upper()])
 			message_packets = bluezutils.split_message(message)
 			print("Split message: {}".format(message_packets))
 			dev_state = dict()
