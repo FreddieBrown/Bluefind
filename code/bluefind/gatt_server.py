@@ -602,19 +602,18 @@ class SecureCharacteristic(Characteristic):
 		dev = bluezutils.dbus_to_MAC(options['device'])
 		if self.send_key:
 			print("Sending key")
+			if not self.k2s:
+				self.k2s = bluezutils.split_message(bluezutils.build_generic_message({3:[self.keypair['public']]}))
 			try:
-				if not self.k2s:
-					print(bluezutils.build_generic_message({3:[self.keypair['public']]}))
-					self.k2s = bluezutils.split_message(bluezutils.build_generic_message({3:[self.keypair['public']]}))
-					print("Split message: {}".format(self.k2s))
+				send_message = self.kindex+"\x01"+self.k2s[self.kindex]
+				print("Message to send: {}".format(send_message))
+				self.kindex += 1
+				if self.kindex == len(self.k2s):
+					self.send_key = False
+					self.encrypt = True
+				print("Message to send: {}".format(send_message))
 			except Exception as e:
 				print("Error: {}".format(e))
-			send_message = self.kindex+"\x01"+self.k2s[self.kindex]
-			self.kindex += 1
-			if self.kindex == len(self.k2s):
-				self.send_key = False
-				self.encrypt = True
-			print("Message to send: {}".format(send_message))
 			
 		# If a message has already been generated, get the next message to send
 		elif not self.global_read_states[dev]:
