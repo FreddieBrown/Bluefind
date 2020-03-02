@@ -263,7 +263,7 @@ def emergency_service_actions(cli, address):
 	cli.set_message(request_message)
 	try:
 		cli.prepare_device(address)
-		cli.set_characteristic(cli.NORMAL_UUID)
+		cli.set_characteristic(cli.EM_UUID)
 		cli.send_message()
 		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db_em(cli.db, found_message)
@@ -295,7 +295,7 @@ def encrypted_client_actions(cli, address):
 	key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 	try:
 		cli.prepare_device(address)
-		cli.set_characteristic(cli.NORMAL_UUID)
+		cli.set_characteristic(cli.SECURE_UUID)
 		# Write it to server
 		cli.set_message(key_message)
 		cli.send_message()
