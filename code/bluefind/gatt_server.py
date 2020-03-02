@@ -579,7 +579,9 @@ class SecureCharacteristic(Characteristic):
 				if dev not in self.global_states:
 					self.global_states[dev] = [message]
 				elif message == chr(5):
-					self.client_key = "".join(self.global_states[dev])
+					full_message = "".join(self.global_states[dev])
+					break_down = bluezutils.break_down_message(full_message)
+					self.client_key = break_down['3'][0]
 					self.send_key = True
 					del self.global_states[dev]
 				else:
