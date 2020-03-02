@@ -657,7 +657,6 @@ class SecureCharacteristic(Characteristic):
 			print("Local Read Position: {}".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+str(self.read_states[dev]['local'])+"\x01"
 			send_message = sequence+""+self.local_read_states[dev][self.read_states[dev]['local']]
-			self.read_states[dev]['global'] += 1
 			self.read_states[dev]['local'] += 1
 
 		print("Message being sent: {}".format(send_message))
