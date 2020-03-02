@@ -605,7 +605,7 @@ class SecureCharacteristic(Characteristic):
 			if not self.k2s:
 				self.k2s = bluezutils.split_message(bluezutils.build_generic_message({3:[self.keypair['public']]}))
 			try:
-				send_message = self.kindex+"\x01"+self.k2s[self.kindex]
+				send_message = str(self.kindex)+"\x01"+self.k2s[self.kindex]
 				print("Message to send: {}".format(send_message))
 				self.kindex += 1
 				if self.kindex == len(self.k2s):
