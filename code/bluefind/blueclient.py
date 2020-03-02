@@ -149,6 +149,26 @@ class Client():
 				seq += 1
 			print("Written whole message to {}".format(self.target_address))
 	
+	def send_secure_message(self, key):
+		print("Sending Secure Message")
+		msg_parts = bluezutils.split_message(self.message, delim=None, size=62)
+		print("Message to send: {}".format(self.message))
+		for i in range(0, len(msg_parts)):
+			print("Encrypt Message")
+			enc_seg = bluezutils.encrypt_message(key, msg_parts[i])
+			broken_enc_seg = bluezutils.split_message(enc_seg, delim=None, size=15)
+			for j in range(0, len(broken_enc_seg)):
+				sequence = str(i)+""+str(j)+"\x01"
+				message = sequence+broken_enc_seg[j]
+				try: 
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+					print("Returned Value: {}".format(ret))
+				except:
+					self.reconnect(5)
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+					print("Returned Value: {}".format(ret))
+		print("Written whole message to {}".format(self.target_address))
+	
 	def read_message(self):
 		"""
 		This function will keep reading from the server 
@@ -187,6 +207,33 @@ class Client():
 		print("Read Message: {}".format(full_message))
 		# break down whole message
 		return full_message
+	
+	def read_secure_message(self):
+		if not self.peripheral:
+			print("No connected device so cannot read message")
+			return None
+		print("Reading Secure Message")
+		global_message = []
+		local_message = []
+		while True:
+			try:
+				recvd = bluezutils.from_byte_array(self.read_value())
+			except:
+				self.reconnect(5)
+				recvd = bluezutils.from_byte_array(self.read_value())
+			seq_num, data = bluezutils.get_sequence_number(recvd)
+			global_place = int(seq_num[:len(seq_num)-1])
+			local_place = int(seq_num[len(seq_num)-1:len(seq_num)])
+			if data == chr(5):
+				return "".join(global_message)
+			elif local_place == 9:
+				local_frag = "".join(local_message)
+				print("Decrypt Message")
+				decrypted = bluezutils.decrypt_message(self.keypair['private'], local_frag)
+				global_message.append(decrypted)
+			else:
+				local_message.append(data)
+
 
 def sig_handler(signal_number, frame):
 	"""
@@ -311,13 +358,14 @@ def encrypted_client_actions(cli, address):
 		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
-			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
-			cli.set_message(bluezutils.bytestring_to_uf8(cipher))
+			cli.set_message(message)
 			print("Get message")
-			print("Decrypt Message")
-			print("Encrypt Message")
+			msg = cli.read_secure_message()
+			print("Message recevied: {}".format(msg))
 			print("Send Message")
-			print("Work here")
+			# cli.send_secure_message(server_key["3"][0])
+			# message_parts = bluezutils.break_down_message(msg)
+			# bluezutils.add_to_db(cli.db, message_parts)
 		print("Disconnect")
 		cli.disconnect()
 	except Exception as e:
