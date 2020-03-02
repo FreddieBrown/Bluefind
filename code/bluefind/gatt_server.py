@@ -633,8 +633,8 @@ class SecureCharacteristic(Characteristic):
 				print("Error: {}".format(e))
 
 		elif self.read_states[dev]['local'] == 8:
-			print("Global Read Position: {}".format(self.read_states[dev]['global']))
-			print("Local Read Position: {}".format(self.read_states[dev]['local']))
+			print("Global Read Position: {}/{}".format(self.read_states[dev]['global'], len(self.global_read_states[dev])-1))
+			print("Local Read Position: {}/8".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+"8"+"\x01"
 			send_message = sequence+""+self.local_read_states[dev][8]
 			print("Built message to send")
@@ -648,8 +648,8 @@ class SecureCharacteristic(Characteristic):
 			self.local_read_states[dev] = bluezutils.split_message(enc_next_seg, delim=None, size=15)
 			
 		elif self.read_states[dev]['global'] == len(self.global_read_states[dev]):
-			print("Global Read Position: {}".format(self.read_states[dev]['global']))
-			print("Local Read Position: {}".format(self.read_states[dev]['local']))
+			print("Global Read Position: {}/{}".format(self.read_states[dev]['global'], len(self.global_read_states[dev])-1))
+			print("Local Read Position: {}/8".format(self.read_states[dev]['local']))
 			send_message = sequence = str(self.read_states[dev]['global'])+"0"+"\x01"
 			send_message = sequence+""+chr(5)
 			del self.read_states[dev]
@@ -657,8 +657,8 @@ class SecureCharacteristic(Characteristic):
 			del self.global_read_states[dev]
 
 		else:
-			print("Global Read Position: {}".format(self.read_states[dev]['global']))
-			print("Local Read Position: {}".format(self.read_states[dev]['local']))
+			print("Global Read Position: {}/{}".format(self.read_states[dev]['global'], len(self.global_read_states[dev])-1))
+			print("Local Read Position: {}/8".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+str(self.read_states[dev]['local'])+"\x01"
 			send_message = sequence+""+self.local_read_states[dev][self.read_states[dev]['local']]
 			self.read_states[dev]['local'] += 1
