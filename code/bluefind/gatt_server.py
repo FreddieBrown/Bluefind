@@ -637,9 +637,12 @@ class SecureCharacteristic(Characteristic):
 			print("Local Read Position: {}".format(self.read_states[dev]['local']))
 			sequence = str(self.read_states[dev]['global'])+"9"+"\x01"
 			send_message = sequence+""+self.local_read_states[dev][9]
+			print("Built message to send")
 			self.read_states[dev]['global'] += 1
 			self.read_states[dev]['local'] = 0
+			print("Incremented global and loca vals")
 			next_seg = self.global_read_states[dev][self.read_states[dev]['global']]
+			print("Get next segment")
 			enc_next_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(self.client_key, next_seg))
 			print("Local Frag: {}".format(len(enc_next_seg)))
 			self.local_read_states[dev] = bluezutils.split_message(enc_next_seg, delim=None, size=15)
