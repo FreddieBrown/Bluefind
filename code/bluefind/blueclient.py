@@ -364,11 +364,11 @@ def encrypted_client_actions(cli, address):
 			cli.set_message(message)
 			print("Get message")
 			msg = cli.read_secure_message()
+			message_parts = bluezutils.break_down_message(msg)
+			bluezutils.add_to_db(cli.db, message_parts)
 			print("Message recevied: {}".format(msg))
 			print("Send Message")
 			# cli.send_secure_message(server_key["3"][0])
-			# message_parts = bluezutils.break_down_message(msg)
-			# bluezutils.add_to_db(cli.db, message_parts)
 		print("Disconnect")
 		cli.disconnect()
 	except Exception as e:
