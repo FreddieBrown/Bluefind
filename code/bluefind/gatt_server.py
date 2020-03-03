@@ -546,6 +546,7 @@ class SecureCharacteristic(Characteristic):
 			then del from global_list 
 			"""
 			full_message = "".join(self.global_states[dev])
+			print("Full Message Written: {}".format(full_message))
 			message_parts = bluezutils.break_down_message(full_message)
 			bluezutils.add_to_db(self.db, message_parts)
 			self.encrypt = False
@@ -571,7 +572,6 @@ class SecureCharacteristic(Characteristic):
 					self.local_states[dev].append(message)
 					joined = "".join(self.local_states[dev])
 					self.local_states[dev] = []
-					print("Frag Len: {}".format(len(joined)))
 					self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(joined)))
 				except Exception as e:
 					print("Error: {}".format(e))
