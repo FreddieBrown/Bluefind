@@ -228,7 +228,7 @@ class Client():
 			if data == chr(5):
 				print("End of message: {}".format(global_message))
 				return "".join(global_message)
-			elif local_place == 9:
+			elif local_place == 8:
 				local_frag = "".join(local_message)
 				print("Decrypt Message")
 				print("Local Frag: {}".format(len(local_frag)))
