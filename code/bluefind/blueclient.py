@@ -229,6 +229,7 @@ class Client():
 				print("End of message: {}".format(global_message))
 				return "".join(global_message)
 			elif local_place == 8:
+				local_message.append(data)
 				local_frag = "".join(local_message)
 				print("Decrypt Message")
 				print("Local Frag: {}".format(len(local_frag)))
