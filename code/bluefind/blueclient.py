@@ -226,7 +226,7 @@ class Client():
 			global_place = int(seq_num[:len(seq_num)-1])
 			local_place = int(seq_num[len(seq_num)-1:len(seq_num)])
 			if data == chr(5):
-				print("End of message")
+				print("End of message: {}".format(global_message))
 				return "".join(global_message)
 			elif local_place == 9:
 				local_frag = "".join(local_message)
