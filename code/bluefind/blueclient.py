@@ -154,15 +154,17 @@ class Client():
 		msg_parts = bluezutils.split_message(self.message,size=62)
 		print("Message to send: {}".format(msg_parts))
 		for i in range(0, len(msg_parts)):
-			print("Encrypt Message")
 			if i == len(msg_parts)-1:
+				print("End Token")
+				message = str(i)+"0\x01"+msg_parts[i]
 				try: 
-					ret = self.write_value(bytearray(bluezutils.to_byte_array(msg_parts[i])), True)
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
 					print("Returned Value: {}".format(ret))
 				except:
 					self.reconnect(5)
-					ret = self.write_value(bytearray(bluezutils.to_byte_array(msg_parts[i])), True)
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
 			else:
+				print("Encrypt Message")
 				enc_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(key, msg_parts[i]))
 				broken_enc_seg = bluezutils.split_message(enc_seg, delim=None, size=15)
 				for j in range(0, len(broken_enc_seg)):
