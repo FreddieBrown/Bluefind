@@ -567,7 +567,9 @@ class SecureCharacteristic(Characteristic):
 				"""
 				This should take the local_list, concat it, decrypt it and add it to global list
 				"""
+				self.local_states[dev].append(message)
 				joined = "".join(self.local_states[dev])
+				self.local_states[dev] = []
 				self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(joined))) 
 			else:
 				"""
