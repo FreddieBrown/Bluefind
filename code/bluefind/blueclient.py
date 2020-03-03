@@ -151,7 +151,7 @@ class Client():
 	
 	def send_secure_message(self, key):
 		print("Sending Secure Message")
-		msg_parts = bluezutils.split_message(self.message, delim=None, size=62)
+		msg_parts = bluezutils.split_message(self.message,size=62)
 		print("Message to send: {}".format(self.message))
 		for i in range(0, len(msg_parts)):
 			print("Encrypt Message")
