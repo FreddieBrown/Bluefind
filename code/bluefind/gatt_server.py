@@ -563,12 +563,12 @@ class SecureCharacteristic(Characteristic):
 				Create entry in local list
 				"""
 				self.local_states[dev] = []
-			elif int(local_place) == 9:
+			elif int(local_place) == 8:
 				"""
 				This should take the local_list, concat it, decrypt it and add it to global list
 				"""
 				joined = "".join(self.local_states[dev])
-				self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], joined)) 
+				self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(joined))) 
 			else:
 				"""
 				Add message to local list

@@ -222,7 +222,6 @@ class Client():
 				self.reconnect(5)
 				recvd = bluezutils.from_byte_array(self.read_value())
 			seq_num, data = bluezutils.get_sequence_number(recvd)
-			print("Message Len: {}".format(len(data)))
 			global_place = int(seq_num[:len(seq_num)-1])
 			local_place = int(seq_num[len(seq_num)-1:len(seq_num)])
 			if data == chr(5):
@@ -233,7 +232,6 @@ class Client():
 				local_frag = "".join(local_message)
 				local_message = []
 				print("Decrypt Message")
-				print("Local Frag: {}".format(len(local_frag)))
 				decrypted = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(local_frag))
 				global_message.append(decrypted)
 			else:
@@ -366,12 +364,10 @@ def encrypted_client_actions(cli, address):
 			cli.set_message(message)
 			print("Get message")
 			msg = cli.read_secure_message()
-			print("Message: {}".format(msg))
 			message_parts = bluezutils.break_down_message(msg)
 			bluezutils.add_to_db(cli.db, message_parts)
-			print("Message recevied: {}".format(msg))
 			print("Send Message")
-			# cli.send_secure_message(server_key["3"][0])
+			cli.send_secure_message(server_key["3"][0])
 		print("Disconnect")
 		cli.disconnect()
 	except Exception as e:
