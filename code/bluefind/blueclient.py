@@ -155,18 +155,26 @@ class Client():
 		print("Message to send: {}".format(msg_parts))
 		for i in range(0, len(msg_parts)):
 			print("Encrypt Message")
-			enc_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(key, msg_parts[i]))
-			broken_enc_seg = bluezutils.split_message(enc_seg, delim=None, size=15)
-			for j in range(0, len(broken_enc_seg)):
-				sequence = str(i)+""+str(j)+"\x01"
-				message = sequence+broken_enc_seg[j]
+			if i == len(msg_parts)-1:
 				try: 
-					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(msg_parts[i])), True)
 					print("Returned Value: {}".format(ret))
 				except:
 					self.reconnect(5)
-					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
-					print("Returned Value: {}".format(ret))
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(msg_parts[i])), True)
+			else:
+				enc_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(key, msg_parts[i]))
+				broken_enc_seg = bluezutils.split_message(enc_seg, delim=None, size=15)
+				for j in range(0, len(broken_enc_seg)):
+					sequence = str(i)+""+str(j)+"\x01"
+					message = sequence+broken_enc_seg[j]
+					try: 
+						ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+						print("Returned Value: {}".format(ret))
+					except:
+						self.reconnect(5)
+						ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+						print("Returned Value: {}".format(ret))
 		print("Written whole message to {}".format(self.target_address))
 	
 	def read_message(self):
