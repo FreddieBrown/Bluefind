@@ -571,8 +571,6 @@ class SecureCharacteristic(Characteristic):
 				try:
 					self.local_states[dev].append(message)
 					joined = "".join(self.local_states[dev])
-					print("Local States Len: {}".format(len(self.local_states[dev])))
-					print("Joined Len: {}".format(len(joined)))
 					self.local_states[dev] = []
 					self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(joined)))
 				except Exception as e:
