@@ -571,7 +571,7 @@ class SecureCharacteristic(Characteristic):
 					self.local_states[dev].append(message)
 					joined = "".join(self.local_states[dev])
 					self.local_states[dev] = []
-					print("Frag Len: {}".format(joined))
+					print("Frag Len: {}".format(len(joined)))
 					self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(joined)))
 				except Exception as e:
 					print("Error: {}".format(e))
