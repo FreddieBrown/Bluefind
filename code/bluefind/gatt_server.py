@@ -562,7 +562,7 @@ class SecureCharacteristic(Characteristic):
 				"""
 				Create entry in local list
 				"""
-				self.local_states[dev] = []
+				self.local_states[dev] = [message]
 			elif int(local_place) == 8:
 				"""
 				This should take the local_list, concat it, decrypt it and add it to global list
@@ -571,6 +571,7 @@ class SecureCharacteristic(Characteristic):
 					self.local_states[dev].append(message)
 					joined = "".join(self.local_states[dev])
 					self.local_states[dev] = []
+					print("Frag Len: {}".format(joined))
 					self.global_states[dev].append(bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(joined)))
 				except Exception as e:
 					print("Error: {}".format(e))
