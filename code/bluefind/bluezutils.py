@@ -1,4 +1,8 @@
-import dbus
+try:
+	import dbus
+except:
+	print("No DBUS")
+
 import datetime
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -193,25 +197,26 @@ def from_byte_array(val_arr):
 	# return string
 	return ret_string
 
-def split_message(message):
+def split_message(message, delim=chr(5), size=15):
 	"""
 	Method splits message into 16byte chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
-	print("Splitting message: {}".format(message))
-	mess_size = 15
+	print("Splitting message, size: {}".format(size))
 	byte_arr = []
 	message_len = len(message)
-	if int(message_len/mess_size) == 0:
+	if int(message_len/size) == 0:
+		print("Small message size")
 		byte_arr.append(message)
 	else:
-		for i in range(0, int(message_len/mess_size)):
-			print("{}/{}".format(i, int(message_len/mess_size)))
-			j = (i+1)*mess_size
-			byte_arr.append(message[i*mess_size:j])
-		if message_len%mess_size is not 0:
-			byte_arr.append(message[(i+1)*mess_size:(i+1)*mess_size+message_len%mess_size])
-	byte_arr.append(chr(5))
+		print("Breaking up message")
+		for i in range(0, int(message_len/size)):
+			j = (i+1)*size
+			byte_arr.append(message[i*size:j])
+		if message_len%size is not 0:
+			byte_arr.append(message[(i+1)*size:(i+1)*size+message_len%size])
+	if delim:
+		byte_arr.append(delim)
 	return byte_arr
 
 def dbus_to_MAC(name):
@@ -262,8 +267,8 @@ def add_to_db_em(db, broken_down_msg):
 			values.append((addresses[i], coords[i].strip('()'), dates[i]))
 	db.insert(values)
 
-def generate_RSA_keypair():
-	key = RSA.generate(2048)
+def generate_RSA_keypair(key_size=2048):
+	key = RSA.generate(key_size)
 	private = key.export_key()
 	public = key.publickey().export_key()
 	return {
@@ -320,4 +325,4 @@ def utf_to_value_list(buffer):
 
 def utf_to_byte_string(buffer):
 	value_list = utf_to_value_list(buffer)
-	return array.array('B', value_list).tostring()
+	return array.array('B', value_list).tobytes()

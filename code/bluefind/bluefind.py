@@ -44,12 +44,6 @@ def server(bus, ad):
 	
 	return ad_manager
 
-def client():
-	"""
-	Function starts up the clientside functionalty of the project.
-	"""
-	print("Client mode started")
-
 def receiveSignal(signal_number, frame):
 	"""
 	Signal handler for the project. This is to clean up the 
@@ -73,13 +67,8 @@ def decide_device_type():
 	device or if it should be a server. 
 	"""
 	global client_ty
-	random.seed()
-	if(random.randint(0, 10) < 5):
-		print("Server")
-		client_ty = "n"
-	else:
-		print("Client")
-		client_ty = "y"
+	print("Server")
+	client_ty = "n"
 
 
 if __name__ == '__main__':
@@ -88,36 +77,31 @@ if __name__ == '__main__':
 
 	decide_device_type()
 
+	# Set parameters about Dbus main loop
+	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
+	# new instance of dbus system bus
+	bus = dbus.SystemBus()
 
-	if client_ty is "y":
-		client()
-	else:
-		# Set parameters about Dbus main loop
-		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+	# Startup main GLib loop which will allow program to run 
+	# indefinetly with dbus
+	mainloop = GLib.MainLoop()
 
-		# new instance of dbus system bus
-		bus = dbus.SystemBus()
+	# Register agent
+	agent_manager = agent.register_agent(bus)
 
-		# Startup main GLib loop which will allow program to run 
-		# indefinetly with dbus
-		mainloop = GLib.MainLoop()
+	# Start device discovery
+	discovery.disco_start(bus)
 
-		# Register agent
-		agent_manager = agent.register_agent(bus)
+	# Creates the Advertisement class for emergency advertising
+	em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
+	ad_manager = server(bus, em_advertisement)
 
-		# Start device discovery
-		discovery.disco_start(bus)
+	# run mainloop
+	mainloop.run()
 
-		# Creates the Advertisement class for emergency advertising
-		em_advertisement = advertising.EmergencyAdvertisement(bus, 0)
-		ad_manager = server(bus, em_advertisement)
-
-		# run mainloop
-		mainloop.run()
-
-		# Cleans up advert if it was registered
-		agent_manager.UnregisterAgent(agent.AGENT_PATH)
-		print("Agent Unregistered!")
-		ad_manager.UnregisterAdvertisement(em_advertisement)
-		print('Advertisement Unregistered')
+	# Cleans up advert if it was registered
+	agent_manager.UnregisterAgent(agent.AGENT_PATH)
+	print("Agent Unregistered!")
+	ad_manager.UnregisterAdvertisement(em_advertisement)
+	print('Advertisement Unregistered')

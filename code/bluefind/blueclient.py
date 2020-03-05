@@ -19,7 +19,9 @@ class Client():
 	and methods which can all be used with the object.
 	"""
 	SERVICE_UUID =  '0000FFF0-0000-1000-8000-00805f9b34fb'
-	RW_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
+	NORMAL_UUID = '0000FFF1-0000-1000-8000-00805f9b34fb'
+	SECURE_UUID = '0000FFF2-0000-1000-8000-00805f9b34fb'
+	EM_UUID = '0000FFF3-0000-1000-8000-00805f9b34fb'
 
 	def __init__(self, location, device_address):
 		self.device_address = device_address
@@ -31,7 +33,7 @@ class Client():
 		self.scanner = Scanner()
 		self.message = None
 		self.db = Database('find.db')
-		self.keypair = bluezutils.generate_RSA_keypair()
+		self.keypair = bluezutils.generate_RSA_keypair(key_size=1024)
 
 	def prepare_device(self, target_address):
 		"""
@@ -43,8 +45,6 @@ class Client():
 		"""
 		self.peripheral = Peripheral(target_address)
 		self.service = self.peripheral.getServiceByUUID( self.SERVICE_UUID )
-		self.characteristic = self.service.getCharacteristics( self.RW_UUID )[0]
-		self.handle = self.characteristic.getHandle()
 		self.target_address = target_address
 
 	def write_value(self, data, response=False):
@@ -103,6 +103,10 @@ class Client():
 		client device.
 		"""
 		self.location = location
+	
+	def set_characteristic(self, uuid):
+		self.characteristic = self.service.getCharacteristics( uuid )[0]
+		self.handle = self.characteristic.getHandle()
 
 	def set_message(self, message):
 		"""
@@ -145,6 +149,36 @@ class Client():
 				seq += 1
 			print("Written whole message to {}".format(self.target_address))
 	
+	def send_secure_message(self, key):
+		print("Sending Secure Message")
+		msg_parts = bluezutils.split_message(self.message,size=62)
+		print("Message to send: {}".format(msg_parts))
+		for i in range(0, len(msg_parts)):
+			if i == len(msg_parts)-1:
+				print("End Token")
+				message = str(i)+"0\x01"+msg_parts[i]
+				try: 
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+					print("Returned Value: {}".format(ret))
+				except:
+					self.reconnect(5)
+					ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+			else:
+				print("Encrypt Message")
+				enc_seg = bluezutils.bytestring_to_uf8(bluezutils.encrypt_message(key, msg_parts[i]))
+				broken_enc_seg = bluezutils.split_message(enc_seg, delim=None, size=15)
+				for j in range(0, len(broken_enc_seg)):
+					sequence = str(i)+""+str(j)+"\x01"
+					message = sequence+broken_enc_seg[j]
+					try: 
+						ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+						print("Returned Value: {}".format(ret))
+					except:
+						self.reconnect(5)
+						ret = self.write_value(bytearray(bluezutils.to_byte_array(message)), True)
+						print("Returned Value: {}".format(ret))
+		print("Written whole message to {}".format(self.target_address))
+	
 	def read_message(self):
 		"""
 		This function will keep reading from the server 
@@ -183,6 +217,36 @@ class Client():
 		print("Read Message: {}".format(full_message))
 		# break down whole message
 		return full_message
+	
+	def read_secure_message(self):
+		if not self.peripheral:
+			print("No connected device so cannot read message")
+			return None
+		print("Reading Secure Message")
+		global_message = []
+		local_message = []
+		while True:
+			try:
+				recvd = bluezutils.from_byte_array(self.read_value())
+			except:
+				self.reconnect(5)
+				recvd = bluezutils.from_byte_array(self.read_value())
+			seq_num, data = bluezutils.get_sequence_number(recvd)
+			global_place = int(seq_num[:len(seq_num)-1])
+			local_place = int(seq_num[len(seq_num)-1:len(seq_num)])
+			if data == chr(5):
+				print("End of message: {}".format(global_message))
+				return "".join(global_message)
+			elif local_place == 8:
+				local_message.append(data)
+				local_frag = "".join(local_message)
+				local_message = []
+				print("Decrypt Message")
+				decrypted = bluezutils.decrypt_message(self.keypair['private'], bluezutils.utf_to_byte_string(local_frag))
+				global_message.append(decrypted)
+			else:
+				local_message.append(data)
+
 
 def sig_handler(signal_number, frame):
 	"""
@@ -237,6 +301,7 @@ def normal_client_actions(cli, address):
 	cli.set_message(message)
 	try:
 		cli.prepare_device(address)
+		cli.set_characteristic(cli.NORMAL_UUID)
 		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db(cli.db, found_message)
 		cli.send_message()
@@ -258,6 +323,7 @@ def emergency_service_actions(cli, address):
 	cli.set_message(request_message)
 	try:
 		cli.prepare_device(address)
+		cli.set_characteristic(cli.EM_UUID)
 		cli.send_message()
 		found_message = bluezutils.break_down_message(cli.read_message())
 		bluezutils.add_to_db_em(cli.db, found_message)
@@ -269,52 +335,50 @@ def emergency_service_actions(cli, address):
 
 def encrypted_client_actions(cli, address):
 	"""
-	Function to perform secure client behaviours using 
-	asymmetric encryption to provide message secrecy to 
-	users. First, it does a key exchange with the server 
-	and they will give each other their public RSA keys. 
-	After this, it will use the servers public key to 
-	encrypt the message that it is to send. It will then 
-	read an encrypted message from the server. It will decrypt
-	this message and store the information it contains.
+		- Key Exchange
 
-	If the key exchange fails, normal behaviour is used. 
+			WRITE:
+			- Build message
+			- Check length
+			- Break down into segments which can be encrypted and give each one a seq number
+			- Encrypt each segment of the message
+			- Try and send each segment. For each one, break down into 15 byte segments and send 
+			each one with large segment seq number + local seq and denim plus the message segment
+
+			READ:
+
+			- Get message and split into message and sequence number
+			- Check if in encryption mode
+			- Build local list for messages 
+			- Add each local segment to list
+			- When the global segment ends, concat local segment pieces and decrypt and add to global message list
+			- When chr(5) has been received, get global list and concat it to get full message then move on
+
 	"""
 	print("Encrypted Client Action")
 	db_data = cli.db.select(3)
 	db_data[0].append(cli.location)
 	db_data[1].append(cli.device_address)
 	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])
-	# Build message which contains clients public key (tag 3)
-	key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 	try:
+		# Key exchange
 		cli.prepare_device(address)
-		# Write it to server
+		cli.set_characteristic(cli.SECURE_UUID)
+		key_message = bluezutils.build_generic_message({3:[cli.keypair['public']]})
 		cli.set_message(key_message)
 		cli.send_message()
-		# Read public key from server
+		print("Get Server Key")
 		server_key = bluezutils.break_down_message(cli.read_message())
 		if "3" in server_key.keys():
 			print("Received public key")
-			# When received full key, write back to server with confirmation (tag 4)
-			conf_message = bluezutils.build_generic_message({4:[chr(6)]})
-			cli.set_message(conf_message)
-			cli.send_message()
-			print("Encrypting Message")
-			cipher = bluezutils.encrypt_message(server_key["3"][0], message)
-			cli.set_message(bluezutils.bytestring_to_uf8(cipher))
-			found_message = cli.read_message()
-			print("Decrypting Message")
-			byte_msg = bluezutils.utf_to_byte_string(found_message)[:len(found_message)-1]
-			print("Message: {}".format(list(byte_msg)))
-			decrypted = bluezutils.decrypt_message(cli.keypair['private'], byte_msg)
-			bluezutils.add_to_db(cli.db, bluezutils.break_down_message(decrypted))
-			cli.send_message()
-		else:
-			found_message = bluezutils.break_down_message(cli.read_message())
-			bluezutils.add_to_db(cli.db, found_message)
 			cli.set_message(message)
-			cli.send_message()
+			print("Get message")
+			msg = cli.read_secure_message()
+			message_parts = bluezutils.break_down_message(msg)
+			bluezutils.add_to_db(cli.db, message_parts)
+			print("Send Message")
+			cli.send_secure_message(server_key["3"][0])
+		print("Disconnect")
 		cli.disconnect()
 	except Exception as e:
 		print("Connection Error for {}: {}".format(address, e))
