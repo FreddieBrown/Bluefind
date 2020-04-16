@@ -621,7 +621,7 @@ class SecureCharacteristic(Characteristic):
 		# If a message has already been generated, get the next message to send
 		elif dev not in self.global_read_states:
 			print("Generate new message")
-			select_amount = 3
+			select_amount = 50
 			db_data = self.db.select(select_amount)
 			db_data[0].append(self.location)
 			db_data[1].append(self.address)

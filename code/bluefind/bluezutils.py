@@ -199,7 +199,7 @@ def from_byte_array(val_arr):
 
 def split_message(message, delim=chr(5), size=15):
 	"""
-	Method splits message into 16byte chunks so they can be transmitted 
+	Method splits message into variable sized chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
 	print("Splitting message, size: {}".format(size))
