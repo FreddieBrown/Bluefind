@@ -2,7 +2,6 @@ import sys
 import dbus
 import array
 import signal
-import bluepy
 from bluepy.btle import Scanner, UUID, Peripheral, DefaultDelegate
 import time
 import datetime

@@ -269,8 +269,12 @@ def add_to_db_em(db, broken_down_msg):
 
 def generate_RSA_keypair(key_size=2048):
 	key = RSA.generate(key_size)
-	private = key.export_key()
-	public = key.publickey().export_key()
+	try:
+		private = key.export_key('PEM')
+		public = key.publickey().export_key('PEM')
+	except:
+		private = key.exportKey()
+		public = key.publickey().exportKey()
 	return {
 		"private" : from_byte_array(private),
 		"public" : from_byte_array(public),
