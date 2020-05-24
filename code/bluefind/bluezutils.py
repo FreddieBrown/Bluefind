@@ -199,7 +199,7 @@ def from_byte_array(val_arr):
 
 def split_message(message, delim=chr(5), size=15):
 	"""
-	Method splits message into 16byte chunks so they can be transmitted 
+	Method splits message into variable sized chunks so they can be transmitted 
 	using Bluetooth. 
 	"""
 	print("Splitting message, size: {}".format(size))
@@ -269,8 +269,12 @@ def add_to_db_em(db, broken_down_msg):
 
 def generate_RSA_keypair(key_size=2048):
 	key = RSA.generate(key_size)
-	private = key.export_key()
-	public = key.publickey().export_key()
+	try:
+		private = key.export_key('PEM')
+		public = key.publickey().export_key('PEM')
+	except:
+		private = key.exportKey()
+		public = key.publickey().exportKey()
 	return {
 		"private" : from_byte_array(private),
 		"public" : from_byte_array(public),

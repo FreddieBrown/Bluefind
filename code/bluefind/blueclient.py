@@ -2,7 +2,6 @@ import sys
 import dbus
 import array
 import signal
-import bluepy
 from bluepy.btle import Scanner, UUID, Peripheral, DefaultDelegate
 import time
 import datetime
@@ -356,7 +355,7 @@ def encrypted_client_actions(cli, address):
 
 	"""
 	print("Encrypted Client Action")
-	db_data = cli.db.select(3)
+	db_data = cli.db.select(50)
 	db_data[0].append(cli.location)
 	db_data[1].append(cli.device_address)
 	message = bluezutils.build_message(db_data[0], db_data[1], [address.upper()])

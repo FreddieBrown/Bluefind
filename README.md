@@ -24,6 +24,8 @@ All of these libraries are available on `apt` and with `python` version `3.7.3`:
 
 - `libgtk2.0-dev`
 - `libdbus-1-dev`
+- `libgirepository1.0-dev`
+- `libcairo2-dev`
 - `sqlite3`
 - Python packages used are included in `requirements.txt`
 
